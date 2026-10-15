@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 174,
+ "requirement_count": 306,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T18:48:32+00:00",
+ "updated_at": "2026-10-15T23:28:17+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -5751,6 +5751,4278 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the handoff of session 2026-10-15b; the rule check it waited for returned PASS before capture.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R175",
+   "text": "'Resume as the NYC Buildability orchestrator.' 'Start INSIDE tmux: `tmux attach -t buildability` (use the Claude there, or close it and run `cd /root/project/nyc-buildability && claude` in the tmux window).' 'Never run two sessions.' 'Continue the existing work and preserve the operating rules' 'Use the existing Claude Code session in the \"buildability\" tmux session.' 'Do not launch a second Claude session.' 'If operating from outside tmux, use \"tmux attach -t buildability\"; if already inside the existing session, remain there.': one existing Claude Code process in tmux 'buildability'; no second session (helpers it dispatches are not sessions: orchestrator's reading).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The notes record tmux and one Claude process.",
+   "required_evidence": "`session-2026-10-15c/SESSION_NOTES.md`.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R176",
+   "text": "'No MCP servers; `/mcp` must show none before any write.' 'Preserve the standing requirement that \"/mcp\" shows no MCP servers before any repository write.': no repository write while /mcp lists a server; the empty list is recorded before the first write.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The notes show it before the first write.",
+   "required_evidence": "`session-2026-10-15c/SESSION_NOTES.md` (23:01 UTC).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R177",
+   "text": "'This is a planned handoff: no resume checks and no READY TO RESUME round (owner, D-094 R109-R113).' 'This is a planned continuation.' 'Do not introduce a \u201cREADY TO RESUME\u201d round, repeat completed review cycles, or restart the project.': start at handoff seq 172 section 4; no resume checks, READY TO RESUME round or restart.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R109",
+    "D-094-R113"
+   ],
+   "required_harness": "No resume-check run or READY message.",
+   "required_evidence": "Transcript; notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R178",
+   "text": "'Do not repeat completed work.' 'Do not introduce a \u201cREADY TO RESUME\u201d round, repeat completed review cycles, or restart the project.' 'Do not rebuild completed work.': reuse accepted work, saved reviews and settled case readings; re-check only what changed since (D-093) and say what changed.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R003"
+   ],
+   "required_harness": "Each repeated check names its reason.",
+   "required_evidence": "Notes; project-control/reports/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R179",
+   "text": "'Read CLAUDE.md, docs/SESSION_HANDOFF.md (seq 172) in full, then /root/project/lanes-runtime/owner-docs/session-2026-10-15b/NEXT-SESSION-BRIEF.md, /root/project/lanes-runtime/owner-docs/session-2026-10-11c/NEXT-SESSION-BRIEF.md sections 1-4, the plan (session-2026-10-11c/workorder-D094-v2.md, session-2026-10-11d/workorder-D094-v3-delta.md, and project-control/master_plan.json report_programme), the last STATE lines of session-2026-10-15b/SESSION_NOTES.md, and the living-files map .claude/rules/living-files.md with its handoff checklist in .claude/session-handoff-profile.md.': this list is read before acting: CLAUDE.md, seq 172, the 15b brief, 11c brief sections 1-4, work order v2 + v3 delta, report_programme, 15b STATE lines, living-files map, handoff profile.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The notes record the reads before the first dispatch.",
+   "required_evidence": "Notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R180",
+   "text": "'Read the applicable project instructions and continuity records, including:' '\"CLAUDE.md\".' '\"docs/SESSION_HANDOFF.md\" in full.' '\"/root/project/lanes-runtime/owner-docs/session-2026-10-14b/NEXT-SESSION-BRIEF.md\".' 'Sections 1\u20134 of \"/root/project/lanes-runtime/owner-docs/session-2026-10-11c/NEXT-SESSION-BRIEF.md\".' 'The D-094 work order in \"session-2026-10-11c/workorder-D094-v2.md\" and delta in \"session-2026-10-11d/workorder-D094-v3-delta.md\".' '\"project-control/master_plan.json\", especially \"report_programme\".' 'The last STATE entries in \"session-2026-10-14b/SESSION_NOTES.md\".' 'The applicable living-files map and handoff profile.' 'The supplied locations were \"/root/project/w-wave20/.claude/rules/living-files.md\" and \"/root/project/w-wave20/.claude/session-handoff-profile.md\"; use their current canonical successors if they have since moved or merged.' 'The owner referred to handoff sequence 168.' 'The GitHub audit found an older sequence 156.' 'Do not overwrite newer local instructions with older repository prose.' 'The ledger, git and CI win over prose.' 'Read the current branch head, relevant CI, task ledger, and applicable handoff instructions to determine what remains.' 'Resolve actual state through the ledger, git, CI, and current owner decisions.': orchestrator's reading (bullet 2): the newer records (seq 172, session-2026-10-15b) are read; seq 168 and the 14b files are older; the committed seq-156 handoff never overrides them; the map and profile paths are unchanged (.claude/rules/living-files.md, .claude/session-handoff-profile.md). State comes from the ledger, git, CI at the exact head and captured owner decisions.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R179"
+   ],
+   "required_harness": "The notes name the seq-172 basis, ledger count, head and CI run before the first contract.",
+   "required_evidence": "Notes; git log of docs/SESSION_HANDOFF.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R181",
+   "text": "'Spin up at least 15 sub agents at once (owner, D-094 R169-R173), each doing a small part: no two touch the same file or hold the same shared set (the benchmark set, the review register, the evidence records); no helper pushes (only you integrate and push); every helper reports to you; you divide the work, review it (dispatch more reviewers when useful) and bring it together; builders may be more than three under these rules; heavy test runs stay one at a time under the shared lock; if helpers collide on files, pushes or the lock, lower the number and note why.' 'Use the latest documented owner authorization for helper concurrency and building limits.' 'Do not increase those limits merely because this prompt mentions parallel review.' 'If no later authorization supersedes the supplied restrictions, retain at most five helpers, up to eight only when the additional helpers perform research, and at most three building.': orchestrator's reading (bullet 1): R169-R173 govern; the five/eight/three fallback does not apply; review wording raises no limit.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R169",
+    "D-094-R170",
+    "D-094-R173",
+    "D-094-R104"
+   ],
+   "required_harness": "Each dispatch line gives role, files and running count; builders above three only with disjoint files and sets.",
+   "required_evidence": "Notes (dispatch lines).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R182",
+   "text": "'Spin up at least 15 sub agents at once (owner, D-094 R169-R173), each doing a small part: no two touch the same file or hold the same shared set (the benchmark set, the review register, the evidence records); no helper pushes (only you integrate and push); every helper reports to you; you divide the work, review it (dispatch more reviewers when useful) and bring it together; builders may be more than three under these rules; heavy test runs stay one at a time under the shared lock; if helpers collide on files, pushes or the lock, lower the number and note why.': R170-R173 hold in this session: no shared file or shared set, no helper push, every helper reports to the main session, heavy runs one at a time under the lock, fewer helpers on collisions with the reason noted.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R170",
+    "D-094-R171",
+    "D-094-R172",
+    "D-094-R173"
+   ],
+   "required_harness": "Disjoint allowed paths; pushes only by the main session; flock on heavy runs; reductions noted.",
+   "required_evidence": "Packets; git log; notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R183",
+   "text": "'Next action: handoff section 4 (the wave-28 PR, pre-merge audit, fail-closed merge; PDF #5 from main with every page diffed against print-main-86a450d4 and real website pictures; then the serial lane from E0 (options 2-3) with each increment split into parallel new-file parts, and parallel lanes on other files).': first: wave-28 PR (writer agent), pre-merge audit, CI read, fail-closed merge; then PDF #5 from main, every page diffed against session-2026-10-15b/print-main-86a450d4/report.pdf, with real website pictures.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Merge only at zero non-success checks; PDF #5, page diff and pictures saved with the main commit.",
+   "required_evidence": "GitHub PR; session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R184",
+   "text": "'Next action: handoff section 4 (the wave-28 PR, pre-merge audit, fail-closed merge; PDF #5 from main with every page diffed against print-main-86a450d4 and real website pictures; then the serial lane from E0 (options 2-3) with each increment split into parallel new-file parts, and parallel lanes on other files).': then the serial lane, each increment split into parallel new-file parts and one serial shared-file part; orchestrator's reading (bullet 4, R196): M5-T173 part B, M5-T180, E0, M5-T174 B1/B2, E1, E2, M0-T195.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R196"
+   ],
+   "required_harness": "Ledger contract order; disjoint allowed paths per part.",
+   "required_evidence": "Ledger; notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R185",
+   "text": "'Research and verification (D-093) applies; put its dispatch clause in every brief and name the reference cases.' 'Every helper brief says: all parts in ONE hand-back.' 'Every helper brief must include the applicable D-093 research-and-verification dispatch clause, name the relevant reference cases, and require all parts in ONE hand-back.': every brief carries the D-093 clause, names docs/reference-cases/R6B/cases/ and the relevant cases, and asks for all parts in one hand-back.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R003"
+   ],
+   "required_harness": "Every brief has all three.",
+   "required_evidence": "Briefs in session-2026-10-15c.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R186",
+   "text": "'Standing restrictions: handoff section 5.' 'Continue ordinary implementation, review, and integration under the existing authorizations.': handoff seq 172 section 5 holds all session (Tier D, PR 241, expansion hold, production off, no model override, no timers or unattended merges, ports 3000/3001/8000, CI read before gates, accepts, merges and handoff); Tier A work continues under ADR-006; no new authorization.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R004"
+   ],
+   "required_harness": "No such action in notes, git or GitHub.",
+   "required_evidence": "Notes; GitHub.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R187",
+   "text": "'Preserve deployment holds and professional-verification requirements.': no deploy or production switch; nothing labelled Verified until C1 (D-090 R779-R799); professional review stays advisory (ADR-007), never claimed.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R046"
+   ],
+   "required_harness": "No deploy change; no 'Verified' label in print or website.",
+   "required_evidence": "git log; candidate print.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R188",
+   "text": "'Updates to the owner: four short plain bullets with links, no time estimates unless asked; answer questions at once and to the point.' 'Keep the owner-facing chat update to four short, plain bullets, with links to the deliverables and detailed project records.' 'Do not provide time estimates unless asked.' 'Answer direct owner questions immediately.': applies to every owner update.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R166",
+    "D-094-R099"
+   ],
+   "required_harness": "Every owner update fits.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R189",
+   "text": "'Continue the NYC Buildability project and finish the architect-facing presentation of the work already underway.' 'Implement the changes and produce the actual outputs.' 'Do not respond with another plan alone.': finish the D-094 pass's presentation with real outputs: merged code, the candidate PDF, website pictures.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R141"
+   ],
+   "required_harness": "The session ends with accepted tasks and a printed candidate PDF.",
+   "required_evidence": "Ledger; session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R190",
+   "text": "'The objective is an accurate, visually clear report and website that help an architect quickly understand the property, compare the options, see the proposed building, and identify what still needs confirmation.' 'The objective is not simply fewer pages, more calculations, or passing tests.': the four reader outcomes are the test of progress; page, calculation or test counts are not.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R062",
+    "D-094-R085",
+    "D-094-R139"
+   ],
+   "required_harness": "The final reader check answers the four.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R191",
+   "text": "'Understand the audit baseline before changing anything' 'These findings describe a specific audited snapshot, not a claim that the branch has remained unchanged.' 'Check each finding below against the current code and output.' 'If it is already fixed, retain the fix and record the evidence.': orchestrator's reading (bullet 3): each finding is checked at the current head before any change and recorded fixed (with commit, test, page), open or changed.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A findings table exists before the first change it drives.",
+   "required_evidence": "Audit-vs-current return; notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R192",
+   "text": "'Audit date:' 'October 15, 2026.' 'Main: \"86a450d46ff0d21dccf9292146edea785ee2952e\".' 'Working branch: \"task/wave28-placement-wiring\".' 'Working branch head: \"8fbf701b20c0bf43e935e0eb85ab566471557835\".' 'PR #491 and PR #492 were merged and had successful automatic checks.' 'The audited working branch also completed its automatic checks successfully.' 'An independent local run passed 361 focused tests.' 'The audit generated PDFs through the actual report API and repository print script, using recorded official-data fixtures through the engine.' 'These were reproducible development previews, not fresh live-data verification or production exports.' 'All pages of both generated PDFs were inspected: eight pages from main and ten pages from the working branch.': the auditor's statements, not re-verified by this capture; main is still 86a450d4; the branch has moved to e026a391.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The findings table cites this baseline apart from the checked head.",
+   "required_evidence": "GitHub PRs 491, 492; git log.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R193",
+   "text": "'The independent reviews found in project records were AI reviews.' 'Do not describe those as human architect approval or professional zoning verification.': applies to records, PR bodies and owner updates.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R063"
+   ],
+   "required_harness": "None says otherwise.",
+   "required_evidence": "PR bodies; reports; transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R194",
+   "text": "'Preserve the genuine progress already made:' 'Street-wall, above-base setback, and side-yard calculations connected to the report.' 'The eleven-option comparison table placed first on its page.' 'Removal of the long repeated \u201cLimitation\u201d paragraphs.' 'Consolidation of calculations, open items, input measurement bases, and provenance.': these stay in every later print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The candidate print's page diff against main shows each.",
+   "required_evidence": "Candidate print; page diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R195",
+   "text": "'Preserve the genuine progress already made:' 'Independently worked reference cases or explicitly identified missing facts.' 'Placement and area-allocation calculations.' 'Handling of nonfinite numbers.' 'Stable report fingerprints.' 'The fix for long commit identifiers causing the report to shrink.' 'Accepted law-library corrections.': these stay; any change goes through a reviewed task.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Their tests green in CI at each accepted head.",
+   "required_evidence": "CI runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R196",
+   "text": "'Correct the contradiction between available calculations and visible drawings' 'This is the highest-priority presentation defect.': M5-T173 part B leads the serial lane (orchestrator's reading).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R143",
+    "D-094-R135"
+   ],
+   "required_harness": "Contracted before E0.",
+   "required_evidence": "Ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R197",
+   "text": "'In the audited ten-page PDF:' 'Page 4 still said \u201cNo building placed\u201d and did not show a proposed building footprint.': fix: the site plan shows the illustrative footprint whenever one is placed and drawn; 'No building placed' only when none is drawn.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R191"
+   ],
+   "required_harness": "The benchmark print shows it; a no-placement test shows the line.",
+   "required_evidence": "Candidate print; tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R198",
+   "text": "'In the audited ten-page PDF:' 'Page 5 said the building was \u201cShown on the site plan.\u201d': fix: every 'shown on' line names a page that shows it (handoff: page 5 reads 'Worked out; not drawn' at e026a391; re-check).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R191"
+   ],
+   "required_harness": "Each cross-reference checked against its page.",
+   "required_evidence": "Candidate print; review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R199",
+   "text": "'In the audited ten-page PDF:' 'Page 6 showed a generic three-floor stack and a schedule, with wording saying there was no placement on the lot.': fix: the scenario sheet shows the placed scheme and its words match the drawing.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R191"
+   ],
+   "required_harness": "Visual review against its text.",
+   "required_evidence": "Candidate print; review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R200",
+   "text": "'In the audited ten-page PDF:' 'Page 10 said the allocation was shown as zones inside the placed footprint, but no such zones appeared anywhere.': fix: zones drawn inside the fitted footprint (R094); the text names their page, or says not drawn.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R191",
+    "D-094-R094"
+   ],
+   "required_harness": "The reference resolves to a page showing zones.",
+   "required_evidence": "Candidate print; review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R201",
+   "text": "'For the audited benchmark, the engine contained:' 'Tax-map-basis rear clearance: 33.34 ft.' 'City-map/GIS-basis rear clearance: 35.31 ft.' 'Three floor plates totaling 20,150 sq ft of the stated zoning-floor-area proxy.' 'A 60/40 illustrative allocation: 12,090 sq ft for apartments and 8,060 sq ft for the remainder.' 'None of those four clearance/allocation numbers appeared in the audited PDF.': fix: the four numbers print on their drawings, each clearance with its own basis, read from the result model.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R191",
+    "D-094-R225"
+   ],
+   "required_harness": "The print shows each with its basis; a test fails if one is missing or merged.",
+   "required_evidence": "Candidate print; tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R202",
+   "text": "'The engine had placement and allocation data, but the report did not show the promised drawings.' 'Do not fix this merely by changing captions to sound more complete.' 'Finish the drawing integration, then make the captions describe what is actually visible.': drawings first, then captions; a caption-only change never closes this.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The fixing diff renders the drawings.",
+   "required_evidence": "M5-T173 part B diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R203",
+   "text": "'A data field such as \"placement.status = placed\", available floor plates, or \"area_allocation.fitted = true\" is not proof that a drawing was rendered.' 'It is also not proof of a permitted, physically resolved building.': no visible claim rests on such a field alone.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The visible-claims inventory shows none.",
+   "required_evidence": "Inventory return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R204",
+   "text": "'Inspect the report readers and conditions that determine these claims.' 'In the audited code, \"building_not_placed()\" could return false based on available geometry even when the report still did not draw the building.': retrieved at e026a391 (read-only): readers.py:588 building_not_placed() still keys on floor_plates.status only.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "An inventory lists each claim with its predicate (file, line).",
+   "required_evidence": "Inventory return; readers.py.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R205",
+   "text": "'Make claims about visible content depend on the content actually included in the output.' 'Correct page references, legends, comparison-table statuses, and methodology together.': claims read whether the drawing is in the output; references, legends, statuses and methodology move in one change.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Integration tests: data without the drawing makes claims say not drawn; with it, they name the page.",
+   "required_evidence": "Tests; candidate print.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R206",
+   "text": "'Finish the existing scenario-sheet work' 'Follow the current task ledger.' 'At the audit, placement wiring was associated with M5-T172, the scenario sheet with M5-T173, and website parity with M5-T174.' 'Preserve these task identities or their documented successors.' 'Complete the applicable placement acceptance and then finish its architect-facing presentation.': M5-T172 placement (part B accepted at wave 28), then M5-T173 scenario sheet (part B) and M5-T174 website parity (B1/B2), or recorded successors.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R143"
+   ],
+   "required_harness": "Ledger ids or successor links; M5-T173 part B after M5-T172.",
+   "required_evidence": "project-control/tasks/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R207",
+   "text": "'The scenario should provide:' 'A dimensioned illustrative proposed footprint positioned on the lot.': from the placement result.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R082",
+    "D-094-R043"
+   ],
+   "required_harness": "On the candidate print; values tested.",
+   "required_evidence": "Print; M5-T173 part B tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R208",
+   "text": "'The scenario should provide:' 'A compact section or floor-stack drawing showing the relevant levels and heights.': levels and heights from the result.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R082"
+   ],
+   "required_harness": "On the candidate print; values tested.",
+   "required_evidence": "Print; M5-T173 part B tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R209",
+   "text": "'The scenario should provide:' 'A concise floor schedule that reconciles with the calculations.': displayed rows sum to displayed totals and to the result.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R022",
+    "D-094-R023"
+   ],
+   "required_harness": "A reconciliation test.",
+   "required_evidence": "Tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R210",
+   "text": "'The scenario should provide:' 'An illustrative area-allocation diagram using the same underlying quantities.': same quantities as the schedule.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "On the candidate print; values tested.",
+   "required_evidence": "Print; tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R211",
+   "text": "'The scenario should provide:' 'A short statement of the important unresolved conditions.': on the scenario sheet.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R082"
+   ],
+   "required_harness": "Visual review.",
+   "required_evidence": "Review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R212",
+   "text": "'For the allocation diagram, use two zones: \u201cApartments\u201d and the approved label for the remainder.': orchestrator's reading (bullet 5): labels R089's 'Apartment area' and 'Other building area: core, circulation, walls and services' (tokens at e026a391).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R087",
+    "D-094-R089"
+   ],
+   "required_harness": "A test pins the labels to the tokens.",
+   "required_evidence": "Tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R213",
+   "text": "'If that remainder includes more than core and corridors, make its label accurate.' 'Do not describe all non-apartment area as circulation unless that is what the calculation means.': the approved label already names walls and services; a change goes to the owner.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R087"
+   ],
+   "required_harness": "Label checked against area_allocation.py's remainder.",
+   "required_evidence": "Review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R214",
+   "text": "'Size the zones from the actual allocation.' 'Do not use decorative proportions that disagree with the numbers.': zone areas proportional to the allocation (12,090 : 8,060 on the benchmark).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A test measures drawn areas within rounding.",
+   "required_evidence": "Tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R215",
+   "text": "'Do not invent rooms, apartment partitions, unit layouts, or unit counts.': R093's ban on unit walls and invented stairs or elevators stands too.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R093"
+   ],
+   "required_harness": "Visual review; none in the drawing source.",
+   "required_evidence": "Review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R216",
+   "text": "'Label the drawing \u201cIllustrative.\u201d Do not make it look like an approved architectural plan.': approved caption 'Illustrative area allocation\u2014not a floor plan' (R090); no title block, seal or permit-style sheet (orchestrator's reading of 'look like').",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R090"
+   ],
+   "required_harness": "Visual review; a test pins the caption.",
+   "required_evidence": "Tests; review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R217",
+   "text": "'Keep these distinctions explicit:' 'Zoning floor area versus physical gross building area.': never shown as the same measure.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R024",
+    "D-094-R092"
+   ],
+   "required_harness": "Wording check of print and website.",
+   "required_evidence": "Wording check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R218",
+   "text": "'Keep these distinctions explicit:' 'A zoning-floor-area proxy versus a physically developed floor plate.': a plate sized from zoning floor area is called a proxy.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R092"
+   ],
+   "required_harness": "Wording check of print and website.",
+   "required_evidence": "Wording check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R219",
+   "text": "'Keep these distinctions explicit:' 'A legal unit ceiling versus an illustrative apartment-yield estimate.': labelled apart wherever both appear.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R078",
+    "D-094-R071"
+   ],
+   "required_harness": "Wording check of print and website.",
+   "required_evidence": "Wording check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R220",
+   "text": "'Keep these distinctions explicit:' 'A single 60% allocation example versus the broader 60\u201375% efficiency range.': the 60% drawing is one example; the range stays stated.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R091"
+   ],
+   "required_harness": "Wording check of print and website.",
+   "required_evidence": "Wording check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R221",
+   "text": "'Keep these distinctions explicit:' 'A feasibility illustration versus verified buildability or remaining development rights.': never presented as verified buildability or remaining rights.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R029",
+    "D-094-R032"
+   ],
+   "required_harness": "Wording check of print and website.",
+   "required_evidence": "Wording check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R222",
+   "text": "'If the current plate geometry is calculated from zoning floor area divided by storeys, say that accurately.' 'Do not silently assume that walls, exclusions, circulation, or gross-area conversion have been resolved.': the wording follows the code (placement.py, geometry.py); anything unresolved is said to be.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Text matches the code; review confirms.",
+   "required_evidence": "Review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R223",
+   "text": "'Keep the existing apartment-size assumption and rounding method traceable.': from the figure to the appendix.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The appendix shows both.",
+   "required_evidence": "Candidate print.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R224",
+   "text": "'Do not make the 60% illustration appear to validate the whole yield range.': the caption says one example.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R091"
+   ],
+   "required_harness": "Wording check.",
+   "required_evidence": "Wording check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R225",
+   "text": "'Use the correct measurement basis for each drawing.' 'The 33.34 ft and 35.31 ft clearances came from different source geometries.' 'Do not mix them into one apparently surveyed plan, average them, or conceal their disagreement.': 33.34 ft is the tax-map basis, 35.31 ft the city-map/GIS basis; each drawing names its basis.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A test prints both with bases; review of labels.",
+   "required_evidence": "Candidate print; tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R226",
+   "text": "'Draw legally established constraint lines only where supported.' 'An illustrative footprint does not establish a legal setback or yard requirement.': the footprint's edges are never shown as a legal yard or setback.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R017"
+   ],
+   "required_harness": "Review of the site plan's legend and lines.",
+   "required_evidence": "Review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R227",
+   "text": "'All displayed values must come from the shared result model.' 'Do not hardcode this property\u2019s numbers or recalculate zoning rules independently inside rendering components.': renderers only read the result model.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R058"
+   ],
+   "required_harness": "No benchmark literal (33.34, 35.31, 20,150, 12,090, 8,060) in renderers; changed inputs change the drawing.",
+   "required_evidence": "Code review; tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R228",
+   "text": "'Improve the information design across the whole report' 'The report still feels busy because of uneven hierarchy, repetition, wrapped tables, process language, and missing useful drawings.' 'Page count alone does not explain the problem.' 'The audited main PDF contained approximately 2,619 extracted words across eight pages.' 'The working version contained approximately 2,674 across ten pages, including repeated page furniture.' 'The increase to ten pages largely reflected the printing fix, not two new pages of substantive scenario drawings.': fix each named cause; the auditor's word counts are context.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Visual review rates each cause per page.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R229",
+   "text": "'Do not set an arbitrary three-page, ten-page, or eighty-eight-page target.' 'The competitor\u2019s length is not a completeness requirement.' 'More pages are appropriate when they contain useful scenarios, drawings, comparisons, or evidence.' 'Fewer pages are not an improvement if essential information disappears.': no page-count goal; nothing essential dropped to save pages.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R048",
+    "D-094-R041"
+   ],
+   "required_harness": "No page goal in packets; the page diff shows nothing essential removed.",
+   "required_evidence": "Packets; page diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R230",
+   "text": "'Use this reading sequence:' 'What can the architect reasonably conclude?' 'What are the main quantities and constraints?' 'What does the building or scenario look like?' 'How do the options compare?' 'What remains unresolved, and what would resolve it?' 'Where are the supporting calculations and sources?': print and website follow this order.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R041"
+   ],
+   "required_harness": "Page and section order match.",
+   "required_evidence": "Print; website pictures.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R231",
+   "text": "'Apply the existing \"docs/design/ARCHITECT_PRESENTATION_CONTRACT.md\" and shared presentation tokens.' 'Locate and use the canonical \"presentation-tokens.json\" rather than creating another design system.': canonical file: docs/design/presentation-tokens.json; no second design system.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R065"
+   ],
+   "required_harness": "No new token system in the diffs.",
+   "required_evidence": "Diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R232",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Summary:' 'Keep the useful headline quantities and map.' 'Fix awkward wrapping of values and units, crowded explanatory columns, and weak use of space.' 'Do not solve this by shrinking the entire page.': summary page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R048"
+   ],
+   "required_harness": "Visual review at full size; type not reduced.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R233",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Location/context:' 'Keep the locator useful and legible.' 'Large blank areas do not need filler; use a better composition or meaningful context where the presentation contract allows.': location page; never filler.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R014"
+   ],
+   "required_harness": "Visual review.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R234",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Constraints:' 'Explain the architectural consequence of each applicable rule.' 'Reduce repeated \u201cconditional\u201d badges, duplicate headings, and long source labels.' 'Preserve material conditions.': constraints page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R050"
+   ],
+   "required_harness": "Visual review; the page diff keeps every material condition.",
+   "required_evidence": "Visual review return; page diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R235",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Site plan:' 'Show the proposed footprint when supported, with dimensions, source basis, and relevant constraints.': site-plan page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R053",
+    "D-094-R094"
+   ],
+   "required_harness": "Visual review on the benchmark print.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R236",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Options comparison:' 'Keep all eleven options in scope and comparable.' 'Distinguish evaluated results, allowances only, conditional results, missing inputs, and work not yet implemented.': each row shows exactly one of the five states.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R018",
+    "D-094-R059",
+    "D-094-R084"
+   ],
+   "required_harness": "A test asserts eleven rows, one state each.",
+   "required_evidence": "Tests; print.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R237",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Options comparison:' 'Never turn \u201cnot evaluated\u201d into zero or \u201cnot buildable.\u201d': applies to print and website.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R059"
+   ],
+   "required_harness": "A test with an unevaluated option.",
+   "required_evidence": "Tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R238",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Scenario sheet:' 'Replace the oversized generic stack with the useful combination of footprint, compact section, allocation, and reconciled schedule.': scenario sheet.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R076",
+    "D-094-R021"
+   ],
+   "required_harness": "Visual review.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R239",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Assumptions/open items:' 'Consolidate repeated statements and shorten wrapped text.' 'State the issue, its effect, and the next useful action.' 'Preserve important uncertainty.': open-items page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R025",
+    "D-094-R050"
+   ],
+   "required_harness": "Visual review; the page diff keeps uncertainty.",
+   "required_evidence": "Visual review return; page diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R240",
+   "text": "'Make these page-specific improvements, adjusting page numbers if the layout changes:' 'Evidence appendix:' 'Keep arithmetic, input bases, citations, review status, and report identity.' 'Improve table breaks, repeated headers, source labels, and long identifiers.': appendix.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R026",
+    "D-094-R028"
+   ],
+   "required_harness": "Visual review per page.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R241",
+   "text": "'Use consistent typography, spacing, alignment, dimension notation, and visual hierarchy.' 'Keep body text readable at normal viewing size.': every page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R047",
+    "D-094-R048",
+    "D-094-R049"
+   ],
+   "required_harness": "Visual review at full size.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R242",
+   "text": "'Avoid collisions, clipped labels, orphan headings, tiny footnotes, and tables that require constant backtracking.': every page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R115"
+   ],
+   "required_harness": "Visual review of page images.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R243",
+   "text": "'Use short readable citations with working links and retained source identifiers.' 'Full legal titles do not need to be repeated in every cell.': links open their exact section.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R027",
+    "D-094-R060"
+   ],
+   "required_harness": "Links opened and checked.",
+   "required_evidence": "Link check return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R244",
+   "text": "'Remove internal development language from architect-facing pages.' 'Examples include \u201cowner-approved order,\u201d \u201cconnecting the rule,\u201d and descriptions of checking the program against a worked example.' 'Those belong in project records.' 'Tell the architect what the condition means for the property.': such text moves to records; each condition says what it means for the property.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R042"
+   ],
+   "required_harness": "A wording sweep of print and website finds none.",
+   "required_evidence": "Wording sweep return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R245",
+   "text": "'Do not add decorative photography to fill space.' 'Prefer useful maps, site imagery with known provenance, diagrams, and clear tables.': each image names its provenance.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R014",
+    "D-094-R052"
+   ],
+   "required_harness": "Visual review.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R246",
+   "text": "'Make the website and PDF agree' 'The website should use the same quantities, assumptions, source bases, scenario identities, and uncertainty states as the PDF.': same result data on both.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R096",
+    "D-094-R057",
+    "D-094-R058"
+   ],
+   "required_harness": "A comparison lists any difference.",
+   "required_evidence": "Parity comparison return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R247",
+   "text": "'At the audited snapshot, an area-allocation web component existed but was not mounted in the relevant user flow.' 'A component file alone does not establish website parity.' 'Connect the appropriate existing components under the established feature flags.': AreaAllocation.tsx and others mounted under the flags (unmounted at 8fbf701b; re-check).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A web test renders it in the results flow with the flag on.",
+   "required_evidence": "M5-T174 tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R248",
+   "text": "'Give the architect a clear overview, visible scenario drawings, a comparable options table, and expandable supporting methods and evidence.': on the website.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R041",
+    "D-094-R051"
+   ],
+   "required_harness": "Visual review at the candidate commit.",
+   "required_evidence": "Website pictures; review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R249",
+   "text": "'Verify the actual relevant property and scenario in the browser.' 'A generic screenshot of another property is not evidence that this benchmark works.' 'Check desktop and narrow-screen layouts.' 'Tables, diagrams, labels, units, and controls must remain readable without overlap.': 215-16 Northern Boulevard (BBL 4073340070), same scenario, six widths.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R150",
+    "D-094-R057"
+   ],
+   "required_harness": "Captures with digests, reviewed.",
+   "required_evidence": "Capture folder; visual review.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R250",
+   "text": "'Preserve the existing map and navigation behavior.': their tests stay green.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Web suites green in CI.",
+   "required_evidence": "CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R251",
+   "text": "'Do not claim full website parity until the visible website and generated PDF have been compared using the same result data.': a parity claim cites that comparison.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R154"
+   ],
+   "required_harness": "Any claim cites it.",
+   "required_evidence": "Comparison return; transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R252",
+   "text": "'Use the existing implementation boundaries' 'Inspect and modify the relevant existing modules rather than creating another reporting framework.' 'Likely locations include:' '\"services/api/app/scenario/three_answers/placement_wiring.py\"' '\"services/api/app/scenario/three_answers/geometry.py\"' '\"services/api/app/scenario/three_answers/placement.py\"' '\"services/api/app/scenario/three_answers/area_allocation.py\"' '\"services/api/app/scenario/three_answers/envelope_constraints.py\"' '\"services/api/app/drawings/report/page_option_comparison.py\"' '\"services/api/app/drawings/report/page_scenario_sheet.py\"' '\"services/api/app/drawings/report/page_evidence.py\"' '\"services/api/app/drawings/report/readers.py\"' '\"services/api/app/drawings/report/drawings_embed.py\"' '\"services/api/app/drawings/report/layout.py\"' '\"services/api/app/drawings/kit/area_allocation.py\"' 'The applicable context-plan renderer under \"services/api/app/drawings/maps/\"' '\"apps/web/src/components/architect/answers/AreaAllocation.tsx\"' '\"apps/web/src/components/architect/answers/FirstBuildingOptions.tsx\"' '\"services/api/app/api/v1/report_read.py\"' '\"apps/web/scripts/print-report-pdf.mjs\"' 'Confirm current responsibilities before editing.' 'This is a navigation list, not an instruction to modify every file.': each packet confirms the responsibilities of the files it edits; the list is navigation only (all sixteen named files exist at e026a391).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R064"
+   ],
+   "required_harness": "The G0 report records the check; no new framework module.",
+   "required_evidence": "G0 reports; diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R253",
+   "text": "'Finish outstanding integrity work and preserve honest status' 'At the audited pushed branch, M3-T013\u2019s producer report was a placeholder, its proposed test file contained only a docstring, and none of the 37 table-bearing bundled snapshots had \"table_digest_sha256\".' 'There may have been unpushed work on the working server.' 'Check that before repeating anything.': retrieved at e026a391 (read-only): 37 snapshots in each of docs/research/zr-snapshots/v1 and services/api/app/_zr_snapshots/v1 carry table_digest_sha256 and the handoff records M3-T013 accepted; check worktrees, branches and saved returns, then the report and test file, before redoing anything.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The findings table records M3-T013's state with file evidence.",
+   "required_evidence": "Findings table; M3-T013 record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R254",
+   "text": "'If still incomplete, finish the captured-law-table integrity protection.' 'Verify that valid captures pass and a deliberate change to a numeric table cell is detected.': only if incomplete.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A non-empty test fails on a mutated cell and passes on the captures; CI green.",
+   "required_evidence": "Test; CI.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R255",
+   "text": "'Document intentional capture updates through the existing process.': via the existing snapshot re-pin process and the evidence record (orchestrator's reading of 'existing process').",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Each digest change has its reason recorded.",
+   "required_evidence": "git log; evidence records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R256",
+   "text": "'Do not call a placeholder, task claim, or empty test an implemented safeguard.' 'Report status precisely. \u201cBuilt,\u201d \u201cconnected,\u201d \u201crendered,\u201d \u201ctested,\u201d \u201caccepted,\u201d \u201cmerged,\u201d \u201cdeployed,\u201d and \u201cprofessionally verified\u201d are different states.': each claim uses the state its evidence shows.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R139"
+   ],
+   "required_harness": "Records and updates match evidence.",
+   "required_evidence": "Reports; transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R257",
+   "text": "'Preserve the accepted fixes associated with M5-T189, M5-T190, and M3-T014, or their current successors.': M5-T189 (full commit id never shrinks the print), M5-T190 (stable fingerprint), M3-T014 (law library).",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Their tests green in CI.",
+   "required_evidence": "CI runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R258",
+   "text": "'Maintain research quality as the remaining options advance' 'Follow \".claude/rules/research-and-verification.md\" and \"docs/RESEARCH_AND_VERIFICATION.md\".' 'Use applicable primary official sources, evidence records, rule-review records, and independently worked reference cases.' 'Relevant R6B cases include:' '\"real-lot.json\"' '\"overlay-reading.json\"' '\"placement-building-b.json\"' '\"benchmark-options-2-3-6-7.json\"' '\"benchmark-options-5-8-9-10.json\"' '\"benchmark-options-4-11.json\"' 'These are under \"docs/reference-cases/R6B/cases/\".': settled readings are reused, not re-researched.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R003"
+   ],
+   "required_harness": "Option tasks' G0 cites records and cases; the research record check passes.",
+   "required_evidence": "G0 reports; research_record_check output.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R259",
+   "text": "'An engine output is not independent verification of the engine.' 'A reference case is not proof that its corresponding scenario has been implemented and rendered.': each needs its own evidence.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "No record cites either as that proof.",
+   "required_evidence": "Reports.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R260",
+   "text": "'Preserve the planned progression into options 2 and 3, then community-facility options 6 and 7 and retail option 5, subject to the current authorized plan.': E0 (options 2-3), E1 (6-7), E2 (5); drafts in session-2026-10-15b.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Ledger order E0, E1, E2.",
+   "required_evidence": "Ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R261",
+   "text": "'Do not copy the same unit count across different qualification pathways.' 'In particular, do not automatically give the qualifying senior-housing option the affordable-housing option\u2019s 35-unit figure.' 'Confirm the applicable formula, exemptions, qualifications, and remaining limits separately.': option 3 (senior housing) has its own rule path; the settled case benchmark-options-2-3-6-7.json records that it removes the 680 dwelling-unit factor.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A test asserts option 3's own rule path.",
+   "required_evidence": "E0 tests; the case.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R262",
+   "text": "'The referenced 24,180 sq ft and 65-foot allowances remain conditional on the applicable pathway and supporting facts.': shown conditional on pathway and facts (qualification, zoning lot), never as entitlements.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Rows and tests carry the conditional state.",
+   "required_evidence": "E0 tests; print.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R263",
+   "text": "'Where reference cases indicate no additional floor area for options 5, 6, or 7 on this lot, implement and explain that result accurately.' 'Do not assume it means those uses have no other architectural or commercial significance.': explained without implying no other value.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "E1/E2 rows reviewed against the cases.",
+   "required_evidence": "E1, E2 reviews.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R264",
+   "text": "'Keep the existing owner questions concerning option 8 and options 9\u201310 open until answered.' 'Do not silently choose their intended meaning.': N1 (option 8), N2 and N3 (options 9-10) stay open.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The questionnaire shows them open; no task picks a meaning.",
+   "required_evidence": "OWNER_QUESTIONS.md; ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R265",
+   "text": "'Verify the actual deliverables' 'Passing tests did not catch the audited contradictions.' 'Add meaningful integration coverage and inspect the rendered outputs.': tests render the report and check claims against what is drawn.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Named integration tests green in CI.",
+   "required_evidence": "Tests; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R266",
+   "text": "'Generate the report through the real API and standard print path, using the exact full commit identifier.' 'Do not manually edit the exported PDF.': full 40-character commit; no hand edit.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R056"
+   ],
+   "required_harness": "The print log names commit and command; the PDF digest is recorded.",
+   "required_evidence": "Print log.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R267",
+   "text": "'For reproduction, the audit used:' '\"POST /api/v1/properties/4073340070/report\".' 'The standard residential scenario for 215-16 Northern Boulevard, Queens.' '\"benchmark_provider(with_zoning_lot=True, street_on=True)\".' '\"recorded_pack_provider(benchmark_215_16_northern_window)\".' 'The applicable internal results and lane flags.' 'The repository\u2019s \"print-report-pdf.mjs\".' 'Use the current canonical equivalent where interfaces have changed.': this recipe or its current equivalent, recorded with each print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The print script or log shows it.",
+   "required_evidence": "Print script; log.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R268",
+   "text": "'Clearly identify recorded-data previews versus live-data exports.': on every print and picture.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R046"
+   ],
+   "required_harness": "Labels in file names, records and updates.",
+   "required_evidence": "Session folder; transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R269",
+   "text": "'Read every page and inspect every rendered page image at a useful size.' 'Do not inspect only the first page, text extraction, or a contact sheet.': every page by number.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R056"
+   ],
+   "required_harness": "The review covers each page.",
+   "required_evidence": "Visual review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R270",
+   "text": "'Check:' 'Every placement and allocation claim against a visible drawing.': in the independent review of the candidate print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it per page.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R271",
+   "text": "'Check:' 'Cross-page consistency of statuses, numbers, legends, captions, and references.': in the independent review of the candidate print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it per page.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R272",
+   "text": "'Check:' 'Reconciliation of floor schedules and allocation totals.': in the independent review of the candidate print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it per page.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R273",
+   "text": "'Check:' 'Separate handling of tax-map and GIS measurement bases.': in the independent review of the candidate print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it per page.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R274",
+   "text": "'Check:' 'Readability, clipping, overlaps, page breaks, repeated table headers, page numbering, links, and bookmarks.': in the independent review of the candidate print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it per page.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R275",
+   "text": "'Check:' 'Correct handling of full-length commit identifiers without global shrinking.': in the independent review of the candidate print.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it per page.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R276",
+   "text": "'Check:' 'Website/PDF agreement for the same results.': in the independent review of the candidate print and website.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review records it.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R277",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: placement data with the drawing rendered; claims say shown, with the page.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R278",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: placement data without a rendered drawing; claims say not drawn.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R279",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: geometry unavailable; no footprint, an honest state, no zero.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R280",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: allocation unavailable; no zones or split figures, an honest state.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R281",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: nonfinite values; never printed as numbers.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R282",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: a legitimate zero prints as zero, apart from missing.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R283",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: conflicting measurement bases; both values print with their bases, never merged.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R284",
+   "text": "'Cover meaningful cases: placement data with a rendered drawing; placement data without a rendered drawing; unavailable geometry; unavailable allocation; nonfinite values; legitimate zero values; conflicting measurement bases; and long metadata.': case: long metadata (full commit ids, long names) prints without global shrinking or clipping.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A named integration test, green in CI at the candidate head.",
+   "required_evidence": "Test; CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R285",
+   "text": "'Ensure missing values remain missing rather than becoming zero, and conditional results remain conditional.': in print and website.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R054"
+   ],
+   "required_harness": "The case tests and the final review.",
+   "required_evidence": "Tests; final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R286",
+   "text": "'Have an independent reviewer inspect the final output from the exact candidate commit, not merely an earlier screenshot or source diff.' 'The producer must not be the sole verifier.': the review names the commit and the print it read.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The review return names both.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R287",
+   "text": "'Run the required existing gates and targeted tests that address the remaining risks.' 'Do not substitute large counts of redundant tests for checking the real output.': targeted at the remaining risks.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Gate records at the head; review notes on test adequacy.",
+   "required_evidence": "project-control/gates/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R288",
+   "text": "'Preserve the work across sessions' 'Update the existing canonical project records as work changes.' 'Do not create a competing status system or a new questionnaire.' 'Use the living-files map and handoff checklist to determine every required update.': per the living-files map.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R067"
+   ],
+   "required_harness": "Each seam updates the files the map names; no new status file.",
+   "required_evidence": "git log.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R289",
+   "text": "'Keep the task ledger, \"report_programme\", session handoff, current pass, subsequent option sequence, and applicable design/research records consistent.': kept consistent at every seam.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R114",
+    "D-094-R142"
+   ],
+   "required_harness": "Master-plan counts equal the ledger at each merge.",
+   "required_evidence": "master_plan.json.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R290",
+   "text": "'At the audit, the master plan still described later options as \"not_planned\" despite concrete next-step descriptions.' 'Reconcile that discrepancy with the actual authorized work.': at e026a391 report_programme.after_this_pass marks nine items not_planned (0, 3-8, 13, 14), item 0 being options 2-11 while E0-E2 are drafted; each is set to the authorized state.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R114"
+   ],
+   "required_harness": "No state contradicts a drafted or contracted task.",
+   "required_evidence": "master_plan.json.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R291",
+   "text": "'The next session must be able to determine:' 'The current branch and exact commit.' 'What is accepted and merged.' 'What remains unmerged or under review.' 'The next concrete task and its acceptance criteria.': in the handoff.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff answers each.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; brief.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R292",
+   "text": "'The next session must be able to determine:' 'Which drawings are actually visible.' 'Which scenarios are fully implemented, conditional, or still pending.' 'Which PDF and website evidence correspond to which commit.' 'Which questions remain unanswered.': in the handoff.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff answers each.",
+   "required_evidence": "docs/SESSION_HANDOFF.md; brief.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R293",
+   "text": "'Preserve the reasons behind the presentation decisions: architect-first reading order, accurate visual claims, shared calculations, explicit uncertainty, useful drawings, and supporting evidence that does not overwhelm the main reading path.': in the design contract.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R065",
+    "D-094-R066"
+   ],
+   "required_harness": "The contract states each reason.",
+   "required_evidence": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R294",
+   "text": "'Do not rely on chat history as the only record.': everything needed later is in files.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R067"
+   ],
+   "required_harness": "The handoff points only to files.",
+   "required_evidence": "docs/SESSION_HANDOFF.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R295",
+   "text": "'Ask only necessary questions and deliver concrete proof' 'Put genuinely blocking product or architectural questions into the existing owner questionnaire, including \"/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md\" if it remains canonical.' 'For each question, provide the recommended answer, the alternatives, the practical consequence, and what it blocks.' 'Mention the question plainly to the owner.': questionnaire /root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md (still canonical); asked in chat the same step.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R068"
+   ],
+   "required_harness": "Each new question in both, with the four parts.",
+   "required_evidence": "OWNER_QUESTIONS.md; transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R296",
+   "text": "'Do not re-ask answered questions or stop unrelated work while waiting.': both halves apply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "No re-ask; the notes show work continuing.",
+   "required_evidence": "OWNER_QUESTIONS.md; notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R297",
+   "text": "'Use professional judgment for routine spacing, typography, component wiring, and other reversible implementation choices already covered by the design contract.': no owner question for such choices.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "None asked.",
+   "required_evidence": "OWNER_QUESTIONS.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R298",
+   "text": "'Deliver all parts in one hand-back:' 'The actual PDF generated from the candidate commit.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply links it.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R299",
+   "text": "'Deliver all parts in one hand-back:' 'Website screenshots or accessible preview evidence for the same property and scenario.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply links it.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R300",
+   "text": "'Deliver all parts in one hand-back:' 'The exact commit and PR status.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply states it.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R301",
+   "text": "'Deliver all parts in one hand-back:' 'A concise account of the visible changes.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply links it.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R302",
+   "text": "'Deliver all parts in one hand-back:' 'The verification results and remaining limitations.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply links them.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R303",
+   "text": "'Deliver all parts in one hand-back:' 'Confirmation that the canonical continuity records were updated.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply states it with links.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R304",
+   "text": "'Deliver all parts in one hand-back:' 'Any genuinely necessary owner questions.': in the closing owner reply.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The reply lists them, or none.",
+   "required_evidence": "Transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R305",
+   "text": "'Do not describe the report as finished because it has ten pages, eleven option rows, passing CI, or placement data in JSON.': applies to records and updates.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R139"
+   ],
+   "required_harness": "None makes that claim.",
+   "required_evidence": "Transcript; reports.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R306",
+   "text": "'It is ready for the next acceptance decision when the architect can see the supported building scenario, understand the main quantities and constraints, compare the available options, and identify the unresolved decisions\u2014and when every visible claim agrees with the calculations and drawings.': the test for the next acceptance decision.",
+   "source_ref": "source-028-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The final independent review answers each condition with page evidence.",
+   "required_evidence": "Final review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
