@@ -230,8 +230,8 @@
     "directive-compliance-verifier",
     "visual-quality-reviewer"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK B1 (mirror of M5-T170 RISK 1): readers.building_not_placed keys on geometry.floor_plates and the kit adapter draws from it (both confirmed at bb5c02b9), so the not-placed sentence clears WITHOUT editing readers.py (forbidden, M5-T169's file). G0 must re-confirm both at the W28 head; if a readers.py edit is in fact required it is a sequencing decision before build, not a gate surprise.",
     "RISK B2 (benchmark fan-out): the enumerated consumer tests, the DXF/SVG snapshots and the two web pins must all be in allowed_paths up front (a missed pin costs a scope correction - M5-T167/M5-T170 lesson). The work order's blanket 'web forbidden' is overridden for exactly the two web benchmark-consumer tests here (recorded at G0); any other web red routes out.",
@@ -242,7 +242,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:43:50.232561+00:00",
-  "updated_at": "2026-10-15T16:50:11.767002+00:00",
+  "updated_at": "2026-10-15T17:54:55.150237+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -276,6 +276,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "M5-T172 part B claimed: the engine places the first building option and writes the placement and area split into the results (builder dispatched next)"
+    },
+    {
+      "at": "2026-10-15T17:54:48.417717+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [

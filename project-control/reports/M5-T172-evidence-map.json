@@ -1,0 +1,80 @@
+{
+ "task_id": "M5-T172",
+ "material_commits": [
+  "11b2bb59 (builder round 1b (cherry-pick of b843f9b6): the engine bridge assembles the four lot measures on their own bases (PLUTO 100.76 x 100 printed tax map; city map 103.88 frontage, 99.97 depth from the lot reach); placement and area allocation written into the document; three floor plates drawn; the DB-248 share rule; the benchmark, DXF and site-plan snapshots regenerated; register calculation entries; NB-01 r10, NB-05 r8, NB-06 r5)",
+  "e79ddbc6 (builder round 2 (cherry-pick of e9b760dc): the placement wiring moved into placement_wiring.py (three_way_document.py 704 SLOC); three consumer tests follow the placed benchmark; the massing snapshot added; register and records resynced)",
+  "5994e220 (builder round 3 (cherry-pick of 5ef7d7eb): page 5's placement status and the appendix's method sentence claim only what the report draws; one placed-and-drawn predicate decides the not-checked line, the fitted flag and the scenario sheet's sentence; register and records resynced)"
+ ],
+ "claim_seam_head": "6f17dcf6",
+ "files_changed": [
+  "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+  "docs/research/evidence-records/NB-05-special-density-area.json",
+  "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-area-allocation.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-first-placement.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "docs/zoning-rule-review/evidence/calc-area-allocation.txt",
+  "docs/zoning-rule-review/evidence/calc-first-placement.txt",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T172-producer-report.md",
+  "services/api/app/contracts/results_way_rules.py",
+  "services/api/app/drawings/report/drawings_embed.py",
+  "services/api/app/drawings/report/page_evidence.py",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/first_option_results.py",
+  "services/api/app/scenario/three_answers/geometry.py",
+  "services/api/app/scenario/three_answers/placement_wiring.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/api/test_results_read_api.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/cad/test_results_dxf.py",
+  "services/api/tests/contracts/test_results_contract_1_5_0.py",
+  "services/api/tests/contracts/test_results_way_rules.py",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/drawings/report/test_constraints_page.py",
+  "services/api/tests/drawings/report/test_location_sheet.py",
+  "services/api/tests/drawings/report/test_report_appendix.py",
+  "services/api/tests/drawings/report/test_report_comparison.py",
+  "services/api/tests/drawings/report/test_report_pages.py",
+  "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+  "services/api/tests/scenario/three_answers/test_geometry_streets.py",
+  "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+ ],
+ "what_did_not_change": "No zoning reading, rule, result value outside the new placement and area-allocation blocks, or label changed; the drawing of the placed footprint on the site plan and of the two-zone illustration is M5-T173 part B's; NB-03 and NB-04 not revised; the part-A modules placement.py and area_allocation.py consumed read-only.",
+ "known_limits": [
+  "The report does not yet draw the placed footprint or the two-zone illustration (M5-T173 part B; the named predicates site_plan_draws_placed_footprint() and _area_illustration_drawn() return False until then).",
+  "The locator and close-up maps keep their 'No building placed' legend (DB-284); NB-04 is stale against close_frame_dimensions.py from wave 27 (DB-283); both queued for M5-T173 part B.",
+  "The drawn floor plates are on the city-map basis while placement.outline is the printed tax-map rectangle; each is labelled and never mixed (G1 observation)."
+ ],
+ "checks_at_material_head": [
+  "round 1b: ruff, register --check, research_record_check, modularity, lane coverage, validate_contracts, the two web pins (28 passed), web lint and typecheck all exit 0; whole api suite 3 failures outside the paths (fixed in round 2)",
+  "round 2: whole api suite 10081 passed, 0 failed; three_way_document.py 704 SLOC; byte-identical output",
+  "round 3: whole api suite 10103 passed, 0 failed; benchmark byte-identical; two mutations",
+  "G1 PASS; G3 code PASS (finding 1 closed in round 3); G3 visual F1, F2 closed in round 3; G4 PASS (whole api 10099 passed; five mutations); the round-3 delta checks recorded in the reviews record",
+  "CI run 38779490023 at 5994e220 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R044": [
+   "No geometry is invented: the placement is built only from the four measured lot dimensions on their own bases (PLUTO's printed tax-map 100.76 x 100 ft; the city-map frontage 103.88 ft from the prepared outline and depth 99.97 ft from the lot reach), each traced to its source in result_way_engine_bridge.py; a missing measure leaves its basis not known and the building not placed (test_s11 input states); a lot whose footprint cannot be drawn claims no placement (S15 single-frontage test)."
+  ],
+  "D-094-R058": [
+   "The placement, the area allocation and the floor plates come from one results document (the regenerated benchmark, reproduced by the live route: test_results_read_api street_on), and the report keeps the floor-area allowance, the scheduled area, the site fit (page 5 now 'Worked out; not drawn' until the site plan draws it) and the estimate distinct (real print print-5994e220)."
+  ],
+  "D-094-R082": [
+   "This task's data share of the scenario: the first building option now carries a placement on the lot with its dimensions (back clearance 33.34 ft on the tax map and 35.31 ft on the city map, frontage difference 3.12 ft, footprint 6,716.66 sq ft), three floor plates reconciled to the floor-by-floor schedule (C-4), and its not-checked list (placement.not_checked); the dimensioned drawing on the scenario sheet is M5-T173 part B's."
+  ],
+  "D-094-R091": [
+   "The area allocation uses one stated share 0.60 from the 60 to 75 percent assumption: apartment 12,090 and other 8,060 sq ft of 20,150, with a way rule that the apartment area equals the total times the share within rounding (DB-248, allocation_share_mismatch); the drawing of the split is M5-T173 part B's."
+  ],
+  "D-094-R092": [
+   "The plate is stated as zoning floor area per storey with no gross-up or wall-thickness conversion (the G-14 statement in the appendix and the register calculation pages); the area allocation and the plates use the same residential floor-area measure; zoning floor area is never presented as the physical floor plate."
+  ]
+ }
+}
