@@ -62,3 +62,7 @@
   the value's bottom inside the dialog's visible area; toBeInViewport passes on a sliver (M5-T181 r1 missed by 30 px).
 - DO list a benchmark regeneration's consumer tests in the contract (wiring S12, register S13 date, constraint_rows and
   report_benchmark benchmark cases, web results-contract-checks pin): M5-T167 needed scope correction 2 for them.
+- DO list the RULE-FILE fan-out at the contract seam when a task adds a lane-A rule file: tests/rules/test_r6b_a02b_golden.py and
+  test_r6b_other_districts_unchanged.py pin the rule set, and the register calc pages re-render (M5-T170 scope correction 1).
+- DO diff EVERY page of a report print against main's (pdftotext per page) before the reviews, not only the pages the task
+  names: M5-T167's page-6/8 fix silently emptied two page-3 rows (DB-266), caught only in the next PDF.
