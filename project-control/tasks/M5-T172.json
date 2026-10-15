@@ -100,7 +100,9 @@
     "services/api/tests/drawings/report/test_constraints_page.py",
     "services/api/tests/drawings/report/test_location_sheet.py",
     "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg",
-    "services/api/app/scenario/three_answers/placement_wiring.py"
+    "services/api/app/scenario/three_answers/placement_wiring.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_evidence.py"
   ],
   "forbidden_paths": [
     "packages/contracts/schemas/",
@@ -199,6 +201,18 @@
       "given": "the placed benchmark (placement placed, floor plates drawn)",
       "when": "the consumer tests that asserted the not-placed state run (test_results_dxf.py, test_constraints_page.py, test_location_sheet.py) and the kit snapshots regenerate",
       "then": "each changes only to follow the placed state (the benchmark's honest floor-plate measurement note in the DXF; the not-placed sentence and legend gone on the placed benchmark while a not-placed fixture still shows them), each edit listed with before and after; the new massing snapshot recorded_215_16_northern_journey.massing.svg is committed from UPDATE_DRAWING_SNAPSHOTS=1; any other red consumer is stop-and-report"
+    },
+    {
+      "id": "S14",
+      "given": "the placed benchmark, where the engine places Building B but no report page yet draws the placed footprint (page 4's site plan still has its 'No building placed' legend) or the two-zone area illustration (both are drawn by M5-T173 part B)",
+      "when": "the report is printed from the real preview",
+      "then": "page 5's 'Placed on site' status never says 'Shown on the site plan' unless the site plan draws the placed footprint; on this head it gives an honest one-cell status that the placement is worked out but not drawn (no repeated 'not yet' prose); the appendix's area-illustration method never says the zones or the bar 'are shown' unless the illustration is drawn in the report (on this head the method is either absent or stated as how the illustration will be drawn, in one sentence); one test per input state (not placed; placed and not drawn; placed and drawn, simulated by the test); the visual reviewer's two findings are closed on a real print"
+    },
+    {
+      "id": "S15",
+      "given": "a document whose four lot measures are all present but whose footprint cannot be drawn (a lot with one street frontage, where geometry finds no corner)",
+      "when": "the engine emits the document",
+      "then": "one predicate decides that the building is placed: the page-5 not-checked line 'Where the plan sits on the lot', the area allocation's fitted flag and the scenario sheet's not-placed sentence all follow the actual placed-and-drawn outcome (placement status and floor plates), never the presence of the four measures alone; the benchmark (a corner lot) is unchanged; a test pins the single-frontage case"
     }
   ],
   "required_gates": [
@@ -274,6 +288,11 @@
       "at": "2026-10-15T15:50:19+00:00",
       "actor": "orchestrator",
       "change": "Scope correction 2 (session 2026-10-15b, after round 1b at builder commit b843f9b6): the whole api suite has three failures outside the allowed paths, all following the placed benchmark (test_results_dxf.py: the drawn plates add an honest measurement note; test_constraints_page.py and test_location_sheet.py: the not-placed sentence and legend are gone), and the kit now draws a massing snapshot for the benchmark (a new file). Round 1b also left three_way_document.py at 790 SLOC, above the justify line S9 forbids crossing; the placement wiring moves into the new module placement_wiring.py (S12). The four files and the new module join the allowed paths; S12 and S13 are added; visual-quality-reviewer joins the reviewers for G3 because pages 3, 5, 6 and the appendix change on the print. No row, gate or dependency changes."
+    },
+    {
+      "at": "2026-10-15T16:50:09+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 3 (session 2026-10-15b, after the round-2 reviews at e79ddbc6): the G3 visual review found two required contradictions on the real print (session-2026-10-15b/return-T172-G3v.md): page 5's comparison says 'Shown on the site plan' while page 4's site plan is byte-identical to before and still carries 'No building placed'; the appendix's area-illustration method says the zones 'are shown' although no illustration is drawn. Both sentences come from drawings_embed.py and page_evidence.py, which join the allowed paths (S14). The G3 code review found that 'placed' is decided by two predicates (the four measures vs the drawn plates), which disagree on a single-frontage lot; the orchestrator takes it as required (S15). No row, gate, reviewer or dependency changes; the drawing of the footprint and the illustration stays M5-T173 part B's."
     }
   ]
 }
