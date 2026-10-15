@@ -129,7 +129,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -138,8 +138,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (parallel safety with M5-T170): the two synthetic 1.5.0 fixtures Part A renders from are in M5-T170's allowed_paths. Part A only READS them, so there is no write-write collision, but if M5-T170 changed their area_allocation/placement blocks or re-serialised them, Part A's snapshots would go stale. M5-T170's edits to these fixtures are ADDITIVE (envelope_rows/constraint_lines) and do not touch area_allocation/placement; G0 must confirm this. If M5-T170 cannot guarantee it, sequence Part A AFTER M5-T170 instead of beside it.",
     "RISK 2 (R091 contradiction): the design contract fixes the real report at 60% while the fixtures carry 0.65/0.70. The kernel is data-driven (round(share*100)); the 60% is enforced upstream. G0 records this responsibility split so a reviewer does not flag a token mismatch.",
@@ -149,7 +149,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:50:00.366986+00:00",
-  "updated_at": "2026-10-15T04:50:00.896346+00:00",
+  "updated_at": "2026-10-15T04:50:04.664674+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -178,5 +178,14 @@
     "rasterise the two standalone SVGs to PNG for the visual-quality-reviewer with the repo's SVG rasteriser (no server, no ports)",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T04:50:04.664561+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints beside M5-T170 and M5-T182 (no shared file); the builder starts from the claim head"
+    }
+  ]
 }
