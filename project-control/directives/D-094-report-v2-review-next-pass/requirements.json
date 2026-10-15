@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 306,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T23:40:20+00:00",
+ "updated_at": "2026-10-15T23:40:39+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -532,7 +532,8 @@
      "M5-T167",
      "M5-T170",
      "M5-T188",
-     "M5-T191"
+     "M5-T191",
+     "M5-T192"
     ],
     "task_types": [],
     "milestones": [],
@@ -663,7 +664,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T192"
     ],
     "task_types": [],
     "milestones": [],
@@ -1395,7 +1397,8 @@
      "M5-T160",
      "M5-T177",
      "M5-T170",
-     "M5-T191"
+     "M5-T191",
+     "M5-T192"
     ],
     "task_types": [],
     "milestones": [],
@@ -2495,7 +2498,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T177"
+     "M5-T177",
+     "M5-T192"
     ],
     "task_types": [],
     "milestones": [],
@@ -6857,7 +6861,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-094-BOOTSTRAP"
+     "D-094-BOOTSTRAP",
+     "M5-T192"
     ],
     "task_types": [],
     "milestones": [],

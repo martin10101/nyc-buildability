@@ -1,0 +1,129 @@
+{
+  "task_id": "M5-T192",
+  "title": "M5-T173 part B2 (M5-T192) - section height-limit lines: the floor-stack section gains the lines read from answers.permitted_envelope (minimum base, maximum base, maximum building height) through an opt-in keyword; compact; default byte-identical",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "(1) NEW kit/section_legal_lines.py: a pure reader returning the STANDARD-case height lines from results.answers.permitted_envelope (status 'available'; keys min_base_height, max_base_height, max_building_height; each a finite non-negative number in unit 'feet', with the document's own label and zr_sections). Nothing computed, no comparison with the building, no qualifying-housing keys, nothing from envelope_rows (they carry street-wall/setback/side-yard states, not heights). A missing or malformed key drops that line only; None when none survive. (2) kit/section.py draw_floor_stack(alternative, *, caption=True, legal_lines=None): with lines, the height axis scales to the higher of the building top and the highest line; each line dashed and labelled '{document label} {value} ft' at the existing label size; drawing height at most 260 pt; where the legal minimum-base line and the to_min_base top coincide, one line. legal_lines None is byte-identical (caption 'Drawn from the floor schedule; no placement on the lot.' kept). (3) kit/__init__.py render_floor_stack(alternative, *, frame='report', env=None, results=None): with results it reads (1) and passes the lines; omitted is byte-identical.",
+  "business_reason": "Audit 2026-10-15c section 4: a compact section with the relevant levels and heights; legal lines only where supported. The draft read heights from envelope_rows, which hold none; the benchmark carries them in answers.permitted_envelope (30/45/55 ft, ZR 23-432).",
+  "inputs": [
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json"
+  ],
+  "outputs": [
+    "services/api/app/drawings/kit/section_legal_lines.py",
+    "services/api/app/drawings/kit/section.py",
+    "services/api/app/drawings/kit/__init__.py",
+    "services/api/tests/drawings/kit/test_section_legal_lines.py",
+    "project-control/reports/M5-T192-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T170",
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/kit/section_legal_lines.py",
+    "services/api/app/drawings/kit/section.py",
+    "services/api/app/drawings/kit/__init__.py",
+    "services/api/tests/drawings/kit/test_section_legal_lines.py",
+    "project-control/reports/M5-T192-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/app/drawings/kit/styles.py",
+    "services/api/app/drawings/kit/adapter.py",
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/report/",
+    "services/api/app/scenario/",
+    "services/api/app/cad/",
+    "packages/contracts/",
+    "services/api/tests/drawings/kit/test_report_frame.py",
+    "services/api/tests/drawings/kit/test_report_frame_rework1.py",
+    "services/api/tests/drawings/kit/test_report_frame_rework3.py",
+    "services/api/tests/drawings/kit/snapshots/",
+    "services/api/tests/drawings/report/",
+    "docs/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "render_floor_stack / draw_floor_stack without results or legal_lines",
+      "when": "the kit tests run",
+      "then": "byte-identical; test_report_frame*.py pass unedited (rework3:109 caption kept)"
+    },
+    {
+      "id": "S2",
+      "given": "the benchmark Building B and its results",
+      "when": "render_floor_stack(b, results=doc)",
+      "then": "three dashed lines 'Minimum base height 30 ft', 'Maximum base height 45 ft', 'Maximum building height 55 ft' (expected from real-lot.json row L3 and the ZR 23-432 capture, never a program run); storey tops 10/20/30 ft kept; height at most 260 pt, width at most 515.9 pt; one line at 30 ft; every number a document number"
+    },
+    {
+      "id": "S3",
+      "given": "one state per row: permitted_envelope not available; a key missing; a value NaN, infinite, negative, a string, a boolean; unit not 'feet'; only qualifying-housing keys",
+      "when": "the reader runs",
+      "then": "that line omitted (None when none survive), never a default; a table of states in the test"
+    },
+    {
+      "id": "S4",
+      "given": "envelope_rows with setback (applies or not_applicable) and street-wall rows",
+      "when": "the reader runs",
+      "then": "no setback or street-wall line on the section; heights only; no rule evaluated"
+    },
+    {
+      "id": "S5",
+      "given": "a 1.4.0 document",
+      "when": "render_floor_stack(b, results=doc)",
+      "then": "identical to the render without results"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1: the section is a renderer, never a law source: no code compares the building with a limit; the setback state on page 6 is part B3's pointer to the appendix item.",
+    "RISK 2: the qualifying affordable/senior heights (65 ft) are not drawn for the standard Building B."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:40:38.611579+00:00",
+  "updated_at": "2026-10-15T23:40:39.074532+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R017",
+        "D-094-R021",
+        "D-094-R043",
+        "D-094-R076",
+        "D-094-R208"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:40:38.611944+00:00",
+  "path_notes": "Parallel part (with B1, B3, B4). Interface with B3: render_floor_stack(..., results=None); B3 checks the keyword by signature, so the two land in either order. D-093: values from the results document, checked against real-lot.json row L3 and the ZR 23-432 capture; NB-06 read only. No register entry cites a drawings module.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/kit",
+    "python tools/modularity_check.py --check",
+    "picture of the benchmark section in scratch for the visual review"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
