@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T11:21:28+00:00",
+ "updated_at": "2026-10-15T13:43:50+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -190,7 +190,7 @@
   "D-094-R166"
  ],
  "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
- "requirements_content_digest_sha256": "209ddf6b1a528283012f6fd60c9306305bd6c7d543f31d8c0f266cb59afe29e1",
+ "requirements_content_digest_sha256": "10b43ed855ce9a519d842956ee79595ed5900de1f804baf97c3e13ff9f93e716",
  "sources": [
   {
    "file": "source-001.md",
@@ -456,7 +456,8 @@
   "M5-T188",
   "M3-T011",
   "M3-T012",
-  "M5-T186"
+  "M5-T186",
+  "M5-T172"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -849,6 +850,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T186 (the R6B reference case benchmark-options-4-11 (worked values of option 4 (more, smaller apartments) and option 11 (all programs combined) for the benchmark lot; two agreeing sealed readings plus a comparer per option; captured-section citations only; owner questions N1/N2 kept open; the eleven-option set completed across the reference cases); no rule file, engine, result, capture, register entry, law-library edit or human verdict) to R007, R075, R084, R102 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T13:43:50+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T172 (wire placement and area allocation into the document and the regenerated benchmark; the register calculation entry; NB-03/NB-04/NB-06 and the NB-01 contingency) to R044, R058, R082, R091, R092 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }

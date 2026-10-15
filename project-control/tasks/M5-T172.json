@@ -1,0 +1,229 @@
+{
+  "task_id": "M5-T172",
+  "title": "Wire the illustrative placement and area allocation into the worked scenario and the report: building_alternatives[].placement + [].area_allocation + geometry.floor_plates emitted via three_way_document.py/first_option_results.py/geometry.py; the building-not-placed sentence clears and the kit draws plates (readers.py unedited, keys on floor_plates); the area-allocation register calculation entry + calc docs with step P8; the G-5 benchmark regenerated from the corrected engine; NB-03 rev 4, NB-04, NB-06 rev 4 and the NB-01 contingency; G-13 status cells (P-6.2 part B).",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Behaviour-identical on 1.4.0. (1) Emit building_alternatives[].placement and [].area_allocation into the document via a thin _apply_placement / _apply_area_allocation in three_way_document.py using the Part-A modules (build_placement / build_area_allocation); the existing conditional version bump already declares 1.5.0. (2) geometry.py emits real floor-plate outlines (3 plates) once a placement exists, replacing the ruling-W5 not_available floor_plates; this is what makes readers.building_not_placed (which keys on floor_plates; readers.py is NOT edited and stays forbidden) stop emitting the not-placed sentence and lets the kit adapter draw plates. (3) first_option_results.py gates the placement/footprint lines on whether a placement was emitted, so pages 5, 6 agree on every document (1.4.0 byte-identical). (4) The review register gains an area-allocation CALCULATION entry (register.json + REGISTER.md + HISTORY.md), with docs/zoning-rule-review/calculations/calc-area-allocation.md and calc-first-placement.md and their evidence/*.txt, each carrying step P8 (placement-building-b.json) as the worked example; no human verdict (G-11). (5) Regenerate the whole G-5 benchmark from the corrected engine (never hand-edited): recorded_215_16_northern_journey.json gains placement + area_allocation + drawn floor_plates; the DXF and site-plan SVG snapshots regenerate; update every pinning consumer only where the engine output moved. (6) NB-03 rev 4, NB-04 and NB-06 rev 4 revised with independent readings (G1); if a research_status changes, update the README status cell and RESEARCH_REQUESTS.md index prose in the same task (G-13; M5-T172 is the W28 owner); the NB-01 contingency fires because three_way_document.py is in NB-01 code_paths (code-identity revision + a G1 agent delta review). All expected values come ONLY from placement-building-b.json / overlay-reading.json / real-lot.json and the law, never a program run; the label is exactly Illustrative; nothing is called complies/buildable/optimal/feasible.",
+  "business_reason": "D-094 R043/R044/R058/R076/R082/R088/R091/R092/R094/R096 and the owner's 2026-10-14 review (source-021): page 5 leads with limitation paragraphs and page 6 shows a three-floor stack with no footprint fitted to the site, and the area-allocation illustration is absent. The next milestone (R143) is a scenario placed on the actual site with reconciled calculations and clearly identified remaining constraints. This task puts the placement and the allocation into the one document that feeds page 5/6, the website and the PDF; M5-T173 then draws the dimensioned footprint, the section and the two-zone illustration.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-02-floor-area-and-use.json",
+    "services/api/app/scenario/three_answers/placement.py",
+    "services/api/app/scenario/three_answers/area_allocation.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/calculations/calc-first-placement.md",
+    "docs/zoning-rule-review/calculations/calc-area-allocation.md",
+    "docs/zoning-rule-review/evidence/calc-first-placement.txt",
+    "docs/zoning-rule-review/evidence/calc-area-allocation.txt",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "project-control/reports/M5-T172-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T182",
+    "M5-T169",
+    "M5-T170",
+    "M5-T177"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/calculations/calc-first-placement.md",
+    "docs/zoning-rule-review/calculations/calc-area-allocation.md",
+    "docs/zoning-rule-review/evidence/calc-first-placement.txt",
+    "docs/zoning-rule-review/evidence/calc-area-allocation.txt",
+    "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+    "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/scenario/three_answers/test_first_option_results.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/contracts/test_results_contract_1_5_0.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/rules/test_zoning_rule_review_register.py",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "project-control/reports/M5-T172-producer-report.md",
+    "services/api/tests/drawings/report/test_report_appendix.py",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+    "services/api/tests/drawings/report/test_report_comparison.py",
+    "services/api/tests/drawings/kit/test_report_frame.py",
+    "services/api/app/contracts/results_way_rules.py",
+    "services/api/tests/contracts/test_results_way_rules.py"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/schemas/",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "services/api/app/scenario/three_answers/placement.py",
+    "services/api/app/scenario/three_answers/area_allocation.py",
+    "services/api/app/scenario/three_answers/engine.py",
+    "services/api/app/scenario/three_answers/scope.py",
+    "services/api/app/scenario/three_answers/explanations.py",
+    "services/api/app/scenario/three_answers/envelope_constraints.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/",
+    "services/api/app/drawings/kit/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/cad/",
+    "docs/reference-cases/",
+    "services/api/tests/rules/reference_cases/",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the regenerated G-5 benchmark",
+      "when": "the engine is run",
+      "then": "building_alternatives[0] carries a placement and an area_allocation; geometry.floor_plates holds 3 drawn plate outlines (not the ruling-W5 not_available block); only lines whose engine output moved change; each new value is cited in the evidence map from placement-building-b.json or the law, never program output"
+    },
+    {
+      "id": "S2",
+      "given": "a 1.4.0 document and the regenerated 1.5.0 benchmark",
+      "when": "the scenario sheet and the evidence appendix are rendered from a REAL print (TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then apps/web/scripts/print-report-pdf.mjs)",
+      "then": "1.4.0 is byte-identical to today; 1.5.0 shows the placed footprint and the allocation data; the building-not-placed sentence is gone (readers.building_not_placed clears because floor_plates is present, readers.py unedited); verified on a real print, not a fixture-only pass (lesson ii)"
+    },
+    {
+      "id": "S3",
+      "given": "the regenerated benchmark",
+      "when": "floor_plates and floor_by_floor are compared",
+      "then": "C-4 holds: 3 plate rows consistent with the 3-storey floor_by_floor; the plates reconcile to the plate 6,716.67"
+    },
+    {
+      "id": "S4",
+      "given": "a placed benchmark building and a hypothetical unplaced one",
+      "when": "area_allocation is emitted",
+      "then": "it is emitted for every alternative with a floor area, placed or not; fitted is true only when placement.status is placed (results_way_rules.py); apartment+other=total"
+    },
+    {
+      "id": "S5",
+      "given": "the review register",
+      "when": "render_review_register.py --check and research_record_check.py --check run",
+      "then": "both pass; the area-allocation calculation entry and calc-area-allocation.md / calc-first-placement.md exist with step P8 as the worked example and no human verdict (G-11)"
+    },
+    {
+      "id": "S6",
+      "given": "NB-01 and NB-06 (three_way_document.py is in both records' code paths) and NB-04 (the placement's measurement basis)",
+      "when": "the records are revised",
+      "then": "NB-01 moves to revision 10 and NB-06 to revision 5 with the recomputed LF sha256 code identity and a dependency assessment saying what changed (no reading changed); NB-04 moves to revision 4 only if its measurement-basis reading is touched; NB-03 is not revised (rear_yard_checks.py is not edited); an independent agent delta review of each revised record before acceptance; nothing is labelled Verified; any research_status change updates the README cell and the RESEARCH_REQUESTS.md index (G-13)"
+    },
+    {
+      "id": "S7",
+      "given": "the benchmark fan-out (lesson i)",
+      "when": "the set is rebuilt",
+      "then": "every pinning consumer (test_three_answers_three_way_emit, test_wiring_emits_nothing, test_first_option_results, test_result_ways, test_results_contract_1_5_0, test_215_16_northern_journey, test_results_read_api, test_report_benchmark, test_report_pages, the DXF and SVG snapshots, the two web benchmark pins) is updated in the same commit and green in CI; any unexpected web red is routed to the orchestrator (web otherwise forbidden per the work order)"
+    },
+    {
+      "id": "S8",
+      "given": "R061 / R093 and the label rules",
+      "when": "the document is emitted",
+      "then": "the label is exactly Illustrative; nothing reads complies/buildable/optimal/feasible; the not_checked list is complete (parking/loading/bicycle, the zoning lot, the survey, the physical floor plate, apartment layout/rooms/unit walls/stair and elevator positions R093, NB-06's conditions); genuinely unresolved site facts stay unresolved, not not_known because a feature is unfinished"
+    },
+    {
+      "id": "S9",
+      "given": "three_way_document.py (warn band) and the modularity census",
+      "when": "modularity_check --check runs",
+      "then": "it passes with no new failure; three_way_document.py does not cross JUSTIFY (keep _apply_placement/_apply_area_allocation thin or carry the logic in the Part-A modules)"
+    },
+    {
+      "id": "S10",
+      "given": "a 1.5.0 document whose area_allocation has apartment_area_sqft / total_sqft different from its share beyond the two-decimal display rounding (backlog DB-248)",
+      "when": "the results way rules run",
+      "then": "a new way rule reports the mismatch (the share must equal the split); the regenerated benchmark and every 1.3.0/1.4.0 document pass unchanged; one test per input state (equal, within rounding, beyond rounding, no allocation) and a mutation proof (remove the rule: the beyond-rounding case passes)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK B1 (mirror of M5-T170 RISK 1): readers.building_not_placed keys on geometry.floor_plates and the kit adapter draws from it (both confirmed at bb5c02b9), so the not-placed sentence clears WITHOUT editing readers.py (forbidden, M5-T169's file). G0 must re-confirm both at the W28 head; if a readers.py edit is in fact required it is a sequencing decision before build, not a gate surprise.",
+    "RISK B2 (benchmark fan-out): the enumerated consumer tests, the DXF/SVG snapshots and the two web pins must all be in allowed_paths up front (a missed pin costs a scope correction - M5-T167/M5-T170 lesson). The work order's blanket 'web forbidden' is overridden for exactly the two web benchmark-consumer tests here (recorded at G0); any other web red routes out.",
+    "RISK B3 (one-owner serialisation): this task holds the G-5 benchmark, the G-11 register and the G-13 records whole; it runs strictly after M5-T169 and M5-T170 release them (W28). It must NOT run in parallel with either.",
+    "RISK B4: the setback/street-wall/rear-yard values the placement names must agree with M5-T170's emitted envelope rows on every document version (lesson iii); a mutation that disagrees fails a dedicated test.",
+    "RISK B5: expected values come ONLY from the reference cases and the law; G1 re-derives each; the GIS south offset is 35.31 (not 33.32); no unconditional coverage/placement conclusion.",
+    "RISK B6 (interface churn): if M5-T182 shipped the modules, this task consumes them read-only; if the wiring needs a different signature, re-opening placement.py/area_allocation.py is a scope correction. Folding Part A into this task (no split) removes the risk."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T13:43:50.232561+00:00",
+  "updated_at": "2026-10-15T13:43:50.663128+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R044",
+        "D-094-R058",
+        "D-094-R082",
+        "D-094-R091",
+        "D-094-R092"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T13:43:50.232746+00:00",
+  "path_notes": "Contract base: the W28 head after M5-T169 and M5-T170 are accepted and integrated (both edit three_way_document.py/first_option_results.py/geometry.py and the benchmark/register; the 'both stay' contingency is W26 M5-T170, W27 M5-T169, W28 M5-T172 -> M5-T173). placement.py/area_allocation.py are consumed read-only (forbidden to edit) when M5-T182 shipped; if the orchestrator declined the split, add those two modules + their tests to allowed_paths, add bind rows R044/R092 as producer rows, add their seeds, and drop the M5-T182 dependency. readers.py, drawings/**, the schema, reference cases and NB-05 stay forbidden. At the contract seam the orchestrator appends M5-T172 to the applicability.task_ids of the bound rows (today none name it), with a directive_registry digest resync + audit_log entry in the SAME commit, runs reg.evaluate_task_refs before claim, appends M5-T172 to manifest.affected_tasks with a PROVISIONAL task_verifications row, and seeds committed placeholders for the four new register/calc files and the producer report. The orchestrator prints the owner's report from the real preview before review (lesson ii). Expected values come only from the reference cases and the law. PRE-CONTRACT CHECK of session 2026-10-15b (return-precheck-M5-T172-B.md), applied: R1 dependencies re-pinned to M5-T182 (part A shipped as M5-T182; its placement.py and area_allocation.py stay forbidden, consumed read-only through build_placement / build_area_allocation); R2/R3 five paths added (test_report_appendix.py: its 'no area_allocation on the benchmark' test flips; test_zoning_rule_review_register_calculations.py: the calculation-entry list grows; calc-lot-coverage-by-portion.md: it pins geometry.py's sha; test_report_comparison.py: the site-fit column may flip; kit/test_report_frame.py: the massing test turns active once floor plates are available) and the builder confirms the fan-out by its own regeneration before editing consumers; R4 the bind set is the data share only (R044, R058, R092, and the data share of R082, R091); D-094-R043, D-094-R076, D-094-R088, D-094-R094, D-094-R096 belong to M5-T173 part B (the drawn page) and M5-T174 (the website); R5 evidence records: three_way_document.py is pinned in NB-01 and NB-06, so this task writes NB-01 revision 10 and NB-06 revision 5 (code identity), and NB-04 revision 4 if the placement's measurement basis reading is touched; NB-03 is not revised (rear_yard_checks.py is not edited) and is forbidden; R6 the two M5-T182 advisories (a non-positive lot-depth guard; the 'exactly' docstring) live in forbidden part-A files and are deferred to backlog row DB-279; R7 the contract base is main after the wave-27 merge. Page references follow the 10-page report (one evidence appendix). Backlog DB-248 (share tied to split) is closed here by a way rule in results_way_rules.py (S10; the module is pinned in no evidence record or register entry). Backlog DB-260 (the back clearance is 35.31 ft on the city-map check, not 33.32) is honoured by RISK B5.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers tests/contracts/test_results_contract_1_5_0.py tests/journey tests/api/test_results_read_api.py tests/drawings/report/test_report_benchmark.py tests/drawings/report/test_report_pages.py tests/rules/test_zoning_rule_review_register.py tests/cad tests/drawings/kit",
+    "python3 .github/scripts/validate_contracts.py && python3 -m pytest .github/scripts/tests",
+    "python3 services/api/app/rules/review_register/render_review_register.py --check",
+    "python3 tools/research_record_check.py --check",
+    "python3 tools/modularity_check.py --check",
+    "REAL PRINT: from services/api, TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs on the HTML; confirm pages 5/6 show the placed footprint and the allocation and the not-placed sentence is gone (no server, no ports)",
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/__tests__/results-contract-checks.test.ts src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
