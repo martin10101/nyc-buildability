@@ -125,7 +125,7 @@
     "security-reviewer"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "R096 sequencing: mounting the website bar before the PDF illustration (M5-T173) would create a website/PDF mismatch - this task deliberately does not mount; Part B mounts in lockstep with M5-T173.",
     "G-5 benchmark freeze: the lead-refinement (DB-264/DB-261) must NOT run here because it edits the frozen three-answers-panel.test.tsx; it is Part B.",
@@ -135,7 +135,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:40.368053+00:00",
-  "updated_at": "2026-10-15T10:02:43.586314+00:00",
+  "updated_at": "2026-10-15T10:26:00.647962+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -849,6 +849,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted; G0 PASS (M5-T174 part A; pre-check READY)"
+    },
+    {
+      "at": "2026-10-15T10:26:00.647828+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 1 (the unmounted web area component); the builder's commit integrated as 92fbc15e (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
