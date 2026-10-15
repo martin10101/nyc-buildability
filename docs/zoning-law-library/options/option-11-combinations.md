@@ -24,7 +24,7 @@ There is no single ZR section for option 11; the combination ceilings are:
 | 35-33 | Max FA … CF use in certain districts (**excludes R6B**) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-33 | 12/5/2024 | zr-35-33.snapshot.json | NOT HANDLED |
 
 Option 11 also inherits every captured/handled and NOT-CAPTURED/NOT-HANDLED section of options
-2-10. The commercial FAR (33-121, captured) and CF FAR (24-11/24-111, not captured) feed the cap
+2-10. The commercial FAR (33-121, captured) and CF FAR (24-11/24-111, captured) feed the cap
 but have no rule; the two qualifying-housing columns (23-22 2nd column; 23-432 qualifying) are the
 only rule-backed add-on inputs today.
 
@@ -32,7 +32,9 @@ only rule-backed add-on inputs today.
 as NOT CAPTURED. The folder is authoritative on capture (PROGRAM_KNOWLEDGE): the producer listed
 `docs/research/zr-snapshots/v1/` and confirmed **all seven ARE captured** (HG read capture state
 off `benchmark-r6b-sections.json`'s `not_evaluated/missing` flags instead of listing the folder).
-Only 24-11 and 24-111 are not captured. Capture state throughout this file is from the folder.
+Of the sections this file touches, only 23-154 (UAP), 77-00 and the shared-housing use/standards
+sections remain not captured; 24-11 and 24-111 are now captured (M3-T009). Capture state throughout
+this file is from the folder.
 
 ## Reading (unreviewed draft)
 
@@ -116,7 +118,8 @@ compatible programs, and toward which objective, is listed under "Questions for 
 2. **35-31 "except where explicitly stated otherwise"** — the full carve-out sweep (which explicit
    provisions raise the greatest-FAR cap) was not done; for R6B/C2-2, 35-32 and 35-33 are
    inapplicable. Next step: read 35-31 in full plus its neighbours (e.g. 35-34+).
-3. **24-11 / 24-111 are NOT CAPTURED** (CF FAR feeding the cap). Next step: capture them.
+3. **24-11 / 24-111 are captured** (M3-T009; CF FAR feeding the cap). Next step: read/compute their
+   FAR contribution to the cap.
 4. **Shared housing (9/10) and the UAP chapter (Article II Ch 7) remain not captured / not
    handled**, and 23-154 is access-blocked — option 11 cannot be fully worked until the component
    options are rule-backed. Next step: the dedicated captures named in options 2-3, 9 and 10.

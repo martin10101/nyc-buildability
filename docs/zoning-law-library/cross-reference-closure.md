@@ -27,7 +27,7 @@ code task M3-T004); it is a bounded manual catalog for the R6B / C2-2 benchmark 
 4. **Added the options frontier.** Added the sections the eleven development options need (from the H6
    return, re-checked against the snapshot folder): commercial use (32-131, 32-161), overlay/commercial
    FAR (33-12, 33-121, 35-30 to 35-33), parking + transit zone (25-xx, 66-11, Appendix I), community
-   facility (24-11, 24-111 — NOT CAPTURED), UAP (23-154 — NOT CAPTURED), shared housing (sections
+   facility (24-11, 24-111 — captured, M3-T009), UAP (23-154 — NOT CAPTURED), shared housing (sections
    unresolved), and the split-lot family (36-64 captured; 77-00 NOT CAPTURED).
 5. **12-10 defined terms** the sections rely on are tracked in the `defined_terms` list, not as
    cross-reference edges, because they are definitions rather than numbered-section references.
@@ -64,15 +64,15 @@ F1). Rework 1 re-runs the producer's **own** extraction over the verbatim text +
 `cross_references_out`, each with `captured` true/false and — where the reference is **not followed** (it
 has no section entry of its own) — a one-line `reason`. Nothing is silently dropped (S2).
 
-- **Reference counts:** 162 cross-references recorded across the 68 captured sections — 104 followed (they
-  have their own section entry), 58 not followed (recorded with a reason).
+- **Reference counts:** 168 cross-references recorded across the 70 captured sections — 105 followed (they
+  have their own section entry), 63 not followed (recorded with a reason).
 - **NAICS exclusion:** inside the Article-32 Use Group sections (32-131, 32-161) the tokens `31-33`,
   `44-45`, `48-49` are **NAICS industry-sector codes** (North American Industry Classification System) in
   the use-allowance tables, not ZR section numbers; they are excluded, and only there. Single 2-digit
   NAICS sectors (51, 52, …) never match the hyphenated ZR pattern anyway. Every other numbered token is
   treated as a ZR reference.
 - **Zero-dropped check:** the producer's reference audit (`audit_refs.py`, scratch, output in the producer
-  report) re-extracts all 68 captured sections and confirms every extracted reference now appears in
+  report) re-extracts all 70 captured sections and confirms every extracted reference now appears in
   `cross_references_out` — zero dropped.
 
 ## What was followed vs out of scope
@@ -106,9 +106,9 @@ has no section entry of its own) — a one-line `reason`. Nothing is silently dr
   25-621 / 25-622 / 25-85 (accessory parking/loading obstructions), 26-50, 23-613 (planting-strip detail),
   23-30 / 23-63 (balcony/yard cross-refs), 37-727 / 37-73 / 74-761 (floor-area-bonus provisions). Also
   referenced only in rule prose (not captured): 23-38, 23-51, 23-70, 23-72.
-- **NOT CAPTURED, in scope / needed by an option** (recorded as `missing`): 24-11, 24-111 (community
-  facility), 23-154 (UAP), 77-00 (split-lot alternative reading), and the shared-housing use/standards
-  sections (section numbers unresolved).
+- **NOT CAPTURED, in scope / needed by an option** (recorded as `missing`): 23-154 (UAP), 77-00
+  (split-lot alternative reading), and the shared-housing use/standards sections (section numbers
+  unresolved). 24-11 and 24-111 (community facility) are now captured (M3-T009).
 
 ## Reproduce
 

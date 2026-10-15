@@ -46,11 +46,13 @@ Grouped plainly (sections captured unless marked NOT CAPTURED):
   floor-area combination = per-use caps summed to the greatest single-use FAR); 34-11 / 34-24 / 34-232
   (residential-bulk-in-commercial modifications); 35-63 / 35-631 / 35-632 / 35-633 (overlay
   street-wall/height). Options 5, 6, 11.
-- **Community facility** — 24-11 (**NOT CAPTURED**; H6's official read gave R6B FAR 2.00, coverage 80/60,
-  last amended 12/5/2024) and 24-111 (**NOT CAPTURED**); plus the Article II Chapter 4 height/yard
-  sections (numbers unresolved). Options 6, 7, 11.
+- **Community facility** — 24-11 (captured, M3-T009; R6B FAR 2.00, coverage 80/60, last amended
+  12/5/2024) and 24-111 (captured, M3-T009); the Article II Chapter 4 height/yard sections
+  (24-161/162/163, 24-33 to 24-56) are captured. Options 6, 7, 11.
 - **Parking and transit zones** — 25-20 / 25-211 / 25-212 / 25-22 / 25-221 / 25-222 / 25-23 / 25-231 /
-  25-232; 66-11 (transit-zone definitions); Appendix I (transit-zone maps — a lot's transit zone stays a
+  25-232; 66-11 (Article VI Chapter 6 "Definitions" — defines the "mass transit station" terms, not the
+  transit zones; the transit-zone definitions themselves are the 12-10 defined terms Transit Zone,
+  Greater / Inner / Outer plus Appendix I); Appendix I (transit-zone maps — a lot's transit zone stays a
   recorded value, DB-194(b)). Options 10, 11.
 - **Universal Affordability Preference (UAP)** — 23-154 (**NOT CAPTURED**; HTTP 403 when H6 tried; the FAR
   consequence flows through 23-22's second column, but UAP eligibility is a legal determination, not a
@@ -61,8 +63,9 @@ Grouped plainly (sections captured unless marked NOT CAPTURED):
   Options 9, 10, 11.
 - **Two buildings on one lot / split lot** — 12-10 "zoning lot" (captured) is used for scope; no rule
   models subdivision/aggregation or two buildings on one zoning lot. If "split lot" instead means a lot
-  divided by a district boundary, the family is 77-00 (**NOT CAPTURED**) with 36-64 as the C-district
-  counterpart. The meaning is an **open question** (see `options-sections.md`). Options 8, 11.
+  divided by a district boundary, the family is 77-00 (**NOT CAPTURED**); 36-64 (captured) is only a
+  loading-berth pointer into Article VII, Chapter 7 (accessory off-street loading berths), not a general
+  C-district counterpart. The meaning is an **open question** (see `options-sections.md`). Options 8, 11.
 - **Multi-use FAR combination** — 23-20 (captured) and 35-31; no rule computes the combined ceiling.
   Option 11 inherits every not-handled family above and cannot be fully worked until they are rule-backed.
 
