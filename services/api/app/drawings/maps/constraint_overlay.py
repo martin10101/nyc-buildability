@@ -53,12 +53,14 @@ from .model import Point, Polygon
 
 __all__ = [
     "CONSTRAINT_LABELS",
+    "CONSTRAINT_STYLE_KINDS",
     "ESTABLISHED",
     "ConstraintOverlayError",
     "DrawnConstraint",
     "draw_constraint_overlay",
     "draw_site_constraints",
     "overlay_offset",
+    "overlay_was_drawn",
 ]
 
 _Box = tuple[float, float, float, float]
@@ -89,6 +91,13 @@ _CONSTRAINT_STYLE = {
 }
 _AREA_FALLBACK = "yard"
 _LINE_FALLBACK = "setback_line"
+
+# The style kinds :func:`draw_constraint_overlay` registers on the sheet when it
+# ACTUALLY draws an established constraint - the four kinds' own styles plus the two
+# generic fallbacks. None of these is a base-scene style (the scene draws
+# subject_lot / neighbour_lot / street_area / building_footprint / existing_building),
+# so a constraint kind appears on the sheet ONLY because an established item was drawn.
+CONSTRAINT_STYLE_KINDS = frozenset(_CONSTRAINT_STYLE.values()) | {_AREA_FALLBACK, _LINE_FALLBACK}
 
 
 class ConstraintOverlayError(RuntimeError):
@@ -308,3 +317,16 @@ def draw_site_constraints(
         out["facts"] = draw_other_basis_dimensions(
             sheet, input_facts, rect, size=size, avoid_lines=avoid_lines)
     return out
+
+
+def overlay_was_drawn(sheet: Sheet) -> bool:
+    """Whether an ESTABLISHED constraint line or area was actually DRAWN on ``sheet``
+    (DB-263 F1). :func:`draw_constraint_overlay` registers a constraint style kind on
+    the sheet only when it draws an established item (a not_established/not_known item
+    draws nothing and registers no kind, and a line clipped wholly outside the lot
+    registers none either), so the presence of a constraint kind means a constraint was
+    truly drawn. A document that merely CARRIES a ``constraint_lines`` block whose items
+    are all not_established/not_known - as the benchmark's four are - draws nothing, so
+    this returns ``False``: the close frame must not grow on the mere presence of the
+    list (which ``bool(constraint_lines)`` got wrong, giving 474 instead of 470)."""
+    return any(kind in CONSTRAINT_STYLE_KINDS for kind in sheet.kinds)

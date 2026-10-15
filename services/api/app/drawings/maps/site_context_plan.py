@@ -37,7 +37,7 @@ from .close_frame_dimensions import (
     dimension_line_segments,
     draw_edge_dimensions,
 )
-from .constraint_overlay import draw_site_constraints
+from .constraint_overlay import draw_site_constraints, overlay_was_drawn
 from .context_scene import (
     CLOSE_PLAN,
     CLOSE_PLAN_MARGIN,
@@ -724,13 +724,18 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet",
                                  constraint_lines=constraint_lines, input_facts=input_facts)
         # The dimensions all share the gis basis, so it is stated ONCE in a note under
         # the drawing and each label shows only the figure (owner K1, D-094 R116).
-        # When a constraint overlay adds its own legend entry, compose_context gives the
-        # close frame the full height its furniture needs (overlay_present), so the 'No
-        # building placed' row is not clipped over the sources caption (S3; DB-263 A2); a
-        # frame without the overlay stays clamped and byte-identical (S4).
+        # When an established constraint is actually DRAWN it adds its own legend entry,
+        # so compose_context gives the close frame the full height its furniture needs
+        # (overlay_present), keeping the 'No building placed' row off the sources caption
+        # (S3; DB-263 A2). overlay_present follows whether a constraint was truly drawn
+        # (overlay_was_drawn reads the drawn kinds), NOT the mere presence of the
+        # constraint_lines block: the benchmark CARRIES four not_established/not_known
+        # items that draw nothing, so its frame stays clamped and byte-identical, as a
+        # frame with no overlay at all does (S4; DB-263 F1, correcting round 1's
+        # bool(constraint_lines) which grew the benchmark frame 470 -> 474).
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
                                mode="close", not_placed_legend=True, basis_note=GIS_BASIS_NOTE,
-                               overlay_present=bool(constraint_lines))
+                               overlay_present=overlay_was_drawn(sheet))
     report = frame == "report"
     region, margin = ((REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN))
     fr = fit_view(view, region, margin, alpha=alpha, top_band=TITLE_BAND_PT)

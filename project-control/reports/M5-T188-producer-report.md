@@ -114,8 +114,11 @@ benchmark_215_16_northern_window)` (flags INTERNAL_RESULTS_ENABLED / LANE_A / LA
 `diff_pages.py print-main-76745ade/report.pdf  …/M5-T188/print/report.pdf`:
 - pages 1, 2, 3, 5, 6, 7, 8, 9, 10, 11: IDENTICAL text.
 - **page 4: CHANGED — 2 lines removed: `60 ft, map outline` and `100 ft, map outline`** (the duplicate
-  street-width chips, exactly DB-275 / S10). Nothing added; the lot's own band carries no other gis lot
-  fact on the benchmark, so page 4 simply loses the two chips.
+  street-width chips, exactly DB-275 / S10). Nothing added. The lot's OWN other-basis figures stay: the
+  band keeps `10,075 sq ft, city record` (recorded_lot_area) AND the lot's own gis fact
+  `10,387.99 sq ft, map outline` (lot_outline_area, basis gis); only the two street-width chips go.
+  (Round-2 G3 F2 correction: the earlier wording "the lot's own band carries no other gis lot fact …"
+  was wrong — lot_outline_area is a gis lot fact and stays.)
 
 This is the expected result: only page 4's two chips go (scope correction 1); pages 1 and 3 stay
 byte-identical (S8 no-regression). The A1/A2 polish is NOT visible on the benchmark print because the
@@ -134,5 +137,97 @@ before/after is the constructed established-line case (S1/S3), the visual-G3 art
 - `code_graph query --no-regen` could not serve a graph (stale fingerprint); treated as advisory and the
   single `expand_frame_for_overlay` consumer verified directly in source.
 - No push. One commit prepared with this report.
+
+## Round 2 (G3 F1 required correction; F2/F3 advisories)
+
+Round-2 build on the task branch `task/wave27-comparison-appendix`, reset to
+`ac7b69e911aac1c25cd091c560c37e42f974c07a` (round 1 integrated there as `3c95cae9`).
+Worktree: `/root/project/nyc-buildability/.claude/worktrees/agent-ac1b20a7c4a54baeb`. No feasibility
+fact, rule, calculation or certainty label changed; D-093 light (NB-04, NB-06 read-only).
+
+### F1 (REQUIRED) — the native-height predicate
+
+Round 1 passed `overlay_present=bool(constraint_lines)` to the close `compose_context`. That is true for
+ANY 1.5.0 document that merely CARRIES a `constraint_lines` block, even when every item is
+not_established/not_known and nothing is drawn — exactly the benchmark (four items, all
+not_known/not_established, no geometry). It dropped the `CLOSE_MAX_H_PT` clamp for the benchmark, growing
+the page-4 close frame **470 → 474 pt**. Reproduced on the real benchmark inputs before fixing.
+
+**Predicate chosen: the presence of an actually-drawn constraint kind** (the brief's second option).
+`constraint_overlay.py` now exposes `CONSTRAINT_STYLE_KINDS` (the four constraint styles + the two
+generic fallbacks `yard` / `setback_line`) and a helper `overlay_was_drawn(sheet)` that returns
+`any(kind in CONSTRAINT_STYLE_KINDS for kind in sheet.kinds)`. A constraint style kind is registered on
+the sheet ONLY when `draw_constraint_overlay` draws an established item (a not_established/not_known item
+draws nothing; a line clipped wholly outside the lot draws nothing) — and none of those kinds is a
+base-scene style (the scene draws subject_lot / neighbour_lot / street_area / building_footprint /
+existing_building), so the predicate exactly answers "was an established constraint actually drawn?".
+`site_context_plan.py` close branch now passes `overlay_present=overlay_was_drawn(sheet)`.
+Why this over a boolean threaded from the drawing step: `draw_block_scene` returns only the `Sheet` and
+is shared by six frames; threading a new return through all of them would be a far larger change than a
+one-line read of the sheet the composer already consumes. Reads the actual draw outcome (clip included),
+not the input list.
+
+Result on the benchmark: close-frame height back to **470** (viewBox `0 0 512.00 470.00`), the only page-4
+change being the two chips removed — the packet's stated intent and S8's premise restored.
+
+**Tests (one per input state, `test_site_context_close_frame.py`):**
+| input state | height | test |
+|---|---|---|
+| no constraint_lines | 470 | `test_s4_non_overlay_close_frame_stays_clamped_at_470` (existing) |
+| a list, all not_established/not_known, no geometry (benchmark case) | 470 | `test_s4_a_not_established_constraint_list_stays_clamped_at_470` (NEW) |
+| an established line drawn | > 470 (grows) | `test_s3_overlay_close_frame_grows_so_the_legend_row_is_not_clipped` (existing) |
+
+Plus a direct unit test of the helper, `test_overlay_was_drawn_tracks_the_actual_draw_not_the_list`
+(`test_constraint_overlay.py`): empty sheet → False; a not_established/not_known list drawn → sheet.kinds
+empty → False; an established line drawn → a constraint kind on the sheet → True.
+
+**Mutation:** reverting the predicate to `overlay_present=bool(constraint_lines)` turned
+`test_s4_a_not_established_constraint_list_stays_clamped_at_470` RED (`474.0 == 470.0` assertion failed)
+while `test_s3` (established, grows) and `test_s4` (no overlay, 470) stayed GREEN (`1 failed, 2 passed`);
+restored.
+
+### F2 (advisory, applied)
+
+Corrected the round-1 real-print wording above: the lot's own gis fact
+`lot_outline_area` ("10,387.99 sq ft, map outline") stays in the other-basis band alongside
+`recorded_lot_area` ("10,075 sq ft, city record"); only the two street-width chips go. Verified in the
+rendered HTML (counts: `10,075 sq ft, city record` ×1, `10,387.99 sq ft, map outline` ×1,
+`100 ft, map outline` ×0, `60 ft, map outline` ×0).
+
+### F3 (advisory)
+
+**Kept the key-prefix exclusion** (`close_frame_dimensions.py`, skip keys starting
+`mapped_street_width:`). An allow-list by kind would be LARGER and no clearer: it would need to enumerate
+every lot-dimension fact key (which can grow), whereas the exclude-list is a single well-commented line
+that matches the only producer family needing exclusion. The QA mutation (G4 MINE-A) already proved the
+filter keys on the KEY, not the gis basis (a lot gis fact is kept). No change.
+
+### Round-2 print + page diff (no server, no ports)
+
+Same TestClient path as round 1 (`benchmark_provider(with_zoning_lot=True, street_on=True)` +
+`recorded_pack_provider(benchmark_215_16_northern_window)`, flags INTERNAL_RESULTS_ENABLED / LANE_A /
+LANE_E on) → HTTP 200, `text/html`, 142067 bytes → `node apps/web/scripts/print-report-pdf.mjs` (the
+installed Playwright 1.61.1 Chromium; starts no server, binds no port) → 11-page PDF.
+`diff_pages.py print-main-76745ade/report.pdf  …/M5-T188-r2/print/report.pdf`: pages
+1,2,3,5,6,7,8,9,10,11 IDENTICAL; **page 4 CHANGED — 0 added, 2 removed: `60 ft, map outline` and
+`100 ft, map outline`**. Page-4 close-frame SVG before/after: main `76745ade` `viewBox="0 0 512.00
+470.00"` → after-fix `viewBox="0 0 512.00 470.00"` — **470 kept** (the 474 round-1 regression is gone),
+only the two chips removed.
+
+### Round-2 checks (lanes venv; heavy runs under `flock /root/project/lanes-runtime/heavy-run.lock`)
+
+| check | result | exit |
+|---|---|---|
+| `cd services/api && python -m ruff check .` | All checks passed | 0 |
+| pytest the three task test files | 52 passed (was 50; +2 round-2 tests) | 0 |
+| pytest `tests/drawings/maps tests/drawings/report` (under lock) | 403 passed, 4 skipped | 0 |
+| `python tools/modularity_check.py --check` | selected 812 files; failures 0; warnings 33 | 0 |
+| `python3 scripts/lanes/check_lane_paths.py --coverage` | LANE COVERAGE PASS: 10715 files | 0 |
+| WHOLE api suite `pytest -q` (under lock) | see the final return line | — |
+
+Files changed in round 2 (all in allowed_paths): `constraint_overlay.py`, `site_context_plan.py`,
+`tests/drawings/maps/test_site_context_close_frame.py`, `tests/drawings/maps/test_constraint_overlay.py`,
+and this report. `context_scene.py` / `close_frame_dimensions.py` / `page_decision_summary.py` were NOT
+re-touched in round 2 (their round-1 changes stand).
 
 END-OF-REPORT

@@ -25,9 +25,11 @@ from app.drawings.maps.close_frame_dimensions import (
     other_basis_label,
 )
 from app.drawings.maps.constraint_overlay import (
+    CONSTRAINT_STYLE_KINDS,
     ConstraintOverlayError,
     draw_constraint_overlay,
     overlay_offset,
+    overlay_was_drawn,
 )
 from app.drawings.maps.context_scene import ViewFrame, fit_view, viewport
 from app.drawings.maps.model import Polygon
@@ -352,6 +354,29 @@ def test_s2_the_label_offset_keeps_the_fit_and_collision_guarantee() -> None:
         pass
     else:  # pragma: no cover - the assertion documents the expected failure
         raise AssertionError("expected ConstraintOverlayError when no label fits")
+
+
+# =================================================================== F1 (DB-263 round 2)
+def test_overlay_was_drawn_tracks_the_actual_draw_not_the_list() -> None:
+    # DB-263 F1: overlay_was_drawn reads the DRAWN constraint kinds, so it is True only
+    # when an established constraint was actually drawn - never on the mere presence of a
+    # not_established/not_known list (the round-1 bool(constraint_lines) bug).
+    fr, rect = _frame_and_rect()
+    # an empty sheet draws nothing -> False.
+    assert overlay_was_drawn(Sheet()) is False
+    # a benchmark-shape list, all not_established/not_known with no geometry -> False.
+    not_est = Sheet()
+    draw_constraint_overlay(not_est, [
+        {"kind": "rear_yard_100ft_line", "state": "not_known", "basis": "derived",
+         "zr_sections": ["ZR 23-344"]},
+        {"kind": "setback_line", "state": "not_established", "basis": "derived",
+         "zr_sections": ["ZR 23-433"]}], fr, rect, offset=_OFFSET)
+    assert not_est.kinds == [] and overlay_was_drawn(not_est) is False
+    # an established line IS drawn -> a constraint kind is on the sheet -> True.
+    est = Sheet()
+    drawn = draw_constraint_overlay(est, _established_line(), fr, rect, offset=_OFFSET)
+    assert drawn and drawn[0].style_kind in CONSTRAINT_STYLE_KINDS
+    assert overlay_was_drawn(est) is True
 
 
 # =================================================================== S5 (DB-263 A2)
