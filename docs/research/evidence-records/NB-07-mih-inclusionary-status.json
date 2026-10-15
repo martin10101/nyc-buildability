@@ -1,0 +1,72 @@
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-07",
+ "title": "215-16 Northern Boulevard (BBL 4073340070): the lot is outside every Mandatory Inclusionary Housing area and every former Inclusionary Housing designated area; the downstream affordable-housing reading stays an unreviewed draft",
+ "revision": 1,
+ "last_changed": "2026-10-15",
+ "question": {
+  "text": "Is lot 70 inside a Mandatory Inclusionary Housing area or a former Inclusionary Housing designated area (ZR Appendix F / DCP GIS), and what does that change for the affordable-housing options (2, 3, 11)?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
+  "lot_scope": "zoning_lot_unconfirmed",
+  "site_scope": "whole_site",
+  "time_scope": "current_law"
+ },
+ "evidence": [
+  {"id": "E1","kind": "gis_geometry","authority": "NYC Department of City Planning (MapPLUTO feature service)","title": "MapPLUTO lot geometry and attributes for block 7334 lot 70","url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D4073340070&outSR=2263&f=json","reference": "MapPLUTO 26v2, BBL 4073340070","page": null,"document_date": "MapPLUTO 26v2 (release read as 26v2 by the independent check; the live service prints no explicit version token - see freshness.limitation)","retrieved": "2026-10-15","excerpt": "ZoneDist1 R6B; Overlay1 C2-2; LotArea 10075 sq ft; QN block 7334 lot 70; centroid EPSG:2263 (1048850.089, 216370.771); 5-vertex ring. The live ring is byte-identical (max vertex delta 0.0000 ft) to the committed fixture services/api/tests/fixtures/benchmark_215_16_northern/mappluto_lot_4073340070_epsg2263.json.","saved_copy": null,"sha256": null},
+  {"id": "E2","kind": "gis_geometry","authority": "NYC Department of City Planning (DCP GIS, nycmih)","title": "Mandatory Inclusionary Housing areas layer (nycmih)","url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nycmih/FeatureServer/0","reference": "nycmih FeatureServer/0 (serviceItemId 491d74ba82c24b218ffcd79d66f71d62); SR 2263","page": null,"document_date": "editingInfo.dataLastEditDate 2026-09-30T21:33Z","retrieved": "2026-10-15","excerpt": "spatialRel=esriSpatialRelIntersects, inSR=2263, full 5-vertex lot ring -> 0 matching features; lot centroid point-in-polygon -> []. Nearest MIH area 'Douglaston Parkway Rezoning' (CD 11, Zoning_Map 11A, adopted 2019-03-13), exact min edge distance 5,925 ft; next '217-14 24th Avenue Rezoning' 7,501 ft. Metadata: 'provided for reference only and not intended for determining Mandatory Inclusionary Housing eligibility at the tax lot level.'","saved_copy": null,"sha256": null},
+  {"id": "E3","kind": "gis_geometry","authority": "NYC Department of City Planning (DCP GIS, nyih)","title": "Former Inclusionary Housing designated areas layer (nyih)","url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyih/FeatureServer/0","reference": "nyih FeatureServer/0 (serviceItemId e0806bbb6e0b46b48dfdb9ca931cdd12); SR 2263; NYC Open Data w83z-2kf9","page": null,"document_date": "editingInfo.dataLastEditDate 2026-09-09T15:30Z","retrieved": "2026-10-15","excerpt": "Full lot ring intersect -> 0 matching features; centroid point-in-polygon -> []; no nyih feature in CD 11; nearest designated area 'Jamaica' (CD 12, adopted 2007-09-10), exact min distance 17,618 ft (about 3.3 mi).","saved_copy": null,"sha256": null},
+  {"id": "E4","kind": "map_document","authority": "NYC Department of City Planning (Zoning Resolution portal)","title": "ZR Appendix F - Mandatory Inclusionary Housing areas and former Inclusionary Housing designated areas (pointer capture)","url": "https://zoningresolution.planning.nyc.gov/appendix-f-mandatory-inclusionary-housing-areas-and-former-inclusionary-housing-designated-areas","reference": "ZR Appendix F, landing node 21424 (zr-appendix-f snapshot)","page": null,"document_date": "Last Amended 9/24/2026","retrieved": "2026-10-14","excerpt": "MIH and former-IH area boundaries 'are shown on the maps listed in this APPENDIX F'. Queens sub-page lists Queens Community District 11 Map 1 (3/13/19) and Map 2 (2/24/26), each a PORTION of CD 11 (matching the two nearest nycmih areas); no former-IH (nyih) feature exists in CD 11. The maps are images and are NOT transcribed in this pointer capture; a lot's MIH-area status is read from these maps / the DCP ZoLa layer (the nycmih/nyih layers E2/E3).","saved_copy": "docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json","sha256": "0a7952bd26c7adb509283e67d689e9ad54f16c73870594f61640c16edaa40008"},
+  {"id": "E5","kind": "filing_record","authority": "NYC Department of City Planning (ZAP, via NYC Open Data)","title": "ZAP project P1998Q0688 on block 7334","url": "https://data.cityofnewyork.us/resource/hgx4-8ukb.json?project_id=P1998Q0688","reference": "ZAP-BBL 2iga-a6mk + ZAP Project Data hgx4-8ukb; BBL 4073340070 / block 7334 Queens","page": null,"document_date": "certified 1999-10-21 (project P1998Q0688)","retrieved": "2026-10-15","excerpt": "Bounded search of block 7334 returns exactly one ZAP project: P1998Q0688, project_name STARBUCKS, 'NEW-UNENCLOSED SIDEWALK CAFE WITH 16 SEATS', status Withdrawn-Other, certified 1999-10-21. No rezoning or MIH action on this block. Bounded to block 7334 only; not a city-wide negative.","saved_copy": null,"sha256": null}
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": ["ZR Appendix F (MIH areas and former IH designated areas) (E4)","ZR 27-131 MIH requirement (snapshot zr-27-131)","ZR 27-133 (MIH areas listed in Appendix F) (snapshot zr-27-133)","ZR 12-10 'qualifying affordable housing' (a)/(b)/(c) (snapshot zr-12-10-qualifying-affordable-housing)","ZR 23-22 R6B FAR column (snapshot zr-23-22)","ZR 23-432 R6B qualifying heights (snapshot zr-23-432)","ZR 27-111 / UAP (referenced, not independently re-derived)"],
+  "exceptions_considered": ["UAP developments are by definition outside MIH areas (ZR 12-10 (b)) - route available here.","An affordable housing regulatory agreement (ZR 12-10 (c)) is available independent of MIH mapping.","'Qualifying residential site' (ZR 12-10) is R1-R5 only and does not apply to this R6B lot."],
+  "reading": "The whole lot outline (MapPLUTO 26v2, EPSG:2263) intersects no nycmih polygon (E2) and no nyih polygon (E3); the nearest MIH area is 5,925 ft away and the nearest former-IH area 17,618 ft away, far outside any map tolerance, so the lot is outside every MIH area and every former IH designated area. Because the lot is outside every MIH area, the ZR 27-131 MIH mandatory set-aside is not triggered by mapping. Being outside an MIH area does NOT by itself lower the R6B 'qualifying' figures: the higher ZR 23-22 (2.40 FAR) and ZR 23-432 (45/65 ft) columns are keyed to a zoning lot containing qualifying affordable or senior housing, which remains reachable through a UAP development (12-10 (b)) or a regulatory agreement (12-10 (c)). Being outside a former IH designated area means the older voluntary-IH FAR bonus does not apply. The membership facts are answered from the primary DCP layers; the downstream affordable-pathway reading is an unreviewed draft (ADR-007).",
+  "applies": "conditional"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {"name": "nearest MIH-area edge distance","value": "5925","units": "ft","basis": "gis","scope": "existing; whole site (lot ring to nearest nycmih polygon)"},
+   {"name": "nearest former-IH-area edge distance","value": "17618","units": "ft","basis": "gis","scope": "existing; whole site (lot ring to nearest nyih polygon)"}
+  ],
+  "double_count_risk": "none identified"
+ },
+ "conclusion": {
+  "research_status": "answered_from_primary_source",
+  "observed_facts": ["MapPLUTO 26v2 lot 70: QN, ZoneDist1 R6B, Overlay1 C2-2, LotArea 10,075 sq ft; the live ring is byte-identical to the committed benchmark fixture.","nycmih: full lot ring and centroid intersect 0 features; nearest MIH area 'Douglaston Parkway Rezoning' (CD 11) 5,925 ft.","nyih: full lot ring and centroid intersect 0 features; nearest 'Jamaica' (CD 12) 17,618 ft; no nyih feature in CD 11.","Appendix F lists two CD 11 MIH maps, both portions of CD 11; no former-IH map in CD 11.","The only ZAP project on block 7334 is P1998Q0688, a withdrawn 1999 sidewalk cafe."],
+  "interpretation": "Outside all MIH and former IH areas: ZR 27-131 MIH mandatory shares do not attach; the UAP route (12-10 (b)) or a regulatory agreement (12-10 (c)) remains the affordable route; the R6B 23-22 (2.40) and 23-432 (45/65 ft) qualifying columns are not foreclosed by MIH-area status; 'qualifying residential site' is R1-R5 only and does not apply to R6B. This downstream reading is an unreviewed draft.",
+  "conflicts": [],
+  "conditions": ["The DCP nycmih/nyih layers carry a 'not for tax-lot-level eligibility' disclaimer; the Appendix F map image (the legal instrument) is not transcribed. The membership fact is robust given the 5,925 ft / 17,618 ft margins, but a definitive legal determination reads the Appendix F CD 11 map image.","The zoning lot is unconfirmed (NB-01); eligibility for a UAP development or a regulatory agreement is a scenario/applicant matter, not a program determination.","The affordable-pathway reading (UAP / 23-22 / 23-432) is interpretation awaiting review (ADR-007)."],
+  "settled_by": ["the membership fact: E2, E3 and E4, corroborated by two independent sealed AI researchers"]
+ },
+ "searches": [
+  {"source": "DCP nycmih / nyih feature services","query": "full lot ring and centroid intersect; nearest-area distance","result": "found","missing_item": "","affected_outputs": ["option2.affordable_housing_pathway"],"next_step": ""},
+  {"source": "NYC Open Data ZAP-BBL 2iga-a6mk + hgx4-8ukb","query": "BBL 4073340070 / block 7334 Queens projects","result": "found","missing_item": "","affected_outputs": ["option2.affordable_housing_pathway"],"next_step": ""},
+  {"source": "DCP nycmih / nycihda metadata PDFs","query": "field-level definitions of DateAdopte / MIH_Option / Status","result": "not_found","missing_item": "verbatim field-level data-dictionary text (binary PDFs not transcribed)","affected_outputs": [],"next_step": "download to scratch and pdftotext to pin field definitions if a later task relies on those fields"}
+ ],
+ "implementation": {
+  "affected_outputs": ["option2.affordable_housing_pathway","option3.senior_housing_pathway","option11.combination.affordable_pathway"],
+  "code_paths": [],
+  "code_identity": {},
+  "worked_example": {"inputs": "BBL 4073340070; full lot ring (EPSG:2263) tested against nycmih and nyih.","expected": "MIH area = no; former IH designated area = no; ZR 27-131 MIH mandate does not attach; UAP (12-10 (b)) or a regulatory agreement (12-10 (c)) available; ZR 23-22 col 2.40 and ZR 23-432 45/65 ft reachable via a qualifying-affordable route; 'qualifying residential site' not applicable in R6B.","basis": "live DCP nycmih/nyih layers + ZR Appendix F + ZR 12-10/23-22/23-432/27-131 snapshots; no program run.","prepared_by": "official-source-researcher (session 2026-10-15b); worked from the live DCP layers and the law text, not from a program run; not professionally checked"},
+  "regression_cases": [],
+  "dependency_assessment": ["The repo connector services/api/app/connectors/zoning_features_arcgis.py covers nyzd/nyco/nysp/nysp_sd/nylh/nyzma only - it has NO MIH/IH layer, so a wired MIH/IH check would be new work (not in this documents-only task).","services/api/app/profile/hidden_issue_flags/map_based_rules.py::_inclusionary_housing reports 'Check needed' (PLUTO omits the mih_opt fields) and never asserts IN - consistent with this record's OUT conclusion; this record does not change that code."]
+ },
+ "review": {
+  "producer": "orchestrator",
+  "agent_reviews": [
+   {"reviewer": "official-source-researcher","date": "2026-10-15","reviewed_revision": 1,"reviewed_code_identity": {},"verdict": "agrees","findings": ["Independent live determination (2026-10-15 08:12-08:14 UTC): centroid and full lot ring outside both layers; nearest MIH 'Douglaston Parkway Rezoning' ~5,925 ft; no IHDA within 8,000 ft. ZR 27-131 does not attach; UAP route available; 23-22/23-432 qualifying columns not gated by MIH status; 'qualifying residential site' R1-R5 only."],"report": null},
+   {"reviewer": "data-contract-verifier","date": "2026-10-15","reviewed_revision": 1,"reviewed_code_identity": {},"verdict": "agrees","findings": ["Sealed independent check (2026-10-15 08:25-08:33 UTC), did not see the other researcher's answer: lot ring byte-identical to the repo fixture; (a) MIH area OUT, nearest 5,925 ft; (b) former IH designated area OUT, nearest 17,618 ft; margins ~300x map tolerance, not a boundary case. VERDICT PASS. Advisory: the ArcGIS distance-buffer parameter was unreliable (used exact segment distance); the live ZR portal HTML digest differs from the repo snapshot's pinned digest (dynamic page tokens, content identical); UAP eligibility (27-111/27-14) not independently re-derived."],"report": null}
+  ],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-15",
+  "method": "live_fetch",
+  "snapshot_date": null,
+  "limitation": "nycmih/nyih queried live 2026-10-15 (dataLastEditDate 2026-09-30 / 2026-09-09); MapPLUTO release not stamped in live metadata (read as 26v2 by the independent check); the nycmih/nycihda field-level metadata PDFs are binary and were not transcribed; the Appendix F capture (E4) is a 2026-10-14 pointer snapshot whose CD 11 map images are not transcribed."
+ },
+ "promotion": {
+  "requested_label": "Provisional"
+ }
+}
