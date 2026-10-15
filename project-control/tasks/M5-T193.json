@@ -1,0 +1,169 @@
+{
+  "task_id": "M5-T193",
+  "title": "M5-T173 part B3 (M5-T193) - page-6 scenario sheet: the embedded two-zone area illustration with one caption carrying the document's areas and footprint basis, the section with height-limit lines, a reconciled floor schedule and a short unresolved list; every drawn/placed claim takes an explicit flag",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "(1) NEW report/scenario_figures.py: embed_area_illustration(building, *, env) calls kit.area_allocation.draw_area_allocation(block, placement=building['placement'], caption=False) behind kit.flag.drawing_kit_enabled and returns a drawings_embed.Embedded (an Unavailable becomes its reason verbatim); embed_section(building, results, *, env) calls kit.render_floor_stack with results= only when its signature has that keyword (part B2), else drawings_embed.embed_floor_stack; embed_scenario_drawings(results, *, env) returns both per worked building for part W. (2) report/page_scenario_sheet.py render(results, ident, *, env=None, drawings=None, footprint_drawn=None); drawings None embeds itself. Area illustration under the section/text row with ONE figcaption: the caption token, then 'apartment area {apartment_area_sqft} sq ft; other building area {other_area_sqft} sq ft; of {total_sqft} sq ft residential floor area; footprint on the {placement.basis in words}' from document fields with the existing formatting (no percentage, no second sentence). Section caption: height lines drawn gives 'Section (Illustrative): storeys from the floor schedule; height limits from the permitted envelope (Conditional).'; footprint_drawn True drops the 'no placement on the lot' clause; otherwise today's text. Placement line: building_not_placed(results) keeps NOT_PLACED_LINE; placement.status 'placed' with floor_plates available and footprint_drawn False gives 'The footprint is worked out but is not drawn in this report.'; True or None gives nothing. Schedule: 'Plan area' relabelled as zoning floor area per storey; the document's conversion statement once on the page (inside the illustration when drawn, else one footnote under the schedule); the note 'Storey areas are shown rounded; the running total adds the unrounded areas.' only when the shown storey figures do not add to the shown total. Unresolved: 'Unresolved for this building' (Pending verification chip) = building.not_checked plus placement.not_checked, de-duplicated case-insensitively in document order, then one line linking the appendix open items by number (readers.open_items anchors). The estimate at page_scenario_sheet.py:117-126 stays. No new sentence of 8 or more words repeats one printed elsewhere.",
+  "business_reason": "Audit 2026-10-15c sections 3-4: page 6 shows a generic stack 'with no placement on the lot'; 12,090/8,060 sq ft appear nowhere; one unchecked item shown of the placement's six; 3 x 6,716.67 shown against 20,150 with no reconciliation.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/scenario_figures.py",
+    "services/api/app/drawings/report/page_scenario_sheet.py",
+    "services/api/tests/drawings/report/test_scenario_sheet.py",
+    "project-control/reports/M5-T193-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T183",
+    "M5-T187",
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/scenario_figures.py",
+    "services/api/app/drawings/report/page_scenario_sheet.py",
+    "services/api/tests/drawings/report/test_scenario_sheet.py",
+    "project-control/reports/M5-T193-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/kit/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/scenario/",
+    "packages/contracts/",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_comparison.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "docs/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "a 1.4.0 document (no placement, no area_allocation), drawings None",
+      "when": "the sheet renders",
+      "then": "no illustration, no new claim or caption; only the schedule wording changes, each change listed before/after"
+    },
+    {
+      "id": "S2",
+      "given": "the fitted benchmark, LANE_E on",
+      "when": "the sheet renders",
+      "then": "the kernel's zones inside the placement outline; exactly one percentage on the sheet ('60% apartment area', kernel); the caption carries 12,090, 8,060 and 20,150 sq ft and 'printed tax map' (expected from placement-building-b.json row area-allocation, never a program run); bare 'Residential floor area' (no 'Measure:'); no unit count, room or stair words"
+    },
+    {
+      "id": "S3",
+      "given": "fitted false; then one degenerate block per kernel refusal",
+      "when": "the sheet renders",
+      "then": "the bar; for each degenerate block the printed line equals draw_area_allocation(...).reason read at test time (no copied literal); one test per state"
+    },
+    {
+      "id": "S4",
+      "given": "footprint_drawn None, False and True, with the placed benchmark and a not-placed document",
+      "when": "the sheet renders",
+      "then": "placement line and section caption follow the objective; one test per state; nothing says shown or drawn unless the flag says so"
+    },
+    {
+      "id": "S5",
+      "given": "the benchmark schedule",
+      "when": "it renders",
+      "then": "storeys 10/20/30 ft, 6,716.67 sq ft each, running total 20,150 sq ft (reference row plate); the rounding note shown; the conversion statement once on the page in every drawing state"
+    },
+    {
+      "id": "S6",
+      "given": "the benchmark",
+      "when": "the unresolved list renders",
+      "then": "six items (parking once), document order, one linked line to the appendix items; no page-3 sentence restated; plain-render page-6 visible words at most 260; plain report at most 2,448 words (2,231 at e026a391); repeat count stays 0"
+    },
+    {
+      "id": "S7",
+      "given": "part B2 landed or not",
+      "when": "embed_section runs",
+      "then": "with B2 the height lines and the new caption; without, today's figure; no error either way"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (two footprints): page-6 zones sit in placement.outline (printed tax map, 100.76 x 66.66); page 4 draws floor_plates (city map, 103.88 x 64.66); the caption names the basis so they are never read as one surveyed plan.",
+    "RISK 2 (page fit): kernel 468 x 290 pt and stack 360 x 358 pt cannot sit side by side within 515.9 pt; page 6 may take two printed pages (DB-270); W measures; no block alone on a blank page.",
+    "RISK 3: tests read document prose from the fixture at test time (M5-T180 rewords engine strings later); numbers stay literal from the reference case."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:40:44.287519+00:00",
+  "updated_at": "2026-10-15T23:40:44.761419+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R022",
+        "D-094-R023",
+        "D-094-R072",
+        "D-094-R076",
+        "D-094-R080",
+        "D-094-R082",
+        "D-094-R089",
+        "D-094-R090",
+        "D-094-R091",
+        "D-094-R092",
+        "D-094-R093",
+        "D-094-R094",
+        "D-094-R095",
+        "D-094-R096",
+        "D-094-R199",
+        "D-094-R207",
+        "D-094-R209",
+        "D-094-R210",
+        "D-094-R211",
+        "D-094-R212",
+        "D-094-R214",
+        "D-094-R215",
+        "D-094-R216",
+        "D-094-R217",
+        "D-094-R218",
+        "D-094-R219",
+        "D-094-R220",
+        "D-094-R221",
+        "D-094-R222",
+        "D-094-R224",
+        "D-094-R238"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:40:44.287902+00:00",
+  "path_notes": "Parallel part (with B1, B2, B4). Flags arrive as plain booleans, so this part imports nothing new from B4; part W passes them from the manifest. D-093: values from the document, checked against placement-building-b.json rows plate, footprint-tax-map, area-allocation, physical-plate-not-checked.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/report tests/drawings/kit",
+    "python tools/modularity_check.py --check",
+    "page-6 HTML for the benchmark (build_report_html with LANE_E) in scratch for the visual review"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
