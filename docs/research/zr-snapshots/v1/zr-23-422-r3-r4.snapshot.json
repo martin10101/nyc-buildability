@@ -45,6 +45,7 @@
     "r3_r4_series_in_scope": ["R3-2", "R4", "R4B"],
     "note": "R3-2 and R4 receive a 35 ft maximum building height for residences NOT subject to Section 23-421; R4B receives a 25 ft maximum building height. R3A, R3X, R3-1, R4-1 and R4A do NOT appear in Section 23-422 (they are pitched-only under 23-421) - recorded, not symmetrized."
   },
+  "table_digest_sha256": "f0e78a58edf52ec169a9ce5056ea6a86f1735853356c6729b6a77380a64735a6",
   "content_digest_sha256": "0268089074b51d7b2457fa280bb19f5a2ce1c49b708dbb6654f49df78ea61b18",
   "extraction_status": "extracted_draft",
   "notes": [

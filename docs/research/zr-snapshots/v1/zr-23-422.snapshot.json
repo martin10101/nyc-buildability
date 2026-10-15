@@ -50,6 +50,7 @@
     ],
     "table_note": "The three 'In the district indicated ...' statements in this section are associated by the researcher with R5 (35/45 + setback), R5B (building 35), and R5D (building 45) respectively. R5A is NOT here - it is a pitched-roof envelope under §23-421. The exact district-to-statement association is a needs_review item pending raw-HTML row confirmation."
   },
+  "table_digest_sha256": "7a2643e52930b2c25a05efa67d5c9c5401715c90ee7975e7cb609d680cf01941",
   "content_digest_sha256": "7e910c245bfc4c8f1a65ffdbdaf9b4985b71477338d3173c13f2a77395f0148a",
   "extraction_status": "extracted_draft",
   "notes": [

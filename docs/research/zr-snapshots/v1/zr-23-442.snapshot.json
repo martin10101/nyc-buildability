@@ -175,5 +175,6 @@
     "Sections and defined terms this text points to are listed, with their pointing words and whether the repository already holds a capture, in the M4-T031 producer report; none is captured by this snapshot beyond this task's named set.",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "e9411d340824faca1c14f1dba3ec4dcf24516bf866324a8797c7bca64e6bd234",
   "content_digest_sha256": "c6e45275dcb7ff1f0d9f53213266eb6a2ce2410594100014bf1edbe9b82e9efb"
 }

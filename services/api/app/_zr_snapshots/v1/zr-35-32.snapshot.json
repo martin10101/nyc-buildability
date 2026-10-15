@@ -128,5 +128,6 @@
     "Channel: the authoritative, sha256-and-byte-pinned channel is the canonical section HTML (raw_html_sha256 and response_bytes in source). The section's own print/PDF render (node 22820) was fetched once and used ONLY as a text check; per M4-T025 finding F4 (DB-167) the PDF bytes are regenerated per request and are NOT pinned.",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "140e4cee69d7de4f54f37e81eef959d0564321625a737cbc547f09f67e6e50c3",
   "content_digest_sha256": "d1aad127c4ea150d3d6c388dbb40b5699c46912673f97c3a2b4723273e03c42a"
 }

@@ -120,6 +120,79 @@ def _digest(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def _table_payload(raw: dict) -> object | None:
+    """Return the structured table payload a snapshot carries, or ``None``.
+
+    Two mutually exclusive shapes exist (see docs/RULES_ENGINE_ARCHITECTURE.md
+    §5): a ``table`` object (carrying ``rows`` or ``row_groups``) XOR a
+    ``tables`` list. A snapshot carrying BOTH keys, or a ``table``/``tables``
+    key of an unexpected shape, is malformed and fails closed.
+    """
+    has_table = "table" in raw
+    has_tables = "tables" in raw
+    if has_table and has_tables:
+        raise SnapshotError(
+            f"snapshot {raw.get('snapshot_id')}: carries both 'table' and "
+            "'tables' payloads (mutually exclusive)"
+        )
+    if has_table:
+        table = raw["table"]
+        if not (isinstance(table, dict) and ("rows" in table or "row_groups" in table)):
+            raise SnapshotError(
+                f"snapshot {raw.get('snapshot_id')}: 'table' payload is not an "
+                "object with 'rows' or 'row_groups'"
+            )
+        return table
+    if has_tables:
+        tables = raw["tables"]
+        if not isinstance(tables, list):
+            raise SnapshotError(
+                f"snapshot {raw.get('snapshot_id')}: 'tables' payload is not a list"
+            )
+        return tables
+    return None
+
+
+def _canonical_table_digest(payload: object) -> str:
+    """sha256 over the canonical JSON of the PARSED payload, so re-indenting the
+    snapshot file never changes the digest — only an edit to a table value does."""
+    canonical = json.dumps(
+        payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    )
+    return _digest(canonical)
+
+
+def _verify_table_digest(raw: dict) -> None:
+    """Tamper-evidence for the structured table payload that
+    ``content_digest_sha256`` does NOT cover (it signs only ``verbatim_excerpt``;
+    the excerpt holds a ``[table - see structured table field]`` placeholder).
+
+    Fails closed on a payload without a digest, a digest without a payload, and a
+    digest mismatch, so a silently edited FAR/height table value is caught on load
+    (DB-276). Snapshots with no table payload are unaffected.
+    """
+    payload = _table_payload(raw)
+    stored = raw.get("table_digest_sha256")
+    if payload is None:
+        if stored is not None:
+            raise SnapshotError(
+                f"snapshot {raw.get('snapshot_id')}: table_digest_sha256 present "
+                "but the snapshot carries no table payload"
+            )
+        return
+    if not isinstance(stored, str) or not stored:
+        raise SnapshotError(
+            f"snapshot {raw.get('snapshot_id')}: table payload present but no "
+            "table_digest_sha256"
+        )
+    actual = _canonical_table_digest(payload)
+    if stored != actual:
+        raise SnapshotError(
+            f"snapshot {raw.get('snapshot_id')}: table_digest_sha256 mismatch "
+            f"(stored {stored!r} != sha256(canonical table JSON) {actual!r})"
+        )
+
+
 def load_snapshot_file(path: Path) -> SectionSnapshot:
     try:
         raw = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -137,6 +210,7 @@ def load_snapshot_file(path: Path) -> SectionSnapshot:
             f"snapshot {raw.get('snapshot_id')}: content_digest_sha256 mismatch "
             f"(stored {stored!r} != sha256(excerpt) {actual!r})"
         )
+    _verify_table_digest(raw)
     source = raw.get("source", {})
     return SectionSnapshot(
         snapshot_id=raw["snapshot_id"],

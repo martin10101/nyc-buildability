@@ -93,5 +93,6 @@
     "LIST-LABEL CORRECTION (the M3-T008 G1 F1 lesson): the three lettered items are labelled (a), (b), (c) from the official print/PDF, which prints one continuous list; the HTML <ol> markup puts each item in its own list and restarts the lettering at (a). Only the labels were set from the print; no word, no defined-term marker changed.",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "79b184e6e13f8fa21290ee2726881c23e3a76c6d9dc9d4f8fd1a063a2bfa3f57",
   "content_digest_sha256": "77951e89b5edbbc83a9046cf88595a6355c3cc2059ef6ae6ca127ab557c4e8bb"
 }

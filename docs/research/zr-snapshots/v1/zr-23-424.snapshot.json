@@ -36,6 +36,7 @@
     ],
     "table_note": "The §23-424 alternative (taller) envelope - base height 45 ft, building height 55 ft, with a setback per §23-423 - applies ONLY on a 'qualifying residential site' (§12-10): broadly a lot of 5,000 sf or more within the Greater Transit Zone with wide-street/short-block frontage and no excluding district. That geography cannot be evaluated from the canonical property_profile, so the alternative fails closed to professional_review_required."
   },
+  "table_digest_sha256": "184a2e31705fb8e1b65d668076b489043ea95fe61f5e2aece53c9322ebd6fca7",
   "content_digest_sha256": "1ad17144b64593652e67e49edf7c1006e9c476074ce62d076e9804da844ce506",
   "extraction_status": "extracted_draft",
   "notes": [

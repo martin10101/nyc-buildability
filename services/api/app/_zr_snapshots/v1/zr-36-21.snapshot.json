@@ -1375,5 +1375,6 @@
     "PDF text-check is PARTIAL for this section: pdftotext does not extract a few styled table cells (e.g. the use-category 'Libraries, museums or non-commercial art galleries' and 'Riding academies or stables'); those cells are present in the sha256-pinned HTML (the authoritative channel) and are captured cell-by-cell below. See cross_check.result.",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "eb9303cb76c2a3b5f2420038b4baaf00016daeb5f4e9a2606307d38a1d31dbdc",
   "content_digest_sha256": "47b2295cbd17b6649f7e9d0554af4d9f62dce54487fefa515c39dec7ecf35537"
 }

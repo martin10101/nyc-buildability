@@ -36,6 +36,7 @@
     ],
     "table_note": "This row is byte-verified to include EVERY R1/R2-series district symbol at 35 ft base / 35 ft building height: R1-1, R1-2, R1-2A, R2, R2A, R2X (plus R3-1/R3-2/R3A/R3X, out of this family's scope - those are M4-T014's R3/R4-series territory). Note bare 'R1' does NOT appear in this table (only R1-1/R1-2/R1-2A do); the R1/R2/R2X QRS rule this snapshot supports is therefore scoped to the six symbols actually named here, never to bare 'R1'."
   },
+  "table_digest_sha256": "38abef9fdf2457f5c68df924869deb40b98d22d604f3ff869e42bee2fc364990",
   "content_digest_sha256": "336ba2cbbe73689e8b24caf3b3d8bb396eaee5d3b8a89b018328213801c798cc",
   "extraction_status": "extracted_draft",
   "notes": [

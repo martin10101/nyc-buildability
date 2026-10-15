@@ -628,5 +628,6 @@
     "The section's two tables are carried in the structured `tables` field (caption, the section's own symbol legend quoted verbatim, columns, a header-structure note and the rows, every cell verbatim with #term# markers). Each table is replaced in the excerpt by a placeholder. The use-name, category and column-header cells were confirmed in the print/PDF; the use-allowance glyph cells and the PRC-column codes are the canonical HTML's and do not render in the print/PDF text layer (disclosed in cross_check and header_structure).",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "08c6a6c007f3c077e810ecddf4e4519f208fd8f3e3535fca1f484b168d9ae9e3",
   "content_digest_sha256": "a40bcc1a791a7c53bcbee29536a76ca2483dd98893325f7e85c941131712966a"
 }
