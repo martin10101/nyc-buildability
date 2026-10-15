@@ -1,0 +1,42 @@
+{
+ "task_id": "M3-T012",
+ "material_commits": [
+  "8891fb99 (researcher (cherry-pick of a9dc02c8): evidence record NB-07 (outside every MIH and former IH designated area), its index line in docs/RESEARCH_REQUESTS.md and its row in the evidence-records README, NB-05 revision 7 (DB-274's parenthesis clarified, text only), the producer report)"
+ ],
+ "claim_seam_head": "593f8c7ace9e807cd9ecd0790c87489e16827965",
+ "files_changed": [
+  "docs/RESEARCH_REQUESTS.md",
+  "docs/research/evidence-records/NB-05-special-density-area.json",
+  "docs/research/evidence-records/NB-07-mih-inclusionary-status.json",
+  "docs/research/evidence-records/README.md",
+  "project-control/reports/M3-T012-producer-report.md"
+ ],
+ "what_did_not_change": "No rule, engine, result, report page, reference case or capture changed; NB-05's code identity, readings, values and status are unchanged; no other record changed.",
+ "known_limits": [
+  "The DCP layers say they are not for tax-lot-level eligibility, and the Appendix F map image itself is not transcribed: the record is answered from the primary layers with that condition named; requested label Provisional; nothing Verified.",
+  "What MIH status changes for options 2, 3 and 11 (no 27-131 set-aside; the qualifying columns reachable through UAP or a regulatory agreement) is an unreviewed draft reading (ADR-007).",
+  "No program check reads NB-07 yet (no code path); a connector for the MIH/IH layers would be new work."
+ ],
+ "checks_at_material_head": [
+  "producer: research_record_check --check exit 0 (7 records; NB-07 current, Provisional); E4's saved_copy sha256 recomputed equal; lane coverage PASS; only the five allowed paths changed",
+  "G1 data-contract-verifier at 8891fb99: PASS (re-opened the DCP layers, MapPLUTO and Appendix F; whole-outline intersects 0 in both layers; nearest MIH 5,925.4 ft, nearest former IH 17,617.8 ft; three advisories)",
+  "CI run 38726761775 at ac7b69e9 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-093-R038": [
+   "One concise record for the question 'is the lot in an MIH area or a former IH designated area, and what does that change': docs/research/evidence-records/NB-07-mih-inclusionary-status.json with its question and scope (BBL 4073340070; zoning lot unconfirmed; whole site; current law), primary evidence (MapPLUTO, the DCP nycmih and nyih layers with their last-edit dates, the Appendix F pointer capture with its LF sha256, the ZAP search), meaning and applicability, measurement basis, conclusion, freshness and search."
+  ],
+  "D-093-R050": [
+   "Two independent readings, one sealed from the other, are the record's agent reviews (official-source-researcher; data-contract-verifier), each opening the decisive layers and Appendix F and working the result separately; the G1 reviewer re-opened them again and reproduced every headline fact (return in project-control/reports/M3-T012-reviews.md)."
+  ],
+  "D-093-R052": [
+   "tools/research_record_check.py --check passes with NB-07 present (status answered_from_primary_source, review current, requested label Provisional); no result is marked verified; the record carries its conditions."
+  ],
+  "D-094-R003": [
+   "The D-093 workflow was applied: every brief of this task carried its dispatch clause and named the evidence records and the settled reference cases; completed research (the two independent determinations) was reused, not repeated."
+  ],
+  "D-094-R104": [
+   "One documents-only producer (official-source-researcher) inside the helper limits (at most three building at once, never sharing files: this task's five files are in no other packet in flight); read-only research helpers produced the two determinations."
+  ]
+ }
+}

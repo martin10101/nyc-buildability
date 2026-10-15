@@ -110,8 +110,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK 1 (sequencing, critical): M5-T170 (status claimed, in-flight) holds docs/RESEARCH_REQUESTS.md AND docs/research/evidence-records/README.md in its allowed_paths. NB-07 edits both. Per CLAUDE.md principle 10 (no overlapping parallel writes), NB-07 must run AFTER M5-T170 is accepted and merged \u2014 hence the M5-T170 dependency. Do not dispatch NB-07 concurrently with M5-T170.",
     "RISK 2: the DCP nycmih/nyih layers carry a 'not for tax-lot-level eligibility' disclaimer and the Appendix F CD 11 map image (the legal instrument) is not transcribed. The membership fact is robust (5,925 ft / 17,618 ft margins, ~300x map tolerance) so research_status answered_from_primary_source stands, but requested_label is Provisional with non-empty conditions; nothing Verified.",
@@ -121,7 +121,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:13:14.102468+00:00",
-  "updated_at": "2026-10-15T11:21:10.825259+00:00",
+  "updated_at": "2026-10-15T11:30:46.143056+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -162,6 +162,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "producer round 1 (NB-07 record + NB-05 parenthesis); the builder's commit integrated as 8891fb99 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T11:30:44.328775+00:00",
+      "agent": "official-source-researcher",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }
