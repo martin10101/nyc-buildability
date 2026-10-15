@@ -2591,78 +2591,143 @@
     "D-094-R098"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65",
+   "reviewed_manifest_sha256": "d2008f3695c6e780d223dc9146d191134667ec3772daec742fc561c6f75ae86f",
    "requirements": [
     {
      "id": "D-094-R024",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source (source-001.md#attached-brief line 99/229): \"Do not silently equate gross floor area, zoning floor area, and apartment area.\"",
+      "The kernel prints the block's measure tag \"Residential floor area\" and the exact conversion statement \"plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked\", so the basis is disclosed, never silently equated (both snapshots carry both lines; test_s6 asserts \"zoning floor area\" absent from the measure tag).",
+      "An apartment/other split that does not reconcile to total, or whose apartment/total disagrees with share, returns Unavailable (test_s3_inconsistent_split_is_unavailable, reproduced: 37/37 tests pass).",
+      "Stays open: R024's wider report-schedule obligations (displayed rounding/totals reconcile, accounting in the appendix) belong to the schedule/report tasks, not this drawing kernel.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R087",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source (source-003-amendment): the remaining 25\u201340% must not all be called \"core and corridors\".",
+      "The second zone is labelled from token area_zone_other = \"Other building area: core, circulation, walls and services\" \u2014 never \"core and corridors\" (verified in presentation_tokens.py and in both snapshot <text data-role=\"area_label_other\">).",
+      "test_s2_labels_and_caption_are_the_tokens_verbatim pins this string; 37/37 pass.",
+      "Nothing stays open: the decision is fully honoured in this kernel.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R088",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source authorizes a simple two-zone illustration under R089\u2013R098.",
+      "The illustration exists as a leaf kernel services/api/app/drawings/kit/area_allocation.py in both states (bar when unfitted, two zones when fitted+placed), with two byte-stable snapshots; scenarios S1\u2013S9 reproduce.",
+      "Stays open: placing the illustration on the worked scenario (PDF) and website is M5-T173 Part B and M5-T174; this task does no report/website wiring (forbidden_paths bar it, evidence map \"what_did_not_change\").",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R089",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: zones labelled exactly \"Apartment area\" and \"Other building area: core, circulation, walls and services\".",
+      "The drawing renders both labels byte-equal to the committed WORDING tokens (snapshots + test_s2; token values confirmed \"Apartment area\" and \"Other building area: core, circulation, walls and services\").",
+      "Observation: the token (and thus the drawing) omits the trailing period present in the owner's quoted sentence; the canonical WORDING string is owned by M5-T165 (presentation_tokens.py is in this task's forbidden_paths), so the period decision is not this kernel's to set \u2014 this kernel correctly consumes the approved token verbatim.",
+      "Nothing stays open in this kernel's share (labels are the approved tokens, verbatim).",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R090",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: caption \"Illustrative area allocation\u2014not a floor plan.\"",
+      "The drawing prints token area_illustration_caption = \"Illustrative area allocation\u2014not a floor plan\" with an em dash, exactly one caption element, same trailing-period note as R089 (test_s2 asserts no trailing period and count==1; both snapshots carry one caption).",
+      "caption=False can omit it for the report frame (test_s2_caption_can_be_omitted_for_the_report_frame).",
+      "Nothing stays open in this kernel's share.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R091",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: one explicitly stated percentage from the 60\u201375% assumption; drawing and calculation consistent; percentage shown beside it.",
+      "The kernel prints round(share*100) as \"65%/70% apartment area\" (never hardcoded: test_s4) and enforces share in 0.60\u20130.75 (out-of-range \u2192 Unavailable, test_s8); the drawn proportion equals share within 0.5% in both states (bar 189.80/292.00=0.65; zones 137.20/196.00=0.70; test_s3).",
+      "On the fixtures the drawn ratio also equals apartment/total (rear_yard 12025/18500=0.65; placed 13300/19000=0.70 \u2014 read directly from the fixtures).",
+      "Stays open: the real-report 60% figure is emitted upstream by the engine (M5-T164/M5-T177), outside this data-driven kernel; it does not contradict the settled placement-building-b.json 60% reading because the fixtures are synthetic.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R092",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: estimate and drawing use compatible area measures; zoning floor area not automatically treated as physical floorplate.",
+      "The drawing carries the block's measure and the exact conversion statement disclosing plate = zoning floor area per storey with no conversion worked; a garbled block (wrong label/measure/conversion) returns Unavailable (test_s6, test_s8), so ZFA is never silently taken as floorplate.",
+      "test_s6 asserts \"zoning floor area\" is absent from the measure label; both fixtures carry measure \"residential_floor_area\".",
+      "Stays open: the live estimate\u2194drawing measure compatibility across the engine/report is M5-T164/M5-T177/M5-T182's share; here it is a defensive refusal only.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R093",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: no rooms, unit walls, apartment counts, or invented stair/elevator locations.",
+      "The rendered group contains only the expected six texts and exactly one number (the percentage), and the fitted state has exactly one line inside the footprint (the single proportional division): test_s5_only_the_expected_texts_and_one_number and test_s5_fitted_has_exactly_one_line_inside_the_footprint; both snapshots confirm (one area_division path, no other interior line).",
+      "The two zones share one fill and differ only by hatch; no count, room or core/stair/elevator mark is drawn.",
+      "Nothing stays open in this kernel's share.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R094",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: zones inside the footprint only when fitted to the site; until then a proportional bar beside the building diagram.",
+      "Unfitted fixture (fitted=false, placement withheld, no outline) \u2192 a proportional bar with no zone/division/footprint; fitted fixture (fitted=true, status placed, 82\u00d782 outline) \u2192 two zones inside outline[0] with one division and no bar (test_s1, both snapshots).",
+      "Fitted-without-outline (None/withheld) returns Unavailable reason_kind \"not_placed\" \u2014 never a bar mislabelled fitted (test_s1_fitted_without_outline_is_unavailable_never_a_bar).",
+      "Stays open: the bar-beside-the-actual-building-diagram pairing is composed on the scenario sheet (M5-T173 Part B); the kernel emits the bar alone, as scoped.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R095",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source: keep the explanation to one short caption; put methodology in the appendix.",
+      "The drawing emits exactly one caption and carries no methodology prose (test_s5 pins the full text set; only the one caption plus labels/measure/conversion/percentage appear).",
+      "Stays open: \"methodology goes in the appendix\" is report-wiring and belongs to M5-T173 Part B; not drawn by this kernel.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R098",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner source (harness): verify the rendered result for readability and consistency before marking complete.",
+      "This kernel's two SVGs were independently checked: every <text> font-size is 9.50 pt (\u22658.5), zones are told apart by two distinct hatch patterns at the same fill #EEF4F7 (test_s7, both snapshots); the G3 visual-quality-reviewer rasterised both and returned PASS with only placement-stage advisories.",
+      "I reproduced the measurable facts from the SVG text; I did not rasterise pixels myself (see section 6).",
+      "Stays open: readability/consistency of the illustration once placed on the report page and website (and under any down-scaling below ~0.89\u00d7) is verified by M5-T173 Part B / M5-T174 / M0-T195 \u2014 three advisories are recorded for them.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 3170556f (content identity d2008f36), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (one gate record, both returns); G4 qa-engineer; G5 security-reviewer (round 1 and the delta check of round 2)). DCV report: project-control/reports/M5-T183-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T08:43:55+00:00"
   },
   {
    "directive_id": "D-094",
@@ -2672,24 +2737,37 @@
     "D-094-R104"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65",
+   "reviewed_manifest_sha256": "36bd5bf7daf4f8abe7b95d558ce5d2f794ab86e36b5f12d6af4b258b2edebb79",
    "requirements": [
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "All 20 captures verified at the frozen head: snapshot_schema == zr_section_snapshot/v1, content_digest_sha256 == sha256(verbatim_excerpt), snapshot_id == filename, extraction_status extracted_draft, source.raw_html_verified false, and an ADR-007 not-professionally-reviewed label present on all 20.",
+      "Each docs/research/zr-snapshots/v1 file is byte-identical (LF-normalized) to its services/api/app/_zr_snapshots/v1 bundled copy (20/20); 18 section captures pin both raw_html_sha256 and raw_pdf_sha256 (cross_check result \"match\", 25-24 correctly \"no_own_body\"), and the two 12-10 terms pin HTML with the disclosed 504/403 \"unavailable_documented_fallback\".",
+      "The library stale-state corrections are applied: options-sections.md line ~155 now reads 66-11 'mass transit station'; benchmark-r6b-sections.json is valid JSON with 32-131 re-pointed to option 6/7 and the C2-2 retail permission re-attributed to 32-161; option-06-07 / option-02-03 capture-state cells flipped NOT CAPTURED -> the captured snapshot ids with no reading or value changed; the index legitimately references none of the 20 new sections (119 entries, 0 overlap), so adding no new index rows was correct.",
+      "Stays open: R102 as a whole (the library lane \u2014 full cross-reference closure, the complete handles/does-not list, the official-guidance pitfall list, and the still-owed captures the producer report names: 22-131..135, 33-261/262, 23-154, 77-xx, 33-27/28/30, CF parking, 74-902/903) continues in later tasks, and no rule yet cites these captures (documents only).",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 087670a9 (content identity 36bd5bf7), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (round 1 and the delta check of both corrections); G2 orchestrator self-check). DCV report: project-control/reports/M3-T010-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The task ran as a single documents-only producer (packet producer_agent official-source-researcher); its reviewer_agents (data-contract-verifier, directive-compliance-verifier) are read-only, so it added one builder, not a swarm.",
+      "Its 45 allowed_paths have zero intersection with every in-flight wave-26 task at the frozen head (M5-T170 89 paths, M5-T182 5, M5-T183 5, M5-T184 19, M5-T175 15 \u2014 all 0 shared), so \"never sharing files\" holds for this task.",
+      "The section list was fed by read-only research helpers (the sealed option readers and the comparer of session 2026-10-15a) per the packet inputs; capture reads and research, consistent with the \"extra helpers only read and research\" authorization.",
+      "Stays open: the session-wide concurrency ceiling (at most 8 helpers / at most 3 building at once) is a session-level posture recorded in session notes/dispatch records, not fully reconstructable from this task's committed artifacts; this task's own contribution to that ceiling is compliant.",
+      "Verifier's carry-forward condition met at 4e61d3fc: the task's allowed-path files are identical to those verified at 087670a9 (content identity 36bd5bf7), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (round 1 and the delta check of both corrections); G2 orchestrator self-check). DCV report: project-control/reports/M3-T010-DCV.md."
+     ],
+     "reviewed_sha": "4e61d3fcc05e09d0feb56bad35e73c2e35c4fc65"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T08:43:57+00:00"
   },
   {
    "directive_id": "D-094",
