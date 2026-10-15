@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-15T23:31:48+00:00",
+ "updated_at": "2026-10-15T23:37:01+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -133,31 +133,83 @@
      "note": "contracted and claimed 2026-10-15 beside the report lane (new snapshot files and the law-library flag files; no shared file); documents only"
     },
     {
-     "wave": 25,
-     "item": "the GIS-wording sweep DB-245 (the city map outline never called 'tax map'), moved out of M5-T167",
+     "wave": 29,
+     "item": "scenario drawings (M5-T173 part B, the audit's highest-priority defect, so it now runs first): the placed footprint dimensioned on the page-4 site plan (city map basis), the section with its height lines, the reconciled schedule and the two-zone area illustration on page 6 (printed tax map basis), and every 'shown/drawn' claim read from what the report actually drew; four parallel parts M5-T191 (page-4 footprint renderer), M5-T192 (section height lines), M5-T193 (scenario-sheet figures), M5-T194 (drawn-content manifest), then the serial wiring part M5-T173",
+     "ids": [
+      "M5-T173",
+      "M5-T191",
+      "M5-T192",
+      "M5-T193",
+      "M5-T194"
+     ],
+     "state": "planned",
+     "waits_for": []
+    },
+    {
+     "wave": 29,
+     "item": "the GIS-wording sweep DB-245 plus plain-language reasons and next actions (no internal development wording on architect pages; audit of 2026-10-15 section 5); after the scenario drawings so the shared report tests and the benchmark are re-pinned once",
      "ids": [
       "M5-T180"
      ],
      "state": "planned",
      "waits_for": [
-      "M5-T167"
+      "M5-T173"
      ]
     },
     {
-     "wave": 27,
-     "item": "scenario sheet: dimensioned footprint, section, reconciled schedule, two-zone area illustration",
+     "wave": 29,
+     "item": "options 2-3 worked (E0): option 2's own legal unit limit (35, conditional on the qualifying pathway; at least 4,030 sq ft affordable floor area on the UAP route, part of the 24,180) and option 3 never given that count (ZR 23-52(a)(2)); the pathway named beside 24,180 sq ft and 65 ft; four parallel new-file parts (rule, engine figures, report extras, record NB-09) then one serial part",
      "ids": [
-      "M5-T173"
+      "M5-T195",
+      "M5-T196",
+      "M5-T197",
+      "M5-T198",
+      "M5-T199"
      ],
-     "state": "planned"
+     "state": "planned",
+     "waits_for": [
+      "M5-T180"
+     ]
     },
     {
-     "wave": 28,
-     "item": "website parity for the remaining sections",
+     "wave": 29,
+     "item": "website parity: the two-zone illustration drawn on the website (fitted branch first, part M5-T202), the eleven-option list, law links and the results revision; then mounted in the Results flow with the same quantities, bases, scenario ids and uncertainty states as the PDF; verified on the benchmark property in the browser",
      "ids": [
-      "M5-T174"
+      "M5-T174",
+      "M5-T202"
      ],
-     "state": "planned"
+     "state": "planned",
+     "waits_for": [
+      "M5-T173",
+      "M5-T199"
+     ]
+    },
+    {
+     "wave": 30,
+     "item": "page-by-page information design (audit section 5): page-1 composition and wrapping, constraints headings and badges, open items, appendix citations ('ZR 23-22' with its link, not the full title in every cell), repeated headings removed with accessible table names; parallel page parts on disjoint files, then one serial part for the shared layout and the report pins",
+     "ids": [],
+     "state": "planned",
+     "waits_for": [
+      "M5-T180"
+     ]
+    },
+    {
+     "wave": 30,
+     "item": "options 6-7 worked (E1): community-facility floor area (ZR 24-11 = 2.00 on R6B; 24-111 adds nothing for a suffixed district), no floor-area gain over option 1; option 7 no dwelling units; record NB-08",
+     "ids": [],
+     "state": "planned",
+     "waits_for": [
+      "M5-T199"
+     ]
+    },
+    {
+     "wave": 30,
+     "item": "option 5 worked (E2): C2-2 ground-floor shops, combined cap 2.00 (ZR 35-31; 35-32 and 35-33 do not reach R6B), one-for-one trade against residential floor area; record NB-10",
+     "ids": [],
+     "state": "planned",
+     "waits_for": [
+      "E1"
+     ]
     },
     {
      "wave": 29,
@@ -174,7 +226,14 @@
      "ids": [
       "M0-T195"
      ],
-     "state": "planned"
+     "state": "planned",
+     "waits_for": [
+      "M5-T173",
+      "M5-T180",
+      "M5-T199",
+      "M5-T174",
+      "M0-T197"
+     ]
     },
     {
      "wave": 28,
@@ -188,10 +247,41 @@
   },
   "after_this_pass": [
    {
-    "item": "options 2-11 worked (law each still lacks: side yards 23-335, community facility 24-11/24-111, the affordable-housing program 23-154, mixed buildings 35-30..35-33 and overlay 33-121, shops 32-131/32-161, parking 25-xx and the transit zone, shared housing; what 'split lot' means for option 8)",
-    "state": "not_planned",
+    "item": "options 2-3, 5 and 6-7 moved into the current pass (E0, E1, E2 above); option 4 (more, smaller apartments) is a presentation note folded into the wording sweep or the options rows",
+    "state": "planned",
     "refs": [
-     "docs/zoning-law-library/options-sections.md",
+     "M5-T180",
+     "docs/reference-cases/R6B/cases/benchmark-options-4-11.json"
+    ]
+   },
+   {
+    "item": "option 9 shared housing (E3): rooming units as residential floor area, no ZR dwelling-unit ceiling (23-51), parking in the Outer Transit Zone (25-221); room size outside the ZR and the shared-housing framework not enacted yet (named gaps)",
+    "state": "planned",
+    "refs": [
+     "docs/reference-cases/R6B/cases/benchmark-options-5-8-9-10.json",
+     "DB-255"
+    ]
+   },
+   {
+    "item": "option 10 shared housing with the parking waiver, shown apart from option 9",
+    "state": "owner_decision",
+    "refs": [
+     "owner questions N2, N3"
+    ]
+   },
+   {
+    "item": "option 8 split lot / two buildings: candidate meanings (two buildings on one zoning lot; a subdivided zoning lot; a lot divided by a district boundary), none chosen",
+    "state": "owner_decision",
+    "refs": [
+     "owner question N1",
+     "docs/reference-cases/R6B/cases/benchmark-options-5-8-9-10.json"
+    ]
+   },
+   {
+    "item": "option 11 all programs combined (E6): greatest single-use ceiling 2.00, 2.40 only with qualifying housing; extends the combination search once E0-E3 exist",
+    "state": "planned",
+    "refs": [
+     "docs/reference-cases/R6B/cases/benchmark-options-4-11.json",
      "DB-243"
     ]
    },
@@ -316,7 +406,7 @@
     "M5-T183",
     "M5-T173"
    ],
-   "note": "M5-T169 stays on the path because the scenario sheet (M5-T173) reads its rounding helper; the order is the work order's serial lane (one engine task holds the benchmark set at a time); M5-T182 and M5-T183 are the first, unwired parts of M5-T172 and M5-T173, built beside M5-T170 on files no other task touches (2026-10-15)."
+   "note": "All but M5-T173 are accepted. M5-T172 worked out the placement, the plates and the area split (page 5 reads 'Worked out; not drawn'); M5-T183 built the two-zone drawing unwired. M5-T173 part B (with its parts M5-T191 to M5-T194) draws the footprint, the section and the two-zone illustration and makes every visible claim follow what is drawn; that meets this milestone (the audit's highest-priority defect, 2026-10-15). The next milestone is then options 2-11 worked with website parity and the final export."
   },
   "progress_record_rule": "Each done entry names its code change (commit links), its test evidence (the CI run read green at the accept head) and its visible result, or says it is supporting work with no visible change yet (D-094 R142); links open on GitHub (R140)."
  }
