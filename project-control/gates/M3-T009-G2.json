@@ -1,0 +1,12 @@
+{
+  "task_id": "M3-T009",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M3-T009-reviews.md",
+  "reviewed_at": "2026-10-15T02:27:11.540886+00:00",
+  "content_manifest_sha256": "3b8091205ea8be636a073cfba7c186ad18b2b980b6ac714bf8d5ec299bce19eb",
+  "reviewed_sha": "48b77e0257edc00399c318519fc3a00822953034",
+  "updated_at": "2026-10-15T02:27:12.106497+00:00"
+}

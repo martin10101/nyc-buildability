@@ -1,0 +1,54 @@
+{
+ "task_id": "M5-T181",
+ "material_commits": [
+  "3edf9ae0 (builder round 1 (cherry-pick of 689d4b0f): the full-width lead band above the unchanged 44:56 grid; the S4 order test; the new first-screen browser spec; the producer report)",
+  "965de3d5 (builder round 2 (cherry-pick of 519f219f): the allowance beside the ceiling-and-estimate block from a 640 px container, the status strip after them, a smaller heading on phones; the spec rewritten to 2 results requests asserting each value's bottom inside the window; the report's Round 2 section)"
+ ],
+ "claim_seam_head": "658e51fbd4bb70ad5594061a08ac2f3102b1e293",
+ "files_changed": [
+  "apps/web/e2e/results-first-screen.flag-on.spec.ts",
+  "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/answers/three-answers.css",
+  "project-control/reports/M5-T181-producer-report.md"
+ ],
+ "what_did_not_change": "Every figure, label, certainty word and fixed wording; ApartmentFigures.tsx, AnswerCard.tsx, ScopeSummary.tsx, apps/web/src/lib/architect/*, docs/design/presentation-tokens.json, the shared floating window, the global styles and every forbidden test (results-layout.flag-on.spec.ts, results.flag-on.spec.ts, report-print.flag-on.spec.ts, the e2e harness, the journey, scope and apartment-figures tests) byte-identical to the claim head; all 13 assumed conditions still shown open (D-090 R119); no package added; no server code.",
+ "known_limits": [
+  "On phones (320 and 390 px) the floor-area allowance is in the first screen and the legal ceiling and estimate are one short scroll below it (tops 963 and 848 px, under 1.25 x 844); the Results window keeps its shared size. Backlog DB-264.",
+  "Only the floor-area allowance leads among the three answers; the height and the scheduled building follow in the detail grid; the status strip follows the results and sits below the first screen. Backlog DB-264 for the later website task M5-T174.",
+  "The pictures and the browser tests use the recorded benchmark lot; the ten-second test with a real person is not run (it needs a person)."
+ ],
+ "checks_at_material_head": [
+  "builders: npm ci 0 (lockfile only); lint 0; typecheck 0 (covers e2e); vitest answers + lib/architect 591 passed in each round; mutation proofs fail as expected (S4 order; the stronger bottom-in-window assertions against the round-1 positions)",
+  "pre-integration checks (ci-evidence-verifier, read-only) for each round: READY_TO_INTEGRATE (one commit on the dispatch head, scope, digests, lint, typecheck, 591 vitest re-run; round 2: 2 results requests)",
+  "orchestrator (G2): round 1 measured on the real preview at 1bec7065 and in CI run 38651131040 and sent back; round 2 measured at f78d302f (six-after-f78d302f/positions.txt): at 768-1920 px allowance, ceiling (531-550) and estimate (565-584) inside the window visible to 795; assumed conditions from 977 down (356 before at 1440); at 390/320 allowance in the first screen, ceiling 848/963; no horizontal overflow at any width",
+  "CI run 38655118526 at f78d302f: web-e2e 171 passed, among them both first-screen tests and the unedited layout and journey specs (the round-1 'Too many requests' failure gone); api and exact-production-install red only on the five review-register tests of M5-T167",
+  "G3 walkthrough (human-journey-reviewer) PASS at 965de3d5, no required correction (three advisories, DB-264)",
+  "G3 visual (visual-quality-reviewer) PASS at 965de3d5, no required correction (four advisories, DB-264)",
+  "G4 qa-engineer PASS at 965de3d5, no required correction (S1-S8 reproduced; forbidden paths byte-identical; five advisories, DB-264)",
+  "CI run 38670334315 at 48b77e02 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R051": [
+   "Result first, the material qualification next: the allowance and the ceiling-and-estimate pair with their chips, the distinction line, the lot-area basis and the zoning-lot concern lead; the derivation and the assumed conditions follow below in the detail grid, all still open."
+  ],
+  "D-094-R057": [
+   "Checked at representative desktop and phone sizes: the new spec passes at 320, 390, 768, 1024, 1440 and 1920 px in CI, and the orchestrator's pictures and position measurements at the same six widths were looked at by the visual and walkthrough reviewers."
+  ],
+  "D-094-R071": [
+   "The conditional 29 is never shown as units that can be built: the block is the unchanged ApartmentFigures (chip Conditional, the distinction line saying neither figure is a demonstrated layout); no wording changed and no forbidden word appears (the reviewers grepped the changed files)."
+  ],
+  "D-094-R073": [
+   "On the website the results no longer compete with the assumptions for the first screen: the 13 assumed conditions moved below the results band (they started at the top of the first screen before at 1440 and 1920 px)."
+  ],
+  "D-094-R081": [
+   "Prominent results with their assumptions beside them, in report page 1's order: identity, the main answer, the ceiling beside the estimate with the distinction and the lot-area line, then the uncertainties; the page-1 site graphic stays a report feature."
+  ],
+  "D-094-R083": [
+   "Before and after pictures of the changed website view at six widths, from real builds of main 30762409 and of the branch at f78d302f, with measured positions: session-2026-10-14d/six-before-30762409/ and six-after-f78d302f/ (round 1's six-after-1bec7065/ kept)."
+  ],
+  "D-094-R151": [
+   "The Results window's first screen now leads with the results: at 768, 1024, 1440 and 1920 px the floor-area allowance, the legal ceiling (29, Conditional) and the apartment estimate (17-22, Provisional) with the distinction line are inside the visible window, and the assumed conditions start below it (measured on the real preview at f78d302f; asserted by the new browser spec in CI). On phones the allowance leads and the ceiling is one short scroll away (recorded limit, DB-264)."
+  ]
+ }
+}

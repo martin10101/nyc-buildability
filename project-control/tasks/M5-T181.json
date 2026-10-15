@@ -128,8 +128,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "Results window height is capped at min(690, viewport) by FloatingWorkspaceWindow (wide window min(1100, width) x min(690, height), centered). The ~690 px dialog bounds how much of the lead fits in the first screen; the lead (identity + strip + allowance + apartment-figures, ~480-520 px stacked) fits with margin, but the builder must CONFIRM in the CI Playwright run that ceiling-value and estimate-value land in the first screen at every desktop width. Do NOT change the shared window height in this task (it would move all tools: map, proposal, study, report, evidence, results, and floating-workspace-window.test.tsx); if a width cannot fit, raise the results-scoped-height open question rather than editing the shared component.",
     "M5-T167 file overlap (task-premise correction): M5-T167.json allowed_paths include apps/web/e2e/results-layout.flag-on.spec.ts, apps/web/e2e/results.flag-on.spec.ts, apps/web/e2e/report-print.flag-on.spec.ts and apps/web/e2e/harness/fixture_api.py \u2014 not only services/api, packages/contracts/fixtures, docs/research and docs/zoning-rule-review as the task framing assumed. M5-T181 avoids all four by forbidding them and adding a NEW spec file (results-first-screen.flag-on.spec.ts); the orchestrator must still ensure M5-T167's producer does not touch those e2e specs so the two tasks truly share no file (CLAUDE.md principle 10).",
@@ -141,7 +141,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T22:35:27.178037+00:00",
-  "updated_at": "2026-10-15T00:03:06.021333+00:00",
+  "updated_at": "2026-10-15T02:27:18.749450+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -194,6 +194,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "builder round 2: allowance beside the ceiling and estimate (2-up from a 640 px container), the status strip after the results, a smaller heading on phones; the new spec makes 2 results requests and asserts each value's bottom inside the window; pre-integration check READY_TO_INTEGRATE; the builder's commit integrated as 965de3d5 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T02:27:16.421067+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [

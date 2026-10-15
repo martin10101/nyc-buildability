@@ -1,0 +1,61 @@
+{
+ "task_id": "M3-T009",
+ "material_commits": [
+  "ccf8e24b (researcher (cherry-pick of da377afb): fifteen captures (22-13 and Article II Chapter 4 24-04, 24-11, 24-111, 24-161, 24-162, 24-163, 24-33, 24-34, 24-35, 24-36, 24-391, 24-52, 24-522, 24-56) with byte-identical bundled copies; tables in the structured field of the zr-23-432 template; list letters from the official print; the producer report)"
+ ],
+ "claim_seam_head": "b077a4478248590dc200fc9b4ad2c050fd2dd5d0",
+ "files_changed": [
+  "docs/research/zr-snapshots/v1/zr-22-13.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-04.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-11.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-111.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-161.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-162.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-163.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-33.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-34.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-35.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-36.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-391.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-52.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-522.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-56.snapshot.json",
+  "project-control/reports/M3-T009-producer-report.md",
+  "services/api/app/_zr_snapshots/v1/zr-22-13.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-04.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-11.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-111.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-161.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-162.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-163.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-33.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-34.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-35.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-36.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-391.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-52.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-522.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-56.snapshot.json"
+ ],
+ "what_did_not_change": "No rule, scenario, drawing, test, script, library document, evidence record, reference case or review-register file; no existing snapshot; the sync script is unchanged (it wrote the bundled copies).",
+ "known_limits": [
+  "Every capture is an unreviewed draft (extraction_status extracted_draft, raw_html_verified false; ADR-007): documents only, no reading for any lot, no derived number, no eligibility determination.",
+  "22-13 is captured as the parent section only; its child sections 22-131 to 22-135 exist on the site and are owed to a later capture.",
+  "The illustration in 24-522 is not transcribed (its caption is kept); pdftotext drops some hyphens in the print's text layer, so the cross-check is hyphen-tolerant and the HTML keeps the hyphen.",
+  "The G1 reviewer confirmed the node id of ten of the fifteen pages directly; the other five are consistent and each URL returned the expected section."
+ ],
+ "checks_at_material_head": [
+  "producer: sync_zr_snapshots.py --check exit 0 (215 files); tests/rules/test_zr_snapshot_bundle.py + tests/drawings/report/test_report_law_links.py 28 passed; lane coverage PASS; own loader/digest/print check over every file",
+  "orchestrator (G2): the material commit touches only the packet's 31 allowed paths; LF sha256 of every file equal to the producer's return",
+  "G1 data-contract-verifier at ccf8e24be: PASS, no required finding; every section's title, date and text checked against the official page, tables cell for cell, every lettered list against the print (the previous set's required fix not repeated), parent-only sections confirmed; both checks green",
+  "CI run 38670334315 at 48b77e02 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R102": [
+   "The zoning-law library continues as its own documents-only line of work beside the report lane, sharing no file with it: this task captures, from the official portal, the fifteen sections the community-facility options need that the library marked not captured (backlog DB-253): 22-13 (parent section) and Article II Chapter 4 24-04, 24-11, 24-111, 24-161, 24-162, 24-163, 24-33, 24-34, 24-35, 24-36, 24-391, 24-52, 24-522 and 24-56, each in the zr_section_snapshot/v1 shape with a byte-identical bundled copy."
+  ],
+  "D-094-R104": [
+   "Helpers within the limits fed the work: one researcher built in its own worktree beside one other builder (M5-T167, disjoint files), and a read-only reviewer checked it (G1); at no time more than three helpers built, and no two helpers shared a file (session notes of 2026-10-14c)."
+  ]
+ }
+}
