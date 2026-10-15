@@ -309,8 +309,16 @@ def _uncertainty_line(row: Mapping, results: Mapping) -> raw:
             # finding 4). Page 3 keeps the full text - there title and text are separate
             # columns, so no stutter occurs.
             text = str(combined.get("text") or "")
-            if text.startswith(row["title"]):
-                text = text[len(row["title"]):].lstrip(": ")
+            title = str(row["title"])
+            # Strip the leading title ONLY at a word boundary - the character after the
+            # title is ':' , whitespace, or the end of the text - so a title that is a
+            # bare prefix of a LONGER word is never mis-stripped (DB-263 A3; S6). The
+            # existing 'Rear yard Rear yard ...' outcome is preserved (the char after
+            # 'Rear yard' there is a space -> boundary -> still stripped).
+            if text.startswith(title):
+                rest = text[len(title):]
+                if rest == "" or rest[0] == ":" or rest[0].isspace():
+                    text = rest.lstrip(": ")
             children.append(el("span", text))
             children += _rear_yard_section_links(combined.get("zr_sections"))
             children.append(label_chip(labels.label_for_way(combined.get("way"))))

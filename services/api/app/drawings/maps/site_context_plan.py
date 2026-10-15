@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import replace
 
 from shapely import make_valid
 from shapely.geometry import LineString
@@ -38,7 +37,7 @@ from .close_frame_dimensions import (
     dimension_line_segments,
     draw_edge_dimensions,
 )
-from .constraint_overlay import draw_site_constraints, expand_frame_for_overlay
+from .constraint_overlay import draw_site_constraints
 from .context_scene import (
     CLOSE_PLAN,
     CLOSE_PLAN_MARGIN,
@@ -725,14 +724,13 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet",
                                  constraint_lines=constraint_lines, input_facts=input_facts)
         # The dimensions all share the gis basis, so it is stated ONCE in a note under
         # the drawing and each label shows only the figure (owner K1, D-094 R116).
-        result = compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
-                                 mode="close", not_placed_legend=True, basis_note=GIS_BASIS_NOTE)
-        # When the overlay adds a legend entry, give the frame the height the legend
-        # needs so no row is clipped over the sources caption (S13); a frame without
-        # the overlay (or one whose legend already fits) is returned byte-identical.
-        if constraint_lines:
-            result = replace(result, svg=expand_frame_for_overlay(result.svg))
-        return result
+        # When a constraint overlay adds its own legend entry, compose_context gives the
+        # close frame the full height its furniture needs (overlay_present), so the 'No
+        # building placed' row is not clipped over the sources caption (S3; DB-263 A2); a
+        # frame without the overlay stays clamped and byte-identical (S4).
+        return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
+                               mode="close", not_placed_legend=True, basis_note=GIS_BASIS_NOTE,
+                               overlay_present=bool(constraint_lines))
     report = frame == "report"
     region, margin = ((REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN))
     fr = fit_view(view, region, margin, alpha=alpha, top_band=TITLE_BAND_PT)

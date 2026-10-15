@@ -37,7 +37,6 @@ label and the legend follow the drawn part.
 
 from __future__ import annotations
 
-import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
@@ -59,7 +58,6 @@ __all__ = [
     "DrawnConstraint",
     "draw_constraint_overlay",
     "draw_site_constraints",
-    "expand_frame_for_overlay",
     "overlay_offset",
 ]
 
@@ -166,9 +164,16 @@ def _label_text(kind: str, state: str, zr_sections: Sequence) -> str:
     return f"{name}, {state}, {law}" if law else f"{name}, {state}"
 
 
-def _label_candidates(anchor: Point, size: float):
+def _label_candidates(anchor: Point, size: float, *, perp: Point | None = None):
     """Candidate label positions around the anchor, nearest first, so a long
-    constraint label finds a clear spot without being shrunk (S6)."""
+    constraint label finds a clear spot without being shrunk (S6). For a drawn LINE
+    the FIRST candidate is a perpendicular offset OFF the line (``perp``, a unit
+    normal at the anchor), so the label's white box sits beside the drawn line and a
+    measurable part of the line stays visible instead of being hidden under the box
+    (S1; DB-263 A1). The full grid - including the on-line ``(0, 0)`` origin and the
+    surrounding rings - still follows as the fallback, so the fit/collision guarantee
+    (a label that cannot be placed FAILS rather than shrinks, S6) is unchanged. An
+    area label passes no ``perp`` and is byte-identical."""
     ax, ay = anchor
     step = size + 3.0
     grid = [(0.0, 0.0)]
@@ -179,7 +184,10 @@ def _label_candidates(anchor: Point, size: float):
                     continue
                 grid.append((dx * ring, dy * ring))
     grid.sort(key=lambda d: abs(d[0]) + abs(d[1]))
-    return [(ax + dx * step, ay + dy * step, 0.0) for dx, dy in grid]
+    cands = [(ax + dx * step, ay + dy * step, 0.0) for dx, dy in grid]
+    if perp is not None:
+        cands.insert(0, (ax + perp[0] * step, ay + perp[1] * step, 0.0))
+    return cands
 
 
 def draw_constraint_overlay(
@@ -212,6 +220,7 @@ def draw_constraint_overlay(
             continue
         kind = str(item.get("kind"))
         is_polygon = _is_polygon(geometry)
+        label_perp: Point | None = None
         if is_polygon:
             source_rings = [_translate(ring, offset) for ring in geometry]
             source_points = source_rings[0][0]
@@ -239,6 +248,14 @@ def draw_constraint_overlay(
             screen_points = tuple(fr.px(p) for p in longest)
             mid = len(screen_points) // 2
             ax, ay = screen_points[mid]
+            # a unit normal to the line at the anchor, so the label's first candidate
+            # sits BESIDE the drawn line rather than on it (S1; DB-263 A1).
+            a = screen_points[max(mid - 1, 0)]
+            b = screen_points[min(mid + 1, len(screen_points) - 1)]
+            dxl, dyl = b[0] - a[0], b[1] - a[1]
+            norm = (dxl * dxl + dyl * dyl) ** 0.5
+            if norm:
+                label_perp = (-dyl / norm, dxl / norm)
         text = _label_text(kind, str(item.get("state")), item.get("zr_sections"))
         box = None
         if with_labels:
@@ -246,7 +263,7 @@ def draw_constraint_overlay(
             # it may sit over its own constraint line, so the street/dimension lines are
             # avoided only as a running-along check (cross_max_len = 2 * size), never a
             # bare touch. The white halo keeps it legible over any line.
-            box = place(sheet, _label_candidates((ax, ay), size), text, size=size,
+            box = place(sheet, _label_candidates((ax, ay), size, perp=label_perp), text, size=size,
                         source=f"constraint_line:{kind}", role="constraint-overlay-label",
                         anchor="middle", rect=rect, pad=1.5, avoid_lines=avoid_lines, own=None,
                         cross_max_len=2.0 * size, halo=True)
@@ -291,43 +308,3 @@ def draw_site_constraints(
         out["facts"] = draw_other_basis_dimensions(
             sheet, input_facts, rect, size=size, avoid_lines=avoid_lines)
     return out
-
-
-_VIEWBOX_RE = re.compile(r'viewBox="0 0 ([\d.]+) ([\d.]+)"')
-_RECT_RE = re.compile(r'<rect\b[^>]*?\sy="([\d.]+)"[^>]*?\sheight="([\d.]+)"')
-_TEXT_Y_RE = re.compile(r'<text\b[^>]*?\sy="([\d.]+)"')
-# The furniture strip (legend, scale bar, basis note) begins well below the drawing
-# viewport; only content past this line can be a legend row that needs more height.
-_FURNITURE_TOP_PT = 400.0
-
-
-def expand_frame_for_overlay(svg: str) -> str:
-    """Give the close frame the height its legend needs when the overlay adds a row
-    (S13 legend fits). The overlay adds its own constraint entry to the legend, which
-    can push the 'No building placed' row past the fixed close-frame height, clipping
-    it over the sources caption (visual G3 finding 1). This expands the SVG height and
-    viewBox to contain the furniture content with a small margin; it ONLY GROWS the
-    frame (never shrinks it), so a frame whose legend already fits - every frame
-    without the overlay - is returned byte-identical. No label is moved."""
-    box = _VIEWBOX_RE.search(svg)
-    if box is None:
-        return svg
-    width, height_text = box.group(1), box.group(2)
-    height = float(height_text)
-    bottom = 0.0
-    for match in _RECT_RE.finditer(svg):
-        top = float(match.group(1))
-        if top > _FURNITURE_TOP_PT:
-            bottom = max(bottom, top + float(match.group(2)))
-    for match in _TEXT_Y_RE.finditer(svg):
-        top = float(match.group(1))
-        if top > _FURNITURE_TOP_PT:
-            bottom = max(bottom, top + 2.0)
-    needed = bottom + 8.0
-    if needed <= height:
-        return svg
-    needed_text = f"{needed:.2f}"
-    svg = svg.replace(f'viewBox="0 0 {width} {height_text}"',
-                      f'viewBox="0 0 {width} {needed_text}"', 1)
-    # the <svg> height attribute and the white background rect both carry the height.
-    return svg.replace(f'height="{height_text}"', f'height="{needed_text}"', 2)

@@ -294,3 +294,130 @@ def test_s14_a_line_wholly_outside_the_lot_draws_nothing() -> None:
     drawn = draw_constraint_overlay(sheet, lines, fr, rect, offset=(0.0, 0.0), clip_polygon=poly)
     assert drawn == []
     assert sheet.parts == [] and sheet.kinds == []
+
+
+# =================================================================== S1 (DB-263 A1)
+def _established_line() -> list[dict]:
+    """A constructed inline established rear-yard line (NOT the shared synthetic
+    fixture, which M5-T170 regenerates): three collinear vertices so the label
+    anchor is a true interior vertex."""
+    return [{"kind": "rear_yard_100ft_line", "state": "established", "basis": "derived",
+             "zr_sections": ["ZR 23-344"],
+             "geometry": [[10.0, 20.0], [40.0, 20.0], [70.0, 20.0]]}]
+
+
+def _point_in_box(box, px: float, py: float) -> bool:
+    return box.x0 <= px <= box.x1 and box.y0 <= py <= box.y1
+
+
+def test_s1_the_line_label_sits_off_the_line_so_the_line_stays_visible() -> None:
+    # A1: the established LINE label's first candidate is a perpendicular offset OFF
+    # the line, so the white-halo label box sits BESIDE the drawn line and a measurable
+    # part of the line stays visible. The label anchor (screen_points[mid]) lies OUTSIDE
+    # the placed label box. REAL geometry, no monkeypatch (A4).
+    # Mutation: revert the first candidate to (0, 0) -> the box sits on the anchor
+    # (anchor inside the box) and this test fails.
+    fr, rect = _frame_and_rect()
+    sheet = Sheet()
+    drawn = draw_constraint_overlay(sheet, _established_line(), fr, rect, offset=_OFFSET)
+    dc = drawn[0]
+    box = dc.label_box
+    assert box is not None
+    mid = len(dc.screen_points) // 2
+    ax, ay = dc.screen_points[mid]
+    assert not _point_in_box(box, ax, ay), "the label box sits on the line anchor (line hidden)"
+    # a measurable portion of the drawn polyline lies outside every placed label box.
+    outside = [p for p in dc.screen_points if not _point_in_box(box, p[0], p[1])]
+    assert outside, "the whole drawn line is hidden under the label box"
+
+
+# =================================================================== S2 (DB-263 A1)
+def test_s2_the_label_offset_keeps_the_fit_and_collision_guarantee() -> None:
+    # The perpendicular first candidate is only the FIRST candidate; the full grid
+    # fallback (and the fail-rather-than-shrink raise) is unchanged (S6). On a normal
+    # rect the label places at >= 8.5 pt with no collision; on a rect with no room it
+    # still raises ConstraintOverlayError (never shrinks or drops the label).
+    fr, rect = _frame_and_rect()
+    sheet = Sheet()
+    drawn = draw_constraint_overlay(sheet, _established_line(), fr, rect, offset=_OFFSET)
+    assert drawn[0].label_box is not None
+    boxes = sheet.boxes
+    for i, a in enumerate(boxes):
+        for b in boxes[i + 1:]:
+            assert not a.overlaps(b, 0.0)
+    tiny = (rect[0], rect[1], rect[0] + 1.0, rect[1] + 1.0)
+    try:
+        draw_constraint_overlay(Sheet(), _established_line(), fr, tiny, offset=_OFFSET)
+    except ConstraintOverlayError:
+        pass
+    else:  # pragma: no cover - the assertion documents the expected failure
+        raise AssertionError("expected ConstraintOverlayError when no label fits")
+
+
+# =================================================================== S5 (DB-263 A2)
+def test_s5_expand_frame_for_overlay_is_gone() -> None:
+    # A2 deleted the fragile post-hoc SVG string rewrite: it is defined, exported,
+    # imported and called nowhere (the grep check in the producer report is 0 hits).
+    from app.drawings.maps import constraint_overlay as co
+
+    assert not hasattr(co, "expand_frame_for_overlay")
+    assert "expand_frame_for_overlay" not in co.__all__
+
+
+# =================================================================== S10 (DB-275)
+def _lot_band_rect() -> tuple[float, float, float, float]:
+    return (0.0, 0.0, 420.0, 300.0)
+
+
+def test_s10_street_width_facts_are_not_drawn_in_the_other_basis_band() -> None:
+    # DB-275: the two mapped street widths (basis gis since M5-T170) are already drawn
+    # on each frontage as '<n> ft mapped width'; they are NOT lot dimensions, so they
+    # are excluded from the other-basis LOT-dimension band - no '100 ft, map outline' /
+    # '60 ft, map outline' duplicate chips. Mutation: drop the mapped_street_width:*
+    # filter -> both chips are drawn and this test fails.
+    rect = _lot_band_rect()
+    sheet = Sheet()
+    facts = [
+        {"key": "mapped_street_width:Northern Boulevard", "value": 100.0, "unit": "ft",
+         "basis": "gis"},
+        {"key": "mapped_street_width:215 Place", "value": 60.0, "unit": "ft", "basis": "gis"},
+        {"key": "recorded_lot_area", "value": 9800.0, "unit": "sq_ft",
+         "basis": "administrative_record"},
+    ]
+    drawn = draw_other_basis_dimensions(sheet, facts, rect)
+    assert [f.key for f in drawn] == ["recorded_lot_area"]  # only the lot dimension
+    svg = "".join(sheet.parts)
+    assert "100 ft, map outline" not in svg
+    assert "60 ft, map outline" not in svg
+
+
+def test_s10_without_street_width_facts_the_lot_band_is_unchanged() -> None:
+    # The lot's own other-basis figures are unchanged whether or not street widths are
+    # present: the filtered band draws the same lot facts, in the same order, same text.
+    rect = _lot_band_rect()
+    only_lot = [{"key": "recorded_lot_area", "value": 9800.0, "unit": "sq_ft",
+                 "basis": "administrative_record"}]
+    a = draw_other_basis_dimensions(Sheet(), only_lot, rect)
+    with_street = [
+        {"key": "mapped_street_width:Northern Boulevard", "value": 100.0, "unit": "ft",
+         "basis": "gis"},
+        *only_lot,
+    ]
+    b = draw_other_basis_dimensions(Sheet(), with_street, rect)
+    assert [f.key for f in b] == [f.key for f in a] == ["recorded_lot_area"]
+    assert [f.text for f in b] == [f.text for f in a]
+
+
+def test_s10_a_lot_gis_fact_still_reads_map_outline() -> None:
+    # The filter keys on the KEY (mapped_street_width:*), not the gis basis: a lot's
+    # OWN gis dimension (a different key) is still drawn and still reads 'map outline'.
+    rect = _lot_band_rect()
+    facts = [
+        {"key": "mapped_street_width:Northern Boulevard", "value": 100.0, "unit": "ft",
+         "basis": "gis"},
+        {"key": "outline_lot_area", "value": 10075.0, "unit": "sq_ft", "basis": "gis"},
+    ]
+    drawn = draw_other_basis_dimensions(Sheet(), facts, rect)
+    assert [f.key for f in drawn] == ["outline_lot_area"]
+    assert drawn[0].basis_label == "map outline"
+    assert "map outline" in drawn[0].text
