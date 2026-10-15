@@ -1,0 +1,111 @@
+{
+  "task_id": "M0-T198",
+  "title": "Helper-briefing skill and helper answer standard that carry over to every later session (owner, D-094 R307-R315)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Two new files, no other change. (1) .claude/skills/dispatch-brief/SKILL.md: a short project skill (frontmatter name and description so it is offered for helper dispatch) that turns the orchestrator's question into a helper brief with five named parts: the exact answer or deliverable needed (and the decision it serves); the exact scope (repository, branch, pinned commit, files, records, reference cases); the evidence that could change the answer (what to open first, what would reverse a first conclusion, disconfirming checks); what is unknown and must stay unknown; the depth (lookup, evaluation, decision) and when to stop; plus the fixed return contract (answer first; each finding tied to its evidence and to what it changes; verified facts, reported claims, inferences, assumptions and unknowns kept apart; what was not checked; all parts in ONE hand-back; END-OF-REPORT) and the project's standing clauses (D-093 research clause, reference cases, read-only or builder limits, ports, heavy-run lock, no model override). The skill never shows the owner the brief and never adds work the question did not ask for. (2) .claude/rules/helper-briefing.md: an always-loaded rule (no paths frontmatter, like research-and-verification.md) with two short halves: for the main session, every helper question goes through /dispatch-brief (or its template) before dispatch; for every helper, the answer standard. Kept short (always-loaded size). No change to CLAUDE.md, agents, hooks or settings.",
+  "business_reason": "The owner asked that helper questions be briefed in the style of the full-picture prompt so answers come back better, and that later sessions do it by themselves without being told again (D-094 R307-R315).",
+  "inputs": [
+    ".claude/rules/research-and-verification.md",
+    ".claude/skills/orchestration/SKILL.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/common-readonly.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/common-builder.md",
+    "project-control/directives/D-094-report-v2-review-next-pass/source-029-amendment.md",
+    "project-control/directives/D-094-report-v2-review-next-pass/source-030-amendment.md",
+    "project-control/directives/D-094-report-v2-review-next-pass/source-031-amendment.md"
+  ],
+  "outputs": [
+    ".claude/skills/dispatch-brief/SKILL.md",
+    ".claude/rules/helper-briefing.md",
+    "project-control/reports/M0-T198-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".claude/skills/dispatch-brief/SKILL.md",
+    ".claude/rules/helper-briefing.md",
+    "project-control/reports/M0-T198-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "CLAUDE.md",
+    ".claude/settings.json",
+    ".claude/agents/",
+    ".claude/hooks/",
+    ".claude/rules/research-and-verification.md",
+    ".claude/rules/PROGRAM_KNOWLEDGE.md",
+    ".claude/rules/CODING_RULES.md",
+    "services/",
+    "apps/",
+    "packages/",
+    "tools/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the skill file",
+      "when": "read",
+      "then": "valid frontmatter (name, description); the five brief parts and the return contract are named; nothing asks for owner-facing output"
+    },
+    {
+      "id": "S2",
+      "given": "the rule file",
+      "when": "read",
+      "then": "no paths frontmatter (always loaded); the main-session half names /dispatch-brief; the helper half states the answer standard; short"
+    },
+    {
+      "id": "S3",
+      "given": "a fresh session in this repository",
+      "when": "it starts",
+      "then": "the rule is in its start-time instructions (always-loaded rules) and the skill is listed; nothing depends on chat history"
+    },
+    {
+      "id": "S4",
+      "given": "one real dispatch brief made with the skill after it lands",
+      "when": "compared with the five parts",
+      "then": "each part present; the helper's return leads with the answer and keeps facts, claims, inferences, assumptions and unknowns apart"
+    },
+    {
+      "id": "S5",
+      "given": "the always-loaded instruction size",
+      "when": "python3 tools/context_budget_check.py runs",
+      "then": "it passes (or reports the size within the owner's rule; the cap was lifted, question B1)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The auto-mode classifier may refuse a .claude write: the owner's words are captured (D-094 R307-R315); retry once under them, never bypass.",
+    "A subagent inherits its parent's start-time instructions: this session's helpers see the rule only through their brief; later sessions load it at start."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:49:21.720190+00:00",
+  "updated_at": "2026-10-15T23:49:22.163660+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R307",
+        "D-094-R309",
+        "D-094-R310",
+        "D-094-R314"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:49:21.720416+00:00",
+  "path_notes": "Governance (writes under .claude/); orchestrator-produced like M0-T193; independent G3 by code-reviewer; no file shared with any task in flight.",
+  "documented_test_commands": [
+    "python3 tools/context_budget_check.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
