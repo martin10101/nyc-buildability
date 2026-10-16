@@ -102,7 +102,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -110,8 +110,8 @@
     "directive-compliance-verifier",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (labelling scope): R103 asks that EACH result be labelled as resting on the architect's value. Today the label is a document-wide status chip driven by the WEAKEST governing rank; a survey value that is not the weakest leaves the chip 'Approximate'. This task delivers the load-bearing half (the entered value changes the numbers, the city fact stays visible, conflicts stay visible); the per-ANSWER label and the plain-entered 'Measurements you entered' chip (DB-114) need an owner wording decision and an engine edit (explanations.py) - named follow-on A, deliberately out of scope to avoid inventing an owner label.",
     "RISK 2 (basis restricted to survey): the increment admits basis 'survey' only, because a survey value is already labelled correctly ('Survey measurements') with zero engine edit and zero new wording. A plain 'entered' (non-survey) basis currently renders only 'Approximate measurements' (explanations.py _PRECISE_SITE_RANKS = {survey_entered}); admitting it without the DB-114 chip would under-label it. Keep the basis enum closed and extend it in follow-on A once the chip wording is settled.",
@@ -120,7 +120,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-16T02:08:58.479699+00:00",
-  "updated_at": "2026-10-16T02:08:58.983379+00:00",
+  "updated_at": "2026-10-16T02:09:02.509874+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -140,5 +140,14 @@
     "python tools/research_record_check.py --check",
     "TESTCLIENT (no ports): POST /api/v1/properties/4073340070/results with and without entered_facts via the injected study-inputs provider; assert the no-channel document equals the city-record baseline byte-for-byte and the survey-channel document recomputes with 10,075 sq ft kept in displaced"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-16T02:09:02.509739+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed for the entered-facts channel (survey-basis lot area and dimensions); builder starts from the claim head"
+    }
+  ]
 }
