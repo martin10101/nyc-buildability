@@ -130,7 +130,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -138,8 +138,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (one owner): this part alone holds the shared pins, the e2e print spec and NB-04; it runs after B1-B4 are integrated and before M5-T180, E0 and M5-T174, never beside them.",
     "RISK 2 (clearance): printed only as the document sentence; measured on the drawing it would read 35.32 ft (215 Place edge 99.98 less 64.66) against the document's 35.31 ft (lot reach 99.97): a different measure, so never drawn.",
@@ -147,7 +147,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-16T01:33:40.016200+00:00",
-  "updated_at": "2026-10-16T01:33:40.481182+00:00",
+  "updated_at": "2026-10-16T01:33:44.060014+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -185,5 +185,14 @@
     "python tools/research_record_check.py --check",
     "REAL PRINT (no ports): TestClient POST /report with providers carrying the street window and the zoning-lot index (confirm a 1.5.0 placed document first) and recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs; also the kit-fallback and drawings-off states; pdftotext per page against the main 86a450d4 print"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-16T01:33:44.059844+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed for the wiring part; the builder starts from the claim head with part B3 folded in"
+    }
+  ]
 }
