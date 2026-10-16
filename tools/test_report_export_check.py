@@ -10,9 +10,10 @@ file (S6) and flags website defects (S7). Heavy work (Chromium print, poppler) r
 caller's heavy-run flock -- run as ``flock /root/project/lanes-runtime/heavy-run.lock
 python3 tools/test_report_export_check.py``.
 
-Real prints live OUTSIDE git: S2/S3 read them from ``REPORT_CHECK_FIXTURES`` and FAIL (never
-skip) when a pinned file is missing or its LF sha256 differs. The folder and sha256 list are
-in the producer report so the orchestrator can keep them in the session fixtures folder.
+Real prints live OUTSIDE git: S2/S3 (and the A1 wrap regression) read them from
+``REPORT_CHECK_FIXTURES`` and FAIL (never skip) when a required file is missing. The folder and
+the LF sha256 list are in the producer report; byte-level pinning of those fixtures is the
+orchestrator's fixture-management step, not asserted here.
 """
 from __future__ import annotations
 
@@ -36,6 +37,8 @@ PRINT_SCRIPT = WEB / "scripts/print-report-pdf.mjs"
 TOKENS = json.loads((REPO / "docs/design/presentation-tokens.json").read_text("utf-8"))
 WORDING = TOKENS["wording"]
 SHA = "b7f473690580794265c73a6323908f2ad062cf15"   # a valid 40-hex commit for A1
+# the real current-main print wraps this 40-hex commit across two PDF lines (G4 finding 1)
+WRAP_COMMIT = "065e3fb55457e1c4c3b06768e5179a6e1f1b662a"
 WIDTHS = (320, 390, 768, 1024, 1440, 1920)
 
 # The results document the synthetic bundle rests on: apartment+other=total, share 0.60,
@@ -178,19 +181,32 @@ def run_group(group, bundle, *extra) -> rec.Report:
 
 
 class S1Consistent(unittest.TestCase):
-    """S1: every rule PASS, exit 0."""
+    """S1: every rule PASS except the explicitly-owed D-rule gaps (D5 and the D6 dark-pixel
+    sub-check are not implemented and say so; D6 clipping-only is REVIEW, never PASS), so a
+    consistent bundle exits 3, never a silent all-green 0 (code-review finding 1 / G4 finding 3)."""
 
-    def test_s1_all_pass_exit_zero(self):
+    def test_s1_only_d5_d6_gaps_exit_three(self):
         out = Path(tempfile.mkdtemp(prefix="rec-s1-out-"))
         args = _args(_BUNDLE_DIR, out)
         code = rec.run(args)
         report = json.loads((out / "check.json").read_text())
-        bad = [r for r in report["results"] if r["verdict"] != rec.PASS]
-        self.assertEqual(bad, [], f"expected every rule PASS, got {bad}")
-        self.assertEqual(code, 0)
+        non_pass = sorted((r["rule"], r["verdict"]) for r in report["results"]
+                          if r["verdict"] != rec.PASS)
+        # the ONLY non-PASS rows on a consistent bundle are the surfaced D5/D6 gaps
+        self.assertEqual(non_pass, [("D5", rec.OWED), ("D6", rec.OWED), ("D6", rec.REVIEW)],
+                         f"expected only the D5/D6 gaps, got {non_pass}")
+        self.assertEqual(code, 3)
         self.assertTrue((out / "check.md").read_text().startswith(rec.FIRST_LINE))
         self.assertTrue((out / "drawings-visible.md").exists())
         self.assertTrue((out / "pages.txt").exists())
+
+    def test_d5_d6_owed_lines_pinned(self):
+        # finding 1 / G4 finding 3: the unimplemented sub-checks are surfaced, D6 never PASS here
+        rep = run_group(rec.rules_d, load(_BUNDLE_DIR), False)
+        rows = {(r.rule, r.verdict, r.detail) for r in rep.results}
+        self.assertIn(("D5", rec.OWED, "not implemented -- figure/caption page attribution"), rows)
+        self.assertIn(("D6", rec.OWED, "dark-pixel subcheck not implemented"), rows)
+        self.assertNotIn(rec.PASS, {v for ru, v, _ in rows if ru == "D6"})
 
 
 class S4Mutations(unittest.TestCase):
@@ -211,6 +227,35 @@ class S4Mutations(unittest.TestCase):
         b = load(_BUNDLE_DIR)
         b.pdf.page_text[0] += " clearance 34.33 ft "
         self.assertEqual(verdicts(run_group(rec.rules_c, b), "C4"), {rec.FAIL})
+
+    def test_lot_area_midpoint_fails_c4(self):
+        # G4 finding 4: the midpoint of the recorded (10,075) and GIS (10,387.99) lot areas is a
+        # reconciled figure the report must never print; the pair is read from the reference case.
+        b = load(_BUNDLE_DIR)
+        b.pdf.page_text[0] += " lot area 10,231.50 sq ft "
+        self.assertEqual(verdicts(run_group(rec.rules_c, b), "C4"), {rec.FAIL})
+
+    def test_drawn_zone_geometry_0898_fails_b5(self):
+        # G4 finding 2: a drawn apartment zone at 0.898 of the footprint against a 0.60 share must
+        # FAIL on the measured geometry -- WITH and WITHOUT the stamped data-apartment-fraction.
+        for stamp in (0.6, None):
+            b = load(_BUNDLE_DIR)
+            svg = next(s for s in b.html.svgs if "area_zone_apartment" in s.roles)
+            svg.fraction = stamp
+            svg.shapes = [("area_footprint", 196 * 120, True),
+                          ("area_zone_apartment", 176 * 120, True),   # 176/196 = 0.898
+                          ("area_zone_other", 20 * 120, True)]
+            self.assertEqual(verdicts(run_group(rec.rules_b, b), "B5"), {rec.FAIL},
+                             f"stamp={stamp}")
+
+    def test_unmeasurable_zone_path_is_review_not_pass(self):
+        # a curve/arc path the shoelace cannot measure must REVIEW (never a false PASS)
+        b = load(_BUNDLE_DIR)
+        svg = next(s for s in b.html.svgs if "area_zone_apartment" in s.roles)
+        svg.fraction = None
+        svg.shapes = [("area_zone_apartment", None, False),
+                      ("area_zone_other", None, False)]
+        self.assertEqual(verdicts(run_group(rec.rules_b, b), "B5"), {rec.REVIEW})
 
     def test_nan_in_text_fails_c5(self):
         b = load(_BUNDLE_DIR)
@@ -329,6 +374,40 @@ class S7Website(unittest.TestCase):
         self.assertTrue(any("390px before/after changed" in d for d in e4))
 
 
+class WritesUnderOut(unittest.TestCase):
+    """Round-2 finding 2: _page_images renders into a private temp dir, never beside the bundle
+    PDF, so the tool writes nothing into the --bundle folder -- even a read-only one."""
+
+    def test_page_images_render_outside_a_readonly_bundle(self):
+        import shutil
+        folder = Path(tempfile.mkdtemp(prefix="rec-ro-"))
+        (folder / "report.pdf").write_bytes((_BUNDLE_DIR / "report.pdf").read_bytes())
+        before = {p.name for p in folder.iterdir()}
+        captured: dict = {}
+        real_run = rec._run
+
+        def spy(cmd, **kw):
+            if cmd and cmd[0] == "pdftoppm":
+                captured["prefix"] = cmd[-1]
+            return real_run(cmd, **kw)
+
+        os.chmod(folder, 0o500)   # read-only bundle dir (blocks the old beside-the-pdf write)
+        rec._run = spy
+        try:
+            facts = rec.extract_pdf(folder / "report.pdf")
+        finally:
+            rec._run = real_run
+            os.chmod(folder, 0o700)
+        # the render prefix is NOT inside the bundle folder ...
+        self.assertIn("prefix", captured)
+        self.assertNotIn(folder.resolve(), Path(captured["prefix"]).resolve().parents)
+        # ... and the bundle folder gained no file (no report-gchk-*.png residue) ...
+        self.assertEqual({p.name for p in folder.iterdir()}, before)
+        # ... while the per-page hashes are still produced
+        self.assertTrue(facts.images)
+        shutil.rmtree(folder, ignore_errors=True)
+
+
 class S2RealHeads(unittest.TestCase):
     """S2: at 8fbf701b (the audited head) B1 and B5 FAIL; at b7f47369 (the honest head) no B1/B5
     FAIL and B3/B7 are OWED. Real prints read from REPORT_CHECK_FIXTURES, fail-not-skip."""
@@ -400,6 +479,38 @@ class S3MainPrints(unittest.TestCase):
         rep = rec.Report()
         rec._fonts(rep, b, rec.load_repo(REPO))
         self.assertEqual(verdicts(rep, "D7"), {rec.FAIL})
+
+
+class S9A1Wrap(unittest.TestCase):
+    """A1 must reconstruct a 40-hex commit wrapped across PDF lines (G4 finding 1). The real
+    current-main print wraps 'Code commit:' as '065e3fb55457e1c4c3b067' then '68e5179a6e1f1b662a';
+    the un-fixed regex captured only the first run and FALSE-FAILED the correct candidate."""
+
+    def test_a1_joins_a_wrapped_commit_unit(self):
+        low = ("appendix code commit: 065e3fb55457e1c4c3b067 68e5179a6e1f1b662a "
+               "results revision: 1 document fingerprint: 4fcfe7a6f915 recorded-data")
+        self.assertEqual(rec._printed_commit(low), WRAP_COMMIT)
+        self.assertEqual(rec._printed_commit("code commit: unknown document fingerprint: abcdef"),
+                         "")
+
+    def _wrap_pdf(self):
+        root = os.environ.get("REPORT_CHECK_FIXTURES")
+        if not root:
+            self.fail("REPORT_CHECK_FIXTURES unset; the wrapped-commit print must be provided")
+        pdf = Path(root).parent / "print-main-065e3fb5" / "report.pdf"
+        if not pdf.exists():
+            self.fail(f"missing wrapped-commit regression fixture {pdf}")
+        work = Path(tempfile.mkdtemp(prefix="rec-wrap-"))
+        local = work / "report.pdf"
+        local.write_bytes(pdf.read_bytes())
+        return rec.extract_pdf(local)
+
+    def test_a1_passes_the_real_wrapped_print_at_its_own_commit(self):
+        b = _Fake(self._wrap_pdf(), rec.ReportHtml())
+        for sha, want in ((WRAP_COMMIT, rec.PASS), (SHA, rec.FAIL)):
+            rep = rec.Report()
+            rec.rules_a(rep, b, rec.load_repo(REPO), sha, None)
+            self.assertEqual(verdicts(rep, "A1"), {want}, f"sha={sha[:12]}")
 
 
 class _Fake:

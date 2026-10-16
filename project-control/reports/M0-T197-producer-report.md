@@ -153,7 +153,142 @@ the HTML + placement/fitted); A4 is not asserted for S2.
 - No evidence record, rule, contract, token, product code or CI file was touched; no review-register
   module changed.
 
+## Round 2 (G3 code-review + G4 gate corrections; `return-T197c-G3.md`, `return-T197c-G4.md`)
+
+Round 2 closes the G3 REQUIRED finding 1 and advisory 2, PLUS the four REQUIRED items the G4 gate
+added (orchestrator scope note, 2026-10-16) and the two G4 advisories. Only the two tool files
+changed. Built on `b7f47369` + cherry-pick of round-1 `2b3b893f`.
+
+### Correction to the round-1 completeness claim (G4 finding 2 / item 6)
+
+My round-1 return said "D6's bbox ... and every other rule ARE implemented". That was inaccurate and
+is withdrawn. As of round 2 the honest statement is: A1-A5, B1-B10, C1-C7, D1-D4, D7-D9, E1-E4 are
+implemented; **B1/B5/B6 now measure drawn geometry/ink** (below); **C4 now sources its benchmark
+values from the reference case and covers both basis pairs** (below); D5 is surfaced as OWED (not
+implemented); the D6 dark-pixel and overlap sub-checks are surfaced (OWED/REVIEW), not implemented;
+the C6 HTML-row content/order check is still owed (below). No rule now returns PASS for an aspect it
+does not actually verify.
+
+### REQUIRED items closed
+
+1. **A1 joins a commit wrapped across PDF lines (G4 finding 1).** The real current-main
+   print wraps `Code commit:` as `065e3fb55457e1c4c3b067` then `68e5179a6e1f1b662a`; the old regex
+   `code commit:\s*([0-9a-f]{7,64})` captured only the first 22-hex run and FALSE-FAILED the
+   correct 40-hex candidate — a false FAIL on the tool's identity gate, on the exact input class
+   M0-T195 feeds it. New `_printed_commit()` joins the consecutive hex tokens after the label up to
+   40 chars (a sha is exactly 40), stopping at the first non-hex token ("unknown"/"results"/
+   "document") so it never swallows the fingerprint. Regression: `S9A1Wrap` has a fixture-free unit
+   test on the exact wrap AND a test that extracts the real `print-main-065e3fb5/report.pdf` and
+   asserts A1 PASS at its own 40-hex commit, FAIL at a different sha.
+2. **B1/B5/B6 measure the drawing, not a stamped attribute (G4 finding 2).** The HTML parser now
+   captures per-shape geometry: a `<rect>` gives width x height; a `<path>` the shoelace area of its
+   absolute M/L/Z polygon; any curve/arc/relative path command is NOT measurable. **B5** now takes
+   the drawn apartment-area ratio (apt area / footprint area, else apt/(apt+other)) and FAILs when
+   it differs from the share by > 0.005; unmeasurable geometry (or a missing share) is **REVIEW**,
+   never a false PASS; a stamped `data-apartment-fraction` that disagrees with the share is still a
+   FAIL. **B6** does the same for the proportional bar. **B1** is scoped to the site-plan svg and
+   requires its dimension text (a measurement with ink in the vector): no footprint role at all is
+   the audited FAIL; a role present with no dimension text is REVIEW (not PASS); a role with its
+   dimension text is PASS. Test `test_drawn_zone_geometry_0898_fails_b5` draws the apartment zone at
+   176/196 = 0.898 of the footprint against a 0.60 share and asserts B5 FAIL **with and without**
+   `data-apartment-fraction`; `test_unmeasurable_zone_path_is_review_not_pass` asserts an
+   unmeasurable path is REVIEW.
+3. **C4 reads its benchmark values from the reference case + adds the lot-area midpoint (G4 finding
+   4).** `load_repo` now parses `docs/reference-cases/R6B/cases/placement-building-b.json` for the
+   back-clearance pair (tax-map 33.34 / GIS 35.31) and the lot-area pair (recorded PLUTO 10,075 /
+   GIS outline 10,387.99) — no hardcoded 33.34/35.31/34.3x. C4 FAILs when a value near the MIDPOINT
+   of either pair (strictly between the two, within 5% of the gap) is printed, i.e. a reconciled
+   average the report must never show. New `test_lot_area_midpoint_fails_c4` inserts the 10,231.50
+   midpoint and asserts C4 FAIL. The tax-rectangle 10,076 (a legitimate distinct figure) is NOT
+   flagged.
+4. **D5/D6 surfaced; D6 never PASS on clipping alone (G3 finding 1 / G4 finding 3).** `rules_d`
+   emits `D5 OWED "not implemented -- figure/caption page attribution"` and `D6 OWED "dark-pixel
+   subcheck not implemented"`; `_clipping` now reports its clean result as **D6 REVIEW**
+   ("clipping sub-check only ... overlap/dark-pixel not implemented"), never PASS, so D6 no longer
+   overstates coverage. A consistent bundle therefore exits **3** (D5 OWED, D6 OWED, D6 REVIEW; every
+   other rule PASS), never a silent all-green 0. A full D5 implementation stays an **owed
+   refinement, queued, not built** (it needs reliable figure/caption page attribution).
+
+### Advisory items
+
+- **Advisory 2 / writes-only-under-out (G3).** `_page_images` rendered the 110-dpi page PNGs beside
+  the input PDF (`report-gchk-*.png` in the `--bundle` folder) then unlinked them. It now renders
+  into a private `tempfile.mkdtemp()` and `shutil.rmtree`s it in a `finally`, so the tool writes
+  nothing into `--bundle` (works on a read-only bundle). `WritesUnderOut` spies on the `pdftoppm`
+  call and asserts the render prefix is NOT inside the bundle folder (the uid-independent anchor;
+  this host runs as root, where a read-only dir would not itself block a write).
+- **Self-test sha256 claim (G4 finding 6).** The docstring no longer claims byte-level sha256
+  enforcement (the code checks presence and fails-not-skips on a missing file); byte pinning of the
+  external fixtures is the orchestrator's fixture-management step. Docstring corrected.
+- **C6 HTML rows (G4 finding 5) — NOT done this round.** `_options` still verifies the 11-row count
+  from `results.json`. The design's HTML `#option-comparison` row-content/order check (11 rows in
+  order; no stray digit in a not-evaluated row; no "not buildable") needs per-row HTML capture the
+  parser does not do, and the synthetic S1 bundle intentionally carries one HTML row, so a naive
+  "11 HTML rows" check would false-FAIL S1. Left as an **owed refinement** rather than add a fragile
+  partial check under time pressure.
+
+### Checks (direct exit codes; lanes venv python; `REPORT_CHECK_FIXTURES` = session check-fixtures)
+
+| check | command | result |
+|---|---|---|
+| ruff | `python -m ruff check tools/report_export_check.py tools/test_report_export_check.py` | `All checks passed!`, exit 0 |
+| modularity | `python tools/modularity_check.py --check` | exit 0; `report_export_check.py` source_lines = 841 (see SLOC note) |
+| research records | `python3 tools/research_record_check.py --check` | `PASS`, exit 0 (no record touched) |
+| lane coverage | `python3 scripts/lanes/check_lane_paths.py --coverage` | `LANE COVERAGE PASS`, exit 0 |
+| full self-test | `flock heavy-run.lock python3 tools/test_report_export_check.py` (fixtures set) | `Ran 29 tests ... OK`, exit 0 |
+
+(Build note: the self-test prints the report HTML with Playwright Chromium via
+`apps/web/scripts/print-report-pdf.mjs`. For this worktree I pointed `apps/web/node_modules` at the
+primary checkout's already-installed modules as a transient test enabler and removed it before
+committing — no tracked change, `node_modules` is gitignored. The A1-wrap regression reads
+`print-main-065e3fb5/report.pdf` from `REPORT_CHECK_FIXTURES/../print-main-065e3fb5/`, the sibling of
+the check-fixtures folder in the session directory; the orchestrator keeps it there.)
+
+### SLOC note (modularity, grown by the G4 geometry/sourcing work)
+
+The G4 corrections grew `report_export_check.py` from 689 to **841 source_lines** (the shoelace/rect
+geometry parser, the C4 reference-case sourcing, the A1 wrap helper). That is in the JUSTIFY band
+(warn 600 / justify 750 / hard 1000): `modularity_check.py --check` still exits 0 because the file is
+new and below the 1000 hard ceiling, and it is NOT listed in the warn output. The file stays a single,
+cohesive responsibility — an output-level bundle check, sectioned extraction / HTML parse / repo
+context / rules A-E / outputs / CLI — and both the G3 (advisory 5) and G4 reviews judged the no-split
+call acceptable at 689. **Flag for the orchestrator:** a facade split now (JUSTIFY band) would need a
+THIRD `tools/` module, which is OUTSIDE this packet's `allowed_paths`; I did not create it (the
+common-builder rule is STOP-and-report on an out-of-scope file). If the policy wants a split, it needs
+a new allowed path and a follow-up packet.
+
+### Mutation proof (one flock; `/tmp/claude-0/M0-T197r2/driver.py`)
+
+One GREEN full self-test run (`Ran 29 tests ... OK`, exit 0) plus one mutation per new behaviour
+(revert the fix -> the binding test goes RED, exit 1 -> restore, source sha256 re-verified
+byte-identical). Driver summary: `ALL_EVIDENCE_OK=True`:
+
+- A1 wrap: revert `_printed_commit` to the single-run regex -> both `S9A1Wrap` tests RED.
+- B5 geometry: revert `_zones` to the always-PASS trust -> the 0.898 and unmeasurable-path tests RED.
+- C4: drop the lot-area basis pair -> `test_lot_area_midpoint_fails_c4` RED.
+- D5/D6: remove the OWED lines and restore D6-clipping-PASS -> the two S1 gap tests RED.
+- Advisory 2: `_page_images` writes beside the pdf -> `WritesUnderOut` RED.
+
+### Supersedes (round 1)
+
+Round 1's "S1 every rule PASS, exit 0" and "Ran 22 tests ... OK" are superseded: S1 now exits 3 with
+the D5/D6 gaps surfaced, and the suite is `Ran 29 tests ... OK`. The round-1 §Assumptions line
+claiming "every other rule ARE implemented" is corrected above. (The round-1 §"What changed" LF
+sha256 values and the §Assumptions "D5/D6" and "D6 pixel-ink" bullets are superseded by this Round 2
+section.)
+
+### Round-2 file identity (LF sha256)
+
+- `tools/report_export_check.py` = `aef36f34e4de8f646f8d69e2ff1a7a2e4971aa235f5c1845191bbd9ddd308197`
+  (source_lines 841)
+- `tools/test_report_export_check.py` = `75ad46e14b438dbc5fce83cbb9cf9e7929f9611eddd2b0b0c9068738cff62ad0`
+  (29 tests)
+
 ## Requested status
 
-awaiting_gate (G0/G2/G3/G4). All documented self-checks pass with exit 0; the one open judgment call
-is the SLOC WARN vs the 600 target (flagged above for the orchestrator).
+awaiting_gate (G0/G2/G3/G4). All G3 and G4 REQUIRED items are closed (A1 wrap; B1/B5/B6 measured
+geometry/ink with REVIEW where unmeasured; C4 reference-case sourcing + lot-area midpoint; D5/D6
+surfaced, D6 never PASS on clipping alone) and the G4 advisories addressed except the C6 HTML-row
+content check, which is recorded as an owed refinement with its reason. Remaining owed refinements:
+full D5, the D6 overlap/dark-pixel sub-checks, the C6 HTML-row check, and the B9 REVIEW-volume
+tuning. No evidence record, rule, contract, token, product or CI file was touched.

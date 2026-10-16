@@ -18,8 +18,10 @@ import ast
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
@@ -213,14 +215,17 @@ def _urls(pdf):
 
 
 def _page_images(pdf):
-    # render every page to a 110-dpi grey PNG and hash it (pages.txt / D6 reviewer evidence)
-    prefix = str(pdf.with_suffix("")) + "-gchk"
-    _run(["pdftoppm", "-r", "110", "-gray", "-png", str(pdf), prefix], binary=True)
-    shas = []
-    for png in sorted(pdf.parent.glob(Path(prefix).name + "-*.png")):
-        shas.append(hashlib.sha256(png.read_bytes()).hexdigest())
-        png.unlink()
-    return shas
+    # render every page to a 110-dpi grey PNG and hash it (pages.txt / D6 reviewer evidence);
+    # render into a private temp dir, never beside the PDF, so the tool writes nothing into the
+    # --bundle folder (the "writes only under --out" contract; works on a read-only bundle)
+    tmp = Path(tempfile.mkdtemp(prefix="report-gchk-"))
+    try:
+        prefix = str(tmp / "page")
+        _run(["pdftoppm", "-r", "110", "-gray", "-png", str(pdf), prefix], binary=True)
+        return [hashlib.sha256(png.read_bytes()).hexdigest()
+                for png in sorted(tmp.glob("page-*.png"))]
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 # --- HTML parsing ---------------------------------------------------------------------
@@ -232,9 +237,66 @@ class Svg:
     roles: set = field(default_factory=set)
     texts: list = field(default_factory=list)   # (role, text, source)
     fraction: float | None = None               # kernel-stamped drawn apartment fraction
+    shapes: list = field(default_factory=list)   # (role, area|None, measurable: bool)
 
     def role_text(self, role):
         return [t for r, t, _ in self.texts if r == role]
+
+    def area(self, role):
+        # summed drawn area of every MEASURABLE shape carrying this role (rect w*h / shoelace)
+        vals = [a for r, a, m in self.shapes if r == role and m and a is not None]
+        return sum(vals) if vals else None
+
+    def has_unmeasurable(self, roles):
+        # a shape with one of these roles whose geometry could not be measured (curve/arc path)
+        want = set(roles)
+        return any((r in want) and not m for r, _, m in self.shapes)
+
+
+def _shape_area(tag, a):
+    # (role, area|None, measurable): a <rect> gives width*height; a <path> the shoelace area of
+    # its polygon -- any curve/arc/relative command is NOT measurable (-> caller reports REVIEW).
+    role = a["data-role"]
+    if tag == "rect":
+        try:
+            return role, abs(float(a.get("width", "")) * float(a.get("height", ""))), True
+        except ValueError:
+            return role, None, False
+    area, ok = _path_area(a.get("d", ""))
+    return role, area, ok
+
+
+def _path_area(d):
+    # shoelace area of an absolute M/L/Z polygon path. Any other command (H, V, C, S, Q, T, A,
+    # or any lowercase/relative command) is unsupported -> (None, False) so the rule REVIEWs it.
+    if not d or not d.strip():
+        return None, False
+    toks = re.findall(r"[A-Za-z]|-?\d*\.?\d+(?:[eE]-?\d+)?", d)
+    pts, i, n = [], 0, len(toks)
+    while i < n:
+        c = toks[i]
+        if re.fullmatch(r"[A-Za-z]", c):
+            if c in ("M", "L"):
+                try:
+                    pts.append((float(toks[i + 1]), float(toks[i + 2])))
+                except (IndexError, ValueError):
+                    return None, False
+                i += 3
+            elif c == "Z":
+                i += 1
+            else:
+                return None, False          # H/V/curve/arc or any lowercase (relative) -> REVIEW
+        else:                                # an implicit lineto pair continuing an M/L run
+            try:
+                pts.append((float(toks[i]), float(toks[i + 1])))
+            except (IndexError, ValueError):
+                return None, False
+            i += 2
+    if len(pts) < 3:
+        return None, False
+    s = sum(pts[j][0] * pts[(j + 1) % len(pts)][1] - pts[(j + 1) % len(pts)][0] * pts[j][1]
+            for j in range(len(pts)))
+    return abs(s) / 2.0, True
 
 
 _BLOCK = {"p", "div", "li", "td", "th", "tr", "h1", "h2", "h3", "section", "br",
@@ -277,6 +339,8 @@ class ReportHtml(HTMLParser):
             self._head, self._level = [], int(tag[1])
         if self._svg is not None and a.get("data-role"):
             self._svg.roles.add(a["data-role"])
+            if tag in ("rect", "path"):
+                self._svg.shapes.append(_shape_area(tag, a))
         if self._svg is not None and a.get("data-apartment-fraction"):
             try:
                 self._svg.fraction = float(a["data-apartment-fraction"])
@@ -349,6 +413,43 @@ class RepoContext:
     caption: str
     forbidden: list
     fingerprint_exclude: tuple
+    clearance: dict          # {"tax": 33.34, "gis": 35.31} from the reference case (no hardcode)
+    basis_pairs: list        # [(tax, gis), (recorded_lot_area, gis_lot_area)] for C4 midpoints
+
+
+def _basis_values(repo: Path):
+    # C4 benchmark values come from the reference case, never a product/tool constant: the
+    # back-clearance pair (tax-map vs GIS) and the lot-area pair (recorded PLUTO vs GIS outline).
+    path = repo / "docs/reference-cases/R6B/cases/placement-building-b.json"
+    jtext = path.read_text("utf-8")
+    named = {}
+
+    def walk(o):
+        if isinstance(o, dict):
+            n, v = o.get("name"), o.get("value")
+            if isinstance(n, str) and isinstance(v, str):
+                named.setdefault(n, v)
+            for x in o.values():
+                walk(x)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+
+    walk(json.loads(jtext))
+
+    def num(s):
+        mt = re.search(r"-?\d[\d,]*\.?\d*", s or "")
+        return float(mt.group().replace(",", "")) if mt else None
+
+    tax, gis = num(named.get("tax-map back clearance")), num(named.get("GIS back clearance"))
+    rec = re.search(r"([\d,]+)\s+recorded \(PLUTO\)", jtext)
+    gisa = re.search(r"measured area ([\d,]+\.\d+)\s+sq ft", jtext)
+    recorded = float(rec[1].replace(",", "")) if rec else None
+    gis_area = float(gisa[1].replace(",", "")) if gisa else None
+    if None in (tax, gis, recorded, gis_area):
+        raise CheckError("could not parse the clearance/lot-area basis pair "
+                         "from placement-building-b.json")
+    return {"tax": tax, "gis": gis}, [(tax, gis), (recorded, gis_area)]
 
 
 def load_repo(repo: Path) -> RepoContext:
@@ -363,10 +464,11 @@ def load_repo(repo: Path) -> RepoContext:
     fm = re.search(r"_FINGERPRINT_EXCLUDE\s*=\s*(\([^)]*\))", run_id)
     if not fm:
         raise CheckError("could not parse _FINGERPRINT_EXCLUDE from run_identity.py")
+    clearance, basis_pairs = _basis_values(repo)
     return RepoContext(
         {n: float(t[n]["print_pt"]) for n in ("property-title", "headline-value", "section-title")},
         w["area_zone_apartment"], w["area_zone_other"], w["area_illustration_caption"],
-        forbidden, tuple(ast.literal_eval(fm[1])))
+        forbidden, tuple(ast.literal_eval(fm[1])), clearance, basis_pairs)
 
 
 @dataclass
@@ -404,17 +506,30 @@ def _svgs_with(b, roles):
     return [s for s in b.html.svgs if s.roles & want]
 
 
+def _printed_commit(low):
+    # A git sha is exactly 40 hex. Chromium can wrap the value across PDF lines, so the
+    # whitespace-normalised text splits the 40-hex into runs (A1 design: "joined across line
+    # wraps"). Join the hex tokens immediately after "code commit:" up to 40 chars, stopping at
+    # the first non-hex token (e.g. "unknown", "results", "document") -- never swallowing the
+    # fingerprint or a later field.
+    if "code commit:" not in low:
+        return ""
+    joined = ""
+    for tok in low.split("code commit:", 1)[1].split():
+        if len(joined) >= 40 or not re.fullmatch(r"[0-9a-f]+", tok):
+            break
+        joined += tok
+    return joined[:40]
+
+
 # ======================================================================================
 #  RULES
 # ======================================================================================
 
 def rules_a(rep, b, repo, sha, reprint):
     pdf = b.pdf
-    # whitespace-preserving so the commit hex stops at the space before the next label (the
-    # next field "Document fingerprint" also begins with a hex 'd'); the label itself may wrap
     low = re.sub(r"\s+", " ", " ".join(pdf.page_text)).lower()
-    m = re.search(r"code commit:\s*([0-9a-f]{7,64})", low)
-    printed = m[1] if m else ""
+    printed = _printed_commit(low)
     rep.add("A1", PASS if printed == sha.lower() else FAIL,
             "printed commit equals the candidate" if printed == sha.lower()
             else f"printed commit {printed or 'unknown'} != {sha[:12]}")
@@ -451,9 +566,7 @@ def rules_b(rep, b, repo):
         if not fp_roles:
             rep.add("B1", REVIEW, "footprint role unknown (no --roles)")
         else:
-            rep.add("B1", PASS if footprint else FAIL,
-                    "placement claim backed by a drawn footprint" if footprint
-                    else "'Shown on the site plan' but no footprint is drawn")
+            _footprint(rep, b, fp_roles)
     if "No building placed" in html:
         rep.add("B2", FAIL if footprint else PASS,
                 "legend 'No building placed' while a footprint is drawn" if footprint
@@ -472,8 +585,7 @@ def rules_b(rep, b, repo):
     if "as zones inside the placed building footprint" in html and not not_drawn:
         _zones(rep, b, repo, zones, bars)
     if "as a proportional bar beside the building diagram" in html and not not_drawn:
-        rep.add("B6", FAIL if (not bars or zones) else PASS,
-                "bar claimed but no/!both roles" if (not bars or zones) else "bar backed by its roles")
+        _bars(rep, b, zones, bars)
     if not_drawn:
         rep.add("B7", FAIL if (zones or bars) else (OWED if fitted else PASS),
                 "'not yet drawn' but an illustration IS present" if (zones or bars)
@@ -482,33 +594,105 @@ def rules_b(rep, b, repo):
     _sweep(rep, b)
 
 
+def _footprint(rep, b, fp_roles):
+    # B1 scoped to the site-plan svg: a footprint role AND its dimension text (a measurement with
+    # ink in the vector). Role presence alone is not proof a scaled footprint was drawn, so an
+    # undimensioned role is REVIEW, never PASS; no footprint role at all is the audited FAIL.
+    svgs = _svgs_with(b, fp_roles)
+    if not svgs:
+        rep.add("B1", FAIL, "'Shown on the site plan' but no footprint is drawn")
+        return
+    dim = re.compile(r"\d[\d,]*\.?\d*\s*(?:ft\b|feet\b|')", re.I)
+    for s in svgs:
+        for _, t, _ in s.texts:
+            if dim.search(t):
+                rep.add("B1", PASS, "footprint drawn in the site-plan svg with its dimension text",
+                        quote=t)
+                return
+    rep.add("B1", REVIEW,
+            "footprint role present but no dimension text; a drawn footprint is not confirmed")
+
+
+def _area_ratio(svg, apt_role, other_role, fp_role):
+    # drawn apartment-area fraction from the measured shapes: apt / footprint, else apt /
+    # (apt + other). Returns (ratio, status): "unmeasurable" (a curve/arc path) -> REVIEW;
+    # "absent" (no measurable geometry) -> REVIEW; "ok" -> compare to the share.
+    roles = [apt_role, other_role] + ([fp_role] if fp_role else [])
+    if svg.has_unmeasurable(roles):
+        return None, "unmeasurable"
+    apt, other = svg.area(apt_role), svg.area(other_role)
+    fp = svg.area(fp_role) if fp_role else None
+    denom = fp if fp else ((apt + other) if (apt is not None and other is not None) else None)
+    if apt is None or not denom:
+        return None, "absent"
+    return apt / denom, "ok"
+
+
+def _zone_structural_fail(svg, repo, bars, share):
+    missing = {"area_footprint", "area_zone_apartment", "area_zone_other", "area_division"} \
+        - svg.roles
+    if missing:
+        return f"zones drawing missing roles {sorted(missing)}"
+    if bars:
+        return "both zone and bar roles present"
+    labels = {t for _, t, _ in svg.texts}
+    if repo.zone_apartment not in labels or repo.zone_other not in labels:
+        return "zone labels do not match the token wording"
+    caps = [t for _, t, _ in svg.texts if t == repo.caption]
+    if len(caps) != 1:
+        return f"caption appears {len(caps)} times, expected once"
+    if svg.fraction is not None and isinstance(share, (int, float)) \
+            and abs(svg.fraction - share) > 0.005:
+        return f"drawn apartment fraction {svg.fraction} != share {share}"
+    pct_text = svg.role_text("area_percentage")
+    pct = round(share * 100) if isinstance(share, (int, float)) else None
+    if pct is not None and pct_text and not any(str(pct) in t for t in pct_text):
+        return f"percentage {pct_text} != {pct}%"
+    return None
+
+
 def _zones(rep, b, repo, zones, bars):
     if not zones:
         rep.add("B5", FAIL, "zones claimed but no zone roles drawn")
         return
     svg = zones[0]
-    missing = {"area_footprint", "area_zone_apartment", "area_zone_other", "area_division"} \
-        - svg.roles
-    labels = {t for _, t, _ in svg.texts}
-    caps = [t for _, t, _ in svg.texts if t == repo.caption]
     share = _dig(b.results, "building_alternatives/0/area_allocation/share")
-    pct_text = svg.role_text("area_percentage")
-    pct = round(share * 100) if isinstance(share, (int, float)) else None
-    if missing:
-        rep.add("B5", FAIL, f"zones drawing missing roles {sorted(missing)}")
-    elif bars:
-        rep.add("B5", FAIL, "both zone and bar roles present")
-    elif repo.zone_apartment not in labels or repo.zone_other not in labels:
-        rep.add("B5", FAIL, "zone labels do not match the token wording")
-    elif len(caps) != 1:
-        rep.add("B5", FAIL, f"caption appears {len(caps)} times, expected once")
-    elif svg.fraction is not None and isinstance(share, (int, float)) \
-            and abs(svg.fraction - share) > 0.005:
-        rep.add("B5", FAIL, f"drawn apartment fraction {svg.fraction} != share {share}")
-    elif pct is not None and pct_text and not any(str(pct) in t for t in pct_text):
-        rep.add("B5", FAIL, f"percentage {pct_text} != {pct}%")
+    fail = _zone_structural_fail(svg, repo, bars, share)
+    if fail:
+        rep.add("B5", FAIL, fail)
+        return
+    # the authoritative proportion check: the DRAWN zone area ratio (rect w*h / shoelace), not a
+    # stamped attribute. Where the geometry cannot be measured B5 is REVIEW, never a false PASS.
+    ratio, status = _area_ratio(svg, "area_zone_apartment", "area_zone_other", "area_footprint")
+    if status == "unmeasurable":
+        rep.add("B5", REVIEW,
+                "zone area not measurable (unsupported path command); drawn proportion not verified")
+    elif status != "ok" or not isinstance(share, (int, float)):
+        rep.add("B5", REVIEW, "zone geometry or share absent; drawn proportion not measured")
+    elif abs(ratio - share) > 0.005:
+        rep.add("B5", FAIL, f"drawn zone area ratio {ratio:.4f} != share {share}")
     else:
-        rep.add("B5", PASS, "zones backed by the roles, labels, one caption and the stated share")
+        rep.add("B5", PASS,
+                f"zones backed by roles, labels, one caption and a drawn area ratio {ratio:.4f}")
+
+
+def _bars(rep, b, zones, bars):
+    # B6: the proportional bar must carry both roles (and not co-exist with zones), and its drawn
+    # area ratio must equal the share; unmeasurable geometry is REVIEW, never a false PASS.
+    if not bars or zones:
+        rep.add("B6", FAIL, "bar claimed but missing a bar role or zones are present too")
+        return
+    svg = bars[0]
+    share = _dig(b.results, "building_alternatives/0/area_allocation/share")
+    ratio, status = _area_ratio(svg, "area_bar_apartment", "area_bar_other", None)
+    if status == "unmeasurable":
+        rep.add("B6", REVIEW, "bar area not measurable (unsupported path command); ratio not verified")
+    elif status != "ok" or not isinstance(share, (int, float)):
+        rep.add("B6", REVIEW, "bar geometry or share absent; drawn ratio not measured")
+    elif abs(ratio - share) > 0.005:
+        rep.add("B6", FAIL, f"drawn bar ratio {ratio:.4f} != share {share}")
+    else:
+        rep.add("B6", PASS, f"bar backed by its roles and a drawn area ratio {ratio:.4f} == share")
 
 
 def _sections(rep, b):
@@ -539,17 +723,31 @@ def _sweep(rep, b):
         rep.add("B9", PASS, "no unregistered claim sentences")
 
 
+def _averaged_bases(nums, pairs):
+    # a value that falls near the MIDPOINT of two distinct-basis figures (strictly between them)
+    # is an averaged/reconciled number the report must never print (bases stay separate).
+    hits = []
+    for lo, hi in pairs:
+        mid = (lo + hi) / 2.0
+        tol = max(0.03, abs(hi - lo) * 0.05)
+        for n in nums:
+            if min(lo, hi) < n < max(lo, hi) and abs(n - mid) <= tol:
+                hits.append(round(n, 3))
+    return sorted(set(hits))
+
+
 def rules_c(rep, b, repo):
     text = " ".join(b.pdf.page_text)
     web_text = " ".join(w.get("text", "") for w in b.web.values())
-    norm = text.replace(",", "")
-    avg = [a for a in ("34.32", "34.33", "34.3") if re.search(rf"(?<!\d){re.escape(a)}(?!\d)", norm)]
-    swapped = any(("33.34" in t and re.search(r"city map|map outline", t.lower()))
-                  or ("35.31" in t and "tax map" in t.lower())
+    mids = _averaged_bases(_nums(text), repo.basis_pairs)
+    tax, gis = f"{repo.clearance['tax']:g}", f"{repo.clearance['gis']:g}"
+    swapped = any((tax in t and re.search(r"city map|map outline", t.lower()))
+                  or (gis in t and "tax map" in t.lower())
                   for _, t, _ in b.html.source_texts)
-    rep.add("C4", FAIL if (avg or swapped) else PASS,
-            f"averaged clearance printed {avg}" if avg else "a clearance carries the wrong basis"
-            if swapped else "measurement bases labelled distinctly")
+    rep.add("C4", FAIL if (mids or swapped) else PASS,
+            f"a reconciled midpoint of two measurement bases printed {mids}" if mids
+            else "a clearance carries the wrong basis" if swapped
+            else "measurement bases labelled distinctly")
     bad = re.search(r"(?<![a-z])(nan|inf|infinity)(?![a-z])", (text + " " + web_text).lower())
     null_zero = [s for s, t, _ in b.html.source_texts
                  if s and not s.startswith("/map_context") and ":" not in s
@@ -634,6 +832,12 @@ def rules_d(rep, b, repo, fetch_links):
     _tables(rep, b)
     _clipping(rep, b)
     _fonts(rep, b, repo)
+    # D5 (heading stranded at a page foot; caption off its figure) and the D6 dark-pixel
+    # hidden-text sub-check are not implemented yet; surface the gap explicitly so a consistent
+    # bundle never reports a silent all-green (exit 3, not 0) and the downstream M0-T195 summary
+    # can enumerate exactly what was and was not evaluated.
+    rep.add("D5", OWED, "not implemented -- figure/caption page attribution")
+    rep.add("D6", OWED, "dark-pixel subcheck not implemented")
     rep.add("D9", PASS, f"words per page {[len(t.split()) for t in pdf.page_text]}")
 
 
@@ -707,7 +911,10 @@ def _clipping(rep, b):
         for pi, t in clipped[:8]:
             rep.add("D6", FAIL, "word box outside the content box", pi, quote=t)
     else:
-        rep.add("D6", PASS, "no clipped or out-of-box words")
+        # only the out-of-content-box sub-check ran; the overlap and dark-pixel sub-checks are
+        # not implemented, so D6 must NOT claim a full PASS (it would overstate coverage).
+        rep.add("D6", REVIEW,
+                "clipping sub-check only: no out-of-box words; overlap/dark-pixel not implemented")
 
 
 def _fonts(rep, b, repo):
