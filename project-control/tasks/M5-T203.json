@@ -15,7 +15,8 @@
     "services/api/app/api/v1/study_live_geometry.py",
     "services/api/app/api/v1/study_inputs.py",
     "services/api/tests/api/test_study_street_window_single_fetch.py",
-    "project-control/reports/M5-T203-producer-report.md"
+    "project-control/reports/M5-T203-producer-report.md",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json"
   ],
   "dependencies": [
     "M5-T170"
@@ -24,7 +25,8 @@
     "services/api/app/api/v1/study_live_geometry.py",
     "services/api/app/api/v1/study_inputs.py",
     "services/api/tests/api/test_study_street_window_single_fetch.py",
-    "project-control/reports/M5-T203-producer-report.md"
+    "project-control/reports/M5-T203-producer-report.md",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json"
   ],
   "forbidden_paths": [
     "services/api/app/config.py",
@@ -34,7 +36,12 @@
     "services/api/app/drawings/",
     "packages/contracts/",
     "apps/",
-    "docs/"
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/research/zr-snapshots/",
+    "docs/design/",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md"
   ],
   "acceptance_scenarios": [
     {
@@ -66,6 +73,12 @@
       "given": "mutation: the shared fetch removed",
       "when": "S1 runs",
       "then": "fails (red and green in the report)"
+    },
+    {
+      "id": "S6",
+      "given": "the evidence record NB-01, whose code identity pins study_inputs.py",
+      "when": "study_inputs.py changes for the shared fetch",
+      "then": "NB-01's code_identity for study_inputs.py carries the new LF sha256 and its dependency assessment records the change (the shared street-window fetch behind LIVE_SPATIAL_PROVIDER_ENABLED, default off; no zoning-lot reading, warning, figure or status changed), following the record's own revision convention; research_record_check prints no drift note for NB-01"
     }
   ],
   "required_gates": [
@@ -115,6 +128,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted and claimed; builder dispatched"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-16T00:26:57+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15c, after the builder's round 1 at 510632bb): NB-01 pins study_inputs.py in its code identity (equal to the contract head before this task), so this task must refresh it; the contract seam missed it (the CODING_RULES lesson of M5-T170). NB-01 joins the allowed paths (S6); the broad 'docs/' forbidden entry is replaced by specific ones so nothing else under docs/ opens. No row, gate, reviewer or dependency changes. NB-01 is held by no task in flight (M5-T180 and the E0 serial part, which also edit it, are not contracted yet)."
     }
   ]
 }
