@@ -1,0 +1,144 @@
+{
+  "task_id": "M5-T178",
+  "title": "M5-T178 architect-entered facts feed the results (survey-basis lot area, frontage, depth): an additive, provenance-tagged entered_facts request channel that becomes survey_entered site facts in the study before build_evaluator_inputs, so an architect survey value governs the engine input and displaces the city fact (kept visible), a same-rank conflict stays a visible typed refusal, raw lot-fact body fields stay refused, and an absent channel leaves the results byte-identical to the city-record baseline. Existing floor area, the plain-entered basis + DB-114 status chip, zoning-lot grouping, the per-answer label and the web wiring are named follow-ons (owner choices).",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "(1) results_request.py: add ONE optional additive body field `entered_facts` to ALLOWED_BODY_FIELDS - a list of {input, value, basis} where input is a CLOSED enum {lot_area, lot_frontage, lot_depth} (mapping to site_fact keys lot_area/lot_frontage/lot_depth and engine keys lot_area_sq_ft/lot_front_ft/lot_depth_ft), value a finite number > 0 (reject NaN/Infinity/<=0 exactly as floor_to_floor_ft), basis a CLOSED enum {survey} for this increment; refuse a duplicate input key (a same-input conflict is visible, never a silent pick); presence tested with `in`, never truthiness. Update the refusal message so a RAW lot-fact field (lot_area_sq_ft, lot_type, overlay_present, area_provenance, geometry, bbl) is STILL refused (T10 preserved) while the provenance-tagged entered_facts channel is accepted. Carry the parsed facts on ResultsRequest. (2) NEW module services/api/app/api/v1/entered_facts.py (one responsibility: the architect-entered-fact channel): parse/validate the entered_facts block into typed records, and a merge helper that turns each into a contract-valid site fact (measurement rank survey_entered / label 'Survey (entered)', source kind survey with a non-null statement and its own fact_id) and adds it to the study's site facts BESIDE the city fact (never overwrites), so build_evaluator_inputs chooses it as governing and keeps the city fact in `displaced`. (3) results_read.py: after study_from_study_setup and BEFORE build_evaluator_inputs, call the merge helper with req.entered_facts; a same-rank/unreconcilable conflict raised by build_evaluator_inputs maps to the existing lot_conditions_unconfirmed 503 (fail safe, both facts named in the log), never a fabricated document. (4) No change to packages/contracts (the evaluator_inputs/site_fact input contracts and the results.schema.json output contract already support survey_entered, displaced, the weakest-input rank and input_facts - reuse). No engine edit (the survey_entered rank already flows to site_measurement_rank and the 'Survey measurements' status chip).",
+  "business_reason": "Owner directive D-094-R103 (answer to question I3): architect-entered facts must feed the results right after the first worked option, each result resting on the architect's value so nobody mistakes it for a city record. The engine channel (evaluator_inputs) and the owner-rule enforcement already exist and are accepted; the only missing link is that the live results request refuses architect lot facts and the study is rebuilt from city sources each call. This task opens the minimal, provenance-safe channel for the ready case (survey-basis lot area, frontage, depth) and defers the wording/engine/web/existing-floor-area pieces to named follow-ons so the first increment ships bounded and independently testable.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "packages/contracts/schemas/v1/evaluator_inputs.schema.json",
+    "packages/contracts/schemas/v1/site_fact.schema.json",
+    "packages/contracts/schemas/v1/study.schema.json",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "services/api/app/contracts/evaluator_inputs.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/app/api/v1/results_read.py",
+    "project-control/directives/D-094-report-v2-review-next-pass/requirements.json"
+  ],
+  "outputs": [
+    "services/api/app/api/v1/results_request.py",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/api/v1/entered_facts.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_entered_facts.py",
+    "project-control/reports/M5-T178-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/api/v1/results_request.py",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/api/v1/entered_facts.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_entered_facts.py",
+    "project-control/reports/M5-T178-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/",
+    "services/api/app/scenario/",
+    "services/api/app/contracts/evaluator_inputs.py",
+    "services/api/app/contracts/study_setup_bridge.py",
+    "services/api/app/api/v1/study_setup_document.py",
+    "services/api/app/rules/",
+    "services/api/app/drawings/",
+    "apps/web/src/",
+    "docs/research/evidence-records/",
+    "docs/zoning-rule-review/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "a POST /api/v1/properties/{bbl}/results body with NO entered_facts (or entered_facts null or empty) for the benchmark BBL 4073340070",
+      "when": "the results document is produced",
+      "then": "it is byte-identical to the current city-record baseline for that lot; no survey site fact is added; the status chip is unchanged ('Approximate measurements'); no answer carries a survey/entered label; the contract version is unchanged"
+    },
+    {
+      "id": "S2",
+      "given": "entered_facts [{input:'lot_area', value:10388, basis:'survey'}] (10,388 sq ft, the MapPLUTO outline figure named in real-lot.json, entered here as the architect's value) against the benchmark whose PLUTO lot area is 10,075 sq ft (real-lot.json 'Lot area (city record)')",
+      "when": "the results are computed",
+      "then": "a survey_entered site fact (source kind survey, its own fact_id, a non-null statement) is in the study; build_evaluator_inputs selects it as the governing lot_area_sq_ft record; the PLUTO 10,075 sq ft fact is present in that record's `displaced` and is never overwritten; the floor-area/coverage/dwelling-unit answers recompute from 10,388; no field shows the entered value with a 'City records' label or a city source kind"
+    },
+    {
+      "id": "S3",
+      "given": "entered_facts [{input:'lot_frontage', value:X, basis:'survey'}] where X differs from the PLUTO lot front 100.76 ft (real-lot.json 'Lot front (city record)')",
+      "when": "the results are computed",
+      "then": "the survey value governs lot_front_ft and the PLUTO 100.76 ft travels in `displaced`; the depth answer and any frontage-dependent value recompute; the city fact stays visible"
+    },
+    {
+      "id": "S4",
+      "given": "entered_facts carrying the SAME input twice with different values (e.g. two lot_area entries), OR an entered survey value the evaluator cannot reconcile with a same-rank value",
+      "when": "the request is read / the inputs are built",
+      "then": "a duplicate input key is a typed 422 at the body gate (both values named, provider never reached); an unreconcilable same-rank conflict inside build_evaluator_inputs becomes the existing lot_conditions_unconfirmed 503 (fail safe, both facts named in the log); never a silent pick and never a fabricated document"
+    },
+    {
+      "id": "S5",
+      "given": "a body carrying a RAW lot fact (lot_area_sq_ft:5000, or lot_type:'corner', or overlay_present:true, or area_provenance:{rank:'survey_entered'}, or a lot geometry, or bbl)",
+      "when": "read_results_request runs",
+      "then": "it is still refused with a typed 422 field_not_accepted (test_t10 behaviour preserved); the ONLY way a lot measure enters is the provenance-tagged entered_facts channel; the refusal message now distinguishes the accepted entered_facts channel from a bare lot fact"
+    },
+    {
+      "id": "S6",
+      "given": "entered_facts with value 0, a negative number, NaN or Infinity, or a wrong unit/basis/input outside the closed enums",
+      "when": "read_results_request runs",
+      "then": "a typed 422 (finite, > 0, closed input and basis enums), mirroring floor_to_floor_ft validation; a legitimately present value (tested with `in`) is never confused with an absent channel"
+    },
+    {
+      "id": "S7",
+      "given": "entered_facts merged into the study",
+      "when": "the study and the evaluator inputs are validated",
+      "then": "the study still validates against study.schema.json (the added site fact carries fact_id, key, value, measurement{rank survey_entered, label 'Survey (entered)'}, and a source{kind survey, document_ref or statement present}); build_evaluator_inputs produces a valid document whose governing lot record is survey_entered with the city fact in `displaced`"
+    },
+    {
+      "id": "S8",
+      "given": "every governing engine input is survey_entered (all three lot measures entered by survey) vs. a mix where a city_records input remains",
+      "when": "the status strip is built (explanations.build_status_strip)",
+      "then": "all-survey -> chip reads 'Survey measurements' (the document is labelled as resting on the architect's survey); a remaining city input keeps 'Approximate measurements' while the entered value still governs its own input (the existing test_survey_value_governs_but_does_not_weaken_the_label invariant holds); the per-ANSWER 'rests on the architect's value' label is named follow-on A, not this task"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (labelling scope): R103 asks that EACH result be labelled as resting on the architect's value. Today the label is a document-wide status chip driven by the WEAKEST governing rank; a survey value that is not the weakest leaves the chip 'Approximate'. This task delivers the load-bearing half (the entered value changes the numbers, the city fact stays visible, conflicts stay visible); the per-ANSWER label and the plain-entered 'Measurements you entered' chip (DB-114) need an owner wording decision and an engine edit (explanations.py) - named follow-on A, deliberately out of scope to avoid inventing an owner label.",
+    "RISK 2 (basis restricted to survey): the increment admits basis 'survey' only, because a survey value is already labelled correctly ('Survey measurements') with zero engine edit and zero new wording. A plain 'entered' (non-survey) basis currently renders only 'Approximate measurements' (explanations.py _PRECISE_SITE_RANKS = {survey_entered}); admitting it without the DB-114 chip would under-label it. Keep the basis enum closed and extend it in follow-on A once the chip wording is settled.",
+    "RISK 3 (web surface): the website already has editable site-fact inputs (LotSiteSetup.tsx: site-fact-input/site-fact-save, 'saved as Entered') but results-api.ts/fetchResults does not send them and the results endpoint rebuilds the study from city sources, so the edits never reach the engine. This task opens the server channel (testable via TestClient); wiring LotSiteSetup/fetchResults to POST entered_facts is follow-on D, held off to avoid colliding with M5-T174/M5-T202 (apps/web).",
+    "RISK 4 (output provenance enum): if the owner later wants the entered value ALSO recorded in the results output input_facts block, its basis is the nine-value QUANTITY_BASES enum (law/deed/survey/printed_tax_map/.../gis/derived) which has 'survey' but NO generic architect-entry value; a survey entry maps to 'survey', but a plain entered value would need an enum change = a contract task with its own review. Not needed for this increment."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-16T02:08:58.479699+00:00",
+  "updated_at": "2026-10-16T02:08:58.983379+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R103",
+        "D-094-R285"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-16T02:08:58.479961+00:00",
+  "path_notes": "Independent of the in-flight wave-29 drawing/options/web tasks: M5-T178 edits only results_request.py, results_read.py, a NEW entered_facts.py and api tests - none held by M5-T173/M5-T191-194 (which hold the report drawings + the e2e print spec), M5-T180 (GIS sweep), the E0 option tasks (M5-T195-199/204/205), M0-T197 (export tool) or M5-T174/M5-T202 (apps/web). No file or test collision, so dependencies=[] (hard); R103's 'right after the first worked option' is a sequencing note, not a task gate - the evaluator_inputs channel (C-07) and the results 1.5.0 output contract (M5-T164) are already accepted. NO evidence-record / register / zoning-rule-review change: this is input wiring, not a fact/rule/label-of-record change; NB-05 pins the density path (result_way_bridge/ways/engine_bridge, result_way_facts, special_density_geography, engine_conditions, three_way_scope_lines) by code_paths AND saved_copy sha - this task touches none of them, so NB-05 and research_record_check stay green (forbid docs/research/evidence-records). The request body has NO JSON schema (validated in results_request.py code), so there is no packages/contracts change; keep packages/contracts forbidden (a schema change needs its own review). Modularity: results_request.py 212, results_read.py 433, both stay well under WARN_SLOC 600 after a ~40-60 line addition; the new entered_facts.py keeps the channel out of both; do NOT grow evaluator_inputs.py (531) - it is reused unchanged (forbidden). CONSUMER SWEEP the builder must confirm (code-graph impact or grep): test_results_read_api.py T10 at line 716 (its enumerated raw-field refusals stay, but its 'only three allowed fields' docstring + the results_request refusal MESSAGE move - list the before/after); the chip test tests/scenario/three_answers/test_three_answers_c6_c11.py and the evaluator test tests/contracts/test_evaluator_inputs.py stay GREEN unchanged (survey basis reuses their behaviour) - if either reddens, stop and report; the journey test tests/journey/test_215_16_northern_journey.py sends no entered_facts and must stay green (additive field). CONTRACT SEAM: bind M5-T178 by appending it to D-094-R103.applicability.task_ids (currently ['D-094-BOOTSTRAP']) and D-094-R285.applicability.task_ids (['D-094-BOOTSTRAP','M0-T197']) with a digest resync + audit_log + provisional task_verifications row in the same commit. DB-114 (the 'Measurements you entered' third status chip) and DB-291/DB-244 (website reads none of the 1.5.0 blocks) are related backlog rows to sweep at the seam; DB-114 is follow-on A. ORDER OF R103's FOUR FACTS (orchestrator, 2026-10-16): survey-basis lot area and dimensions first (this task: no new owner wording, no engine, contract or web change); then the plain-entered basis with its status words (follow-on A, owner wording), existing floor area (B), zoning-lot grouping (C), the website entry wiring (D) and the survey reader (E). Nothing is dropped; this is build order only.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/api/test_results_read_api.py tests/api/test_entered_facts.py tests/contracts/test_evaluator_inputs.py tests/scenario/three_answers/test_three_answers_c6_c11.py tests/journey/test_215_16_northern_journey.py",
+    "python tools/modularity_check.py --check",
+    "python tools/research_record_check.py --check",
+    "TESTCLIENT (no ports): POST /api/v1/properties/4073340070/results with and without entered_facts via the injected study-inputs provider; assert the no-channel document equals the city-record baseline byte-for-byte and the survey-channel document recomputes with 10,075 sq ft kept in displaced"
+  ],
+  "worktree": "/root/project/w-wave29"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-16T02:06:44+00:00",
+ "updated_at": "2026-10-16T02:08:59+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -339,7 +339,7 @@
   "D-094-R315"
  ],
  "requirements_id_digest_sha256": "36f3b1e3902340b3f230249e0c47cc996d39a20424b4aab97a3147f1c1602ada",
- "requirements_content_digest_sha256": "1dbd400fa13f4abfcc3dbcdae30b96a113f12ae6c13e48defef6424e9d7db053",
+ "requirements_content_digest_sha256": "dd73d87ed2953eab42bb3ea40ca530750fcc39dd9951bc6f0c72fe5dee091dc6",
  "sources": [
   {
    "file": "source-001.md",
@@ -689,7 +689,8 @@
   "M5-T204",
   "M5-T205",
   "M5-T173",
-  "M5-T206"
+  "M5-T206",
+  "M5-T178"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1256,6 +1257,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T206 (M5-T206 web law-link primitive (unmounted): zr-section-urls.ts resolver + ZrSectionLinks.tsx mirror law_links.py section_url/_section_index with a Python-written parity golden; every citation links its exact section, no-snapshot shows plain text) to R027, R246 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-16T02:08:59+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T178 (architect-entered facts feed the results: a provenance-tagged entered_facts request channel (survey-basis lot area, frontage, depth) that becomes survey_entered site facts before the evaluator inputs, displacing the city fact (kept visible), conflicts visible, missing stays missing) to R103, R285 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
