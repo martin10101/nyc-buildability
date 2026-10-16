@@ -102,15 +102,15 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "May be built beside M5-T173B (disjoint files) but takes its measure words before submit",
     "Web worktree needs npm ci once (heavy: run under the lock)"
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:52:41.655388+00:00",
-  "updated_at": "2026-10-15T23:52:45.146929+00:00",
+  "updated_at": "2026-10-16T01:48:24.276322+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -144,6 +144,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted and claimed; builder dispatched (unmounted)"
+    },
+    {
+      "at": "2026-10-16T01:48:21.927607+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }

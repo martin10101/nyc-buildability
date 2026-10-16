@@ -120,8 +120,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK 1 (bases): floor_plates is the plate fitted on the city-map (GIS) outline, 103.88 x 64.66 (scenario geometry.py:51-118); placement.outline is the printed-tax-map rectangle 100.76 x 66.66 in its own frame. Drawing placement.outline on the GIS map would mix bases: forbidden.",
     "RISK 2: the literal kind 'illustrative_footprint' is the contract with part B4's manifest; do not rename.",
@@ -129,7 +129,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:19.457228+00:00",
-  "updated_at": "2026-10-16T01:30:42.123519+00:00",
+  "updated_at": "2026-10-16T01:48:33.062944+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -171,5 +171,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-16T01:48:33.062751+00:00"
 }

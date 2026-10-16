@@ -80,15 +80,15 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The auto-mode classifier may refuse a .claude write: the owner's words are captured (D-094 R307-R315); retry once under them, never bypass.",
     "A subagent inherits its parent's start-time instructions: this session's helpers see the rule only through their brief; later sessions load it at start."
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:49:21.720190+00:00",
-  "updated_at": "2026-10-16T01:31:04.874864+00:00",
+  "updated_at": "2026-10-16T01:48:38.400531+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -123,5 +123,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-16T01:48:38.400366+00:00"
 }

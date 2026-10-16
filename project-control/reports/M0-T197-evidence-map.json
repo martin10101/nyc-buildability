@@ -1,0 +1,48 @@
+{
+ "task_id": "M0-T197",
+ "material_commits": [
+  "c1ac389f (backend-engineer round 1 (cherry-pick of 2b3b893f / 35050a0e): tools/report_export_check.py, the output-level check of a report bundle (claims against drawings, reconciliation, bases, page mechanics, website/PDF agreement), and its self-test with fixtures from three real prints)",
+  "accd28cb (backend-engineer round 2 (cherry-pick of 7c36335b): A1 joins a wrapped 40-hex commit; B1/B5/B6 measure drawn geometry (REVIEW when unmeasurable, never PASS); C4 reads both basis pairs from placement-building-b.json and flags a printed midpoint; D5/D6 surfaced as OWED/REVIEW; page images rendered outside the bundle; accurate implemented-versus-owed list)"
+ ],
+ "claim_seam_head": "b7f47369",
+ "files_changed": [
+  "project-control/reports/M0-T197-producer-report.md",
+  "tools/report_export_check.py",
+  "tools/test_report_export_check.py"
+ ],
+ "what_did_not_change": "No product code, report page, record, contract or CI file changed; the tool is not wired into CI (its self-test is run by hand under the heavy-run lock).",
+ "known_limits": [
+  "Owed refinements, recorded, not built: full D5 (figure and caption page attribution), the D6 overlap and dark-pixel sub-checks, the C6 HTML row-content check, a pixel-ink cross-check for B (backlog DB-292).",
+  "The tool is 841 source lines (modularity JUSTIFY band, recorded cohesion justification); split it behind a facade before further growth (DB-292).",
+  "The real-print A1 regression reads print-main-065e3fb5 as the sibling of the check-fixtures folder; the fixtures live in the session folder, outside the repository."
+ ],
+ "checks_at_material_head": [
+  "builder round 2: ruff PASS; modularity exit 0; record check and lane coverage PASS; self-test 29 tests OK under the lock; one revert per new behaviour turns its test red",
+  "orchestrator G2 at the integrated head: the self-test under the lock with REPORT_CHECK_FIXTURES set (selftest-M0-T197.log); modularity exit 0; lane coverage PASS; ruff from the repository root PASS (CI's ruff step covers services/api only)",
+  "G3 code-reviewer round 1 PASS with required items, round 2 delta PASS; G4 qa-engineer round 1 FAIL (four required items), round 2 delta PASS with new disconfirming inputs",
+  "CI run 38836291821 at c4422294 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R058": [
+   "Rule A4 fingerprints the result content so a bundle whose pages come from different revisions fails (test_a_value_change_changes_the_fingerprint; per-run metadata does not change it); the C family keeps allowance, scheduled area, site fit, estimate and legal unit limit distinct (C4 basis checks, C6 option rows).",
+   "Stays open: the check is run on each final export (M0-T195); it does not itself change the report."
+  ],
+  "D-094-R060": [
+   "Rule D3 opens the PDF's link annotations and checks each destination (page or anchor), and reports object-stream PDFs for review rather than passing them (test_object_streams_review_links); the live --fetch-links network path exists but was not run in review."
+  ],
+  "D-094-R098": [
+   "Rules B1, B5 and B6 check the rendered result against its claims by measuring the drawn geometry (rect and polygon areas; footprint role with dimension text); a mis-drawn zone at 0.898 against a 0.60 share fails with or without the stamped fraction (test_drawn_zone_geometry_0898_fails_b5), and what cannot be measured is REVIEW, never PASS.",
+   "Stays open: readability by eye stays with the visual reviews; D5 and parts of D6 are owed and reported as OWED."
+  ],
+  "D-094-R150": [
+   "Rule E4 labels a before/after picture pair 'unchanged' only when the digests are equal (test_before_after_unchanged_only_on_equal_digests)."
+  ],
+  "D-094-R265": [
+   "The tool renders the report bundle and checks claims against what is drawn: on the audited head 8fbf701b it fails B1 and B5 (the audited contradiction), and on the honest head b7f47369 it reports the gaps as OWED, not failed (test_audited_head_fails_b1_and_b5, test_honest_head_is_owed_not_failed)."
+  ],
+  "D-094-R285": [
+   "Rule C5 fails a NaN in the text and a missing value printed as zero, and passes a legitimate zero (test_nan_in_text_fails_c5, test_null_rendered_zero_fails_c5, test_legitimate_zero_passes); C6 keeps not-evaluated option rows free of figures.",
+   "Stays open: the website half of the row is checked by rule E1 only for layout; the C6 HTML row check is owed (DB-292)."
+  ]
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "task_id": "M5-T202",
+ "material_commits": [
+  "a96f6880 (frontend-engineer round 1 (cherry-pick of f0f54a04 / 49bb867f): the fitted two-zone drawing in AreaAllocation.tsx (zones split inside the placed footprint at the share, one division line, hatch not colour), the geometry and refusal reasons in area-allocation.ts byte-equal to the PDF kernel, the parity golden and its api test; still mounted nowhere)",
+  "f88bdc86 (frontend-engineer round 2 (cherry-pick of d7210438): one hatch-direction source; the legend swatches drawn with the zones' own SVG patterns and the bar matching the kernel, closing the visual review's inverted-legend finding)"
+ ],
+ "claim_seam_head": "98cf8a9a",
+ "files_changed": [
+  "apps/web/src/components/architect/answers/AreaAllocation.tsx",
+  "apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx",
+  "apps/web/src/lib/architect/__tests__/area-allocation.test.ts",
+  "apps/web/src/lib/architect/area-allocation.ts",
+  "apps/web/src/test-support/report-parity-area-zones.json",
+  "project-control/reports/M5-T202-producer-report.md",
+  "services/api/tests/drawings/kit/test_web_parity_area_zones.py"
+ ],
+ "what_did_not_change": "The component is mounted nowhere (the Results flow is unchanged); no api code, contract, token or report page changed; the unfitted bar's wording and geometry unchanged.",
+ "known_limits": [
+  "Mounting in the Results flow under the flags is M5-T174 (website parity).",
+  "The expandable methodology still reads 'Measure: Residential floor area'; the final measure wording follows the wiring part M5-T173.",
+  "The BAR hatch test encodes the chromium CSS/SVG mirror; two visual reviewers confirmed it by rendering."
+ ],
+ "checks_at_material_head": [
+  "builder round 1: lint and typecheck exit 0; the two web test files passed; the api parity test passed; round 2: 37 web tests passed; mutations A (swatch swap) and B (bar swap) red then restored; chromium render",
+  "orchestrator G2 at the integrated head: npm ci, lint, typecheck, the two web test files and test_web_parity_area_zones.py (web-checks-M5-T202.log)",
+  "G3 code-reviewer PASS (round 1) and code/test delta PASS (round 2); G3 visual round 1 FAIL (inverted legend) then delta PASS with an independent chromium render; G4 qa-engineer PASS (round 1)",
+  "CI run 38836291821 at c4422294 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R088": [
+   "The website component now draws the two-zone illustration inside the fitted footprint (area-allocation.test.tsx S1: two zones, one outline, one division, fraction and x equal to the kernel's), replacing the nothing-drawn state for a fitted footprint.",
+   "Stays open: it is shown to users only when M5-T174 mounts it."
+  ],
+  "D-094-R091": [
+   "One stated percentage from the 60-75 percent assumption: the benchmark golden is the fitted 60 percent split (test_benchmark_golden_is_the_fitted_60_percent_split) and the zone proportions equal the share (S1); the percentage is shown beside the drawing ('60% apartment area')."
+  ],
+  "D-094-R092": [
+   "The drawing splits the placed footprint by the share and labels its measure from the document's wording tokens; the expandable detail carries the conversion statement and lists the physical floor plate as not checked (the G-14 test), so zoning floor area is not presented as the floor plate."
+  ],
+  "D-094-R093": [
+   "No rooms, unit walls, counts or stair/elevator marks: the only line inside the footprint is the single division and the drawing carries no text (S5 tests, every state)."
+  ],
+  "D-094-R094": [
+   "Zones are drawn only for a fitted, placed footprint; otherwise the proportional bar (S3 table: fitted false gives the bar, fitted true placed gives the zones); a fitted block whose outline cannot be drawn shows the kernel's plain reason and nothing drawn."
+  ],
+  "D-094-R095": [
+   "One short caption ('Illustrative area allocation—not a floor plan'), byte-equal to the shared wording tokens (S4); the methodology sits in the expandable detail."
+  ],
+  "D-094-R096": [
+   "The website's geometry, refusal reasons and wording are byte-equal to the PDF kernel's (the parity golden and its api test; S4 tokens), and the legend and bar hatch directions match the kernel after round 2.",
+   "Stays open: the website shows it once M5-T174 mounts it; the PDF side is the wiring part M5-T173."
+  ],
+  "D-094-R247": [
+   "This task's share: the fitted branch of the AreaAllocation component is built and verified, ready to mount; it is still mounted nowhere (verified by both round-2 reviewers).",
+   "Stays open: mounting under the established flags in the Results flow is M5-T174; a component file alone does not establish website parity."
+  ]
+ }
+}

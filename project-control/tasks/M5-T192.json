@@ -95,15 +95,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK 1: the section is a renderer, never a law source: no code compares the building with a limit; the setback state on page 6 is part B3's pointer to the appendix item.",
     "RISK 2: the qualifying affordable/senior heights (65 ft) are not drawn for the standard Building B."
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:38.611579+00:00",
-  "updated_at": "2026-10-16T01:30:50.072663+00:00",
+  "updated_at": "2026-10-16T01:48:34.919075+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -141,5 +141,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-16T01:48:34.918883+00:00"
 }
