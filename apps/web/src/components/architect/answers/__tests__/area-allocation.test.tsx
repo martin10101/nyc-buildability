@@ -168,7 +168,9 @@ describe("S5 — hatch not colour; only the division line inside; no room/wall/u
     expect(apartmentFill).toBe("var(--pt-color-selected)");
     expect(otherFill).toBe(apartmentFill); // same colour: colour cannot tell them apart.
 
-    const patterns = Array.from(container.querySelectorAll("pattern"));
+    // the zones SVG carries exactly its two hatch patterns (the legend swatches are their own SVGs).
+    const zonesSvg = screen.getByTestId("area-allocation-zones");
+    const patterns = Array.from(zonesSvg.querySelectorAll("pattern"));
     expect(patterns).toHaveLength(2);
     const transforms = patterns.map((p) => p.getAttribute("patternTransform"));
     expect(new Set(transforms).size).toBe(2); // the hatch angle differs.
@@ -197,6 +199,84 @@ describe("S5 — hatch not colour; only the division line inside; no room/wall/u
       for (const pattern of FORBIDDEN) expect(text).not.toMatch(pattern);
       expect(screen.queryAllByTestId("area-allocation-caption")).toHaveLength(1);
     }
+  });
+});
+
+// ---- the legend key shows each zone's own hatch (not its mirror) ----
+
+/**
+ * The chromium-verified mirror between the two hatch render mechanisms (M5-T202 G3 visual review of
+ * r1 + the round-2 producer-report screenshot): an SVG horizontal line under patternTransform
+ * rotate(-45) renders rising "/", rotate(-135) renders falling "\"; a CSS repeating-linear-gradient
+ * at 135deg renders rising "/", at 45deg renders falling "\". These constants are this test's OWN
+ * record of that fact — independent of the component's mapping — so a component that pairs the
+ * mechanisms wrongly (the r1 inverted legend) reddens here.
+ */
+type Diagonal = "rising" | "falling";
+
+function svgRotateToDiagonal(transform: string | null | undefined): Diagonal {
+  const m = /rotate\(\s*(-?\d+(?:\.\d+)?)\s*\)/.exec(transform ?? "");
+  const deg = m ? Number(m[1]) : Number.NaN;
+  if (deg === -45) return "rising";
+  if (deg === -135) return "falling";
+  throw new Error(`unexpected SVG hatch rotate: ${transform ?? "(none)"}`);
+}
+
+function cssAngleToDiagonal(backgroundImage: string | undefined): Diagonal {
+  const m = /(-?\d+(?:\.\d+)?)deg/.exec(backgroundImage ?? "");
+  const deg = m ? Number(m[1]) : Number.NaN;
+  if (deg === 135) return "rising";
+  if (deg === 45) return "falling";
+  throw new Error(`unexpected CSS hatch angle: ${backgroundImage ?? "(none)"}`);
+}
+
+/** The diagonal a legend swatch (its own SVG pattern) renders for `role`. */
+function swatchDiagonal(container: HTMLElement, role: string): Diagonal {
+  const swatch = container.querySelector(`[data-role="${role}"]`);
+  return svgRotateToDiagonal(swatch?.querySelector("pattern")?.getAttribute("patternTransform"));
+}
+
+/** The diagonal the fitted zone whose hatch pattern id contains `which` renders. */
+function zoneDiagonal(which: "apartment" | "other"): Diagonal {
+  const svg = screen.getByTestId("area-allocation-zones");
+  const pattern = Array.from(svg.querySelectorAll("pattern")).find((p) =>
+    (p.getAttribute("id") ?? "").includes(which),
+  );
+  return svgRotateToDiagonal(pattern?.getAttribute("patternTransform"));
+}
+
+describe("the legend key shows each zone's OWN hatch and matches the PDF kernel direction", () => {
+  it("FITTED: each swatch's hatch runs the same diagonal as the zone it labels", () => {
+    const { allocation, placement } = benchmark();
+    const { container } = render(<AreaAllocation allocation={allocation} placement={placement} />);
+
+    // the r1 defect was an inverted key: the apartment swatch showed the OTHER zone's hatch.
+    expect(swatchDiagonal(container, "area_swatch_apartment")).toBe(zoneDiagonal("apartment"));
+    expect(swatchDiagonal(container, "area_swatch_other")).toBe(zoneDiagonal("other"));
+    // and the directions are the kernel's: apartment rising "/", other falling "\".
+    expect(zoneDiagonal("apartment")).toBe("rising");
+    expect(zoneDiagonal("other")).toBe("falling");
+    // the two swatches differ, so the key is not one ambiguous hatch.
+    expect(swatchDiagonal(container, "area_swatch_apartment")).not.toBe(
+      swatchDiagonal(container, "area_swatch_other"),
+    );
+  });
+
+  it("BAR: each bar segment runs the same diagonal as its swatch, and matches the kernel bar", () => {
+    const { container } = render(<AreaAllocation allocation={barBlock(0.65)} />);
+    const apartmentBar = container.querySelector<HTMLElement>('[data-role="area_bar_apartment"]');
+    const otherBar = container.querySelector<HTMLElement>('[data-role="area_bar_other"]');
+
+    // the bar segment and its legend swatch render the same diagonal (bar is CSS, swatch is SVG).
+    expect(cssAngleToDiagonal(apartmentBar?.style.backgroundImage)).toBe(
+      swatchDiagonal(container, "area_swatch_apartment"),
+    );
+    expect(cssAngleToDiagonal(otherBar?.style.backgroundImage)).toBe(
+      swatchDiagonal(container, "area_swatch_other"),
+    );
+    // the kernel bar direction: apartment rising "/", other falling "\".
+    expect(cssAngleToDiagonal(apartmentBar?.style.backgroundImage)).toBe("rising");
+    expect(cssAngleToDiagonal(otherBar?.style.backgroundImage)).toBe("falling");
   });
 });
 

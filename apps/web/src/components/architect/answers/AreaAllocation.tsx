@@ -43,14 +43,102 @@ const FP_SPAN = 196;
 /** Hatch geometry at that scale — identical to the kernel (_HATCH_SPACING / _HATCH_WEIGHT). */
 const HATCH_SPACING = 5;
 const HATCH_WEIGHT = 0.5;
+/** The legend swatch's side, matching the bar/zone hatch scale (px). */
+const SWATCH_SIZE = 12;
 
-/** A neutral fill overlaid with parallel hatch lines at `angle` degrees — the kernel's hatch idea in
- * CSS, so the two zones differ by pattern and never by colour alone (bar branch). */
-function hatchStyle(angle: number): CSSProperties {
+/**
+ * Hatch direction — the ONE fact that keeps every surface (the zone fills, the
+ * legend swatches and the proportional bar) telling the two zones apart the SAME
+ * way, and the same way the PDF kernel does.
+ *
+ * The kernel draws the apartment hatch rising ("/") and the other hatch falling
+ * ("\") — kit/area_allocation.py `_defs`: apartment `patternTransform` rotate(-45),
+ * other rotate(-135); its legend swatches and its bar reuse those same patterns.
+ *
+ * This component renders the hatch two ways, and in chromium the two mechanisms
+ * MIRROR each other, so each diagonal is defined once here and every surface
+ * derives its own mechanism's angle from it:
+ *   • SVG pattern (the zones AND the legend swatches, exactly as the kernel): a
+ *     horizontal line under `patternTransform` rotate(θ); rotate(-45) renders "/",
+ *     rotate(-135) renders "\".
+ *   • CSS `repeating-linear-gradient(θdeg)` (the proportional bar): 135deg renders
+ *     "/", 45deg renders "\" — the MIRROR of the SVG rotation (M5-T202 G3 visual
+ *     review r1, chromium-verified; see the producer-report screenshot).
+ * Mixing the two mechanisms with un-paired angles inverted the legend key in r1;
+ * deriving every angle from this one model is what stops that recurring.
+ */
+type HatchDiagonal = "rising" | "falling";
+/** The kernel's apartment zone hatch: rising "/". */
+const APARTMENT_DIAGONAL: HatchDiagonal = "rising";
+/** The kernel's other zone hatch: falling "\". */
+const OTHER_DIAGONAL: HatchDiagonal = "falling";
+
+/** The SVG `patternTransform` rotation that renders `diagonal` (the kernel's convention). */
+function hatchSvgRotate(diagonal: HatchDiagonal): number {
+  return diagonal === "rising" ? -45 : -135;
+}
+/** The CSS `repeating-linear-gradient` angle that renders `diagonal` in chromium
+ * (the mirror of the SVG rotation above). */
+function hatchCssAngle(diagonal: HatchDiagonal): number {
+  return diagonal === "rising" ? 135 : 45;
+}
+
+/** A neutral fill overlaid with parallel hatch lines running in `diagonal` — the kernel's hatch idea
+ * in CSS, so the two zones differ by pattern and never by colour alone (the proportional bar). */
+function hatchStyle(diagonal: HatchDiagonal): CSSProperties {
   return {
     backgroundColor: ZONE_FILL,
-    backgroundImage: `repeating-linear-gradient(${angle}deg, ${INK}, ${INK} 0.75px, transparent 0.75px, transparent 5px)`,
+    backgroundImage: `repeating-linear-gradient(${hatchCssAngle(diagonal)}deg, ${INK}, ${INK} 0.75px, transparent 0.75px, transparent 5px)`,
   };
+}
+
+/** One `<pattern>` of parallel hatch lines running in `diagonal` — the kernel's `_hatch_pattern`
+ * in the browser, used by both the zones and the legend swatches so they can never drift. */
+function HatchPattern({ id, diagonal }: { id: string; diagonal: HatchDiagonal }) {
+  return (
+    <pattern
+      id={id}
+      patternUnits="userSpaceOnUse"
+      width={HATCH_SPACING}
+      height={HATCH_SPACING}
+      patternTransform={`rotate(${hatchSvgRotate(diagonal)})`}
+    >
+      <line
+        x1={0}
+        y1={HATCH_SPACING / 2}
+        x2={HATCH_SPACING}
+        y2={HATCH_SPACING / 2}
+        stroke={INK}
+        strokeWidth={HATCH_WEIGHT}
+      />
+    </pattern>
+  );
+}
+
+/** A legend swatch drawn with the SAME SVG pattern as its zone (the kernel's `_footer` swatch), so
+ * the key for each zone shows exactly the hatch that zone is drawn with — never a mirror of it. */
+function HatchSwatch({ diagonal, role }: { diagonal: HatchDiagonal; role: string }) {
+  const raw = useId();
+  const uid = raw.replace(/[^a-zA-Z0-9_-]/g, "");
+  const patternId = `aa-swatch-${role}-${uid}`;
+  return (
+    <svg
+      className="aa-swatch"
+      data-role={role}
+      aria-hidden="true"
+      width={SWATCH_SIZE}
+      height={SWATCH_SIZE}
+      viewBox={`0 0 ${SWATCH_SIZE} ${SWATCH_SIZE}`}
+      style={{ flex: "0 0 auto", border: `1px solid ${OUTLINE}` }}
+    >
+      <defs>
+        <HatchPattern id={patternId} diagonal={diagonal} />
+      </defs>
+      {/* One neutral fill overlaid with the zone's own hatch — colour never tells the zones apart. */}
+      <rect x={0} y={0} width={SWATCH_SIZE} height={SWATCH_SIZE} fill={ZONE_FILL} />
+      <rect x={0} y={0} width={SWATCH_SIZE} height={SWATCH_SIZE} fill={`url(#${patternId})`} stroke="none" />
+    </svg>
+  );
 }
 
 /** Drop binary-float noise from an SVG coordinate (0.1 * 3 is 0.30000000000000004). */
@@ -68,23 +156,13 @@ function IllustrationFooter({ conversionStatement }: { conversionStatement: stri
         style={{ listStyle: "none", padding: 0 }}
       >
         <li className="aa-legend-item" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span
-            className="aa-swatch"
-            data-role="area_swatch_apartment"
-            aria-hidden="true"
-            style={{ width: "12px", height: "12px", border: `1px solid ${OUTLINE}`, ...hatchStyle(45) }}
-          />
+          <HatchSwatch diagonal={APARTMENT_DIAGONAL} role="area_swatch_apartment" />
           <span data-testid="area-allocation-label-apartment" style={{ fontSize: LABEL_SIZE }}>
             {AREA_ZONE_APARTMENT}
           </span>
         </li>
         <li className="aa-legend-item" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span
-            className="aa-swatch"
-            data-role="area_swatch_other"
-            aria-hidden="true"
-            style={{ width: "12px", height: "12px", border: `1px solid ${OUTLINE}`, ...hatchStyle(135) }}
-          />
+          <HatchSwatch diagonal={OTHER_DIAGONAL} role="area_swatch_other" />
           <span data-testid="area-allocation-label-other" style={{ fontSize: LABEL_SIZE }}>
             {AREA_ZONE_OTHER}
           </span>
@@ -149,38 +227,8 @@ function ZonesDrawing({ view }: { view: AreaZonesView }) {
       aria-label={`Two zones inside the placed footprint: ${view.percent}% ${AREA_ZONE_APARTMENT}; the remainder is ${AREA_ZONE_OTHER}`}
     >
       <defs>
-        <pattern
-          id={apartmentPattern}
-          patternUnits="userSpaceOnUse"
-          width={HATCH_SPACING}
-          height={HATCH_SPACING}
-          patternTransform="rotate(-45)"
-        >
-          <line
-            x1={0}
-            y1={HATCH_SPACING / 2}
-            x2={HATCH_SPACING}
-            y2={HATCH_SPACING / 2}
-            stroke={INK}
-            strokeWidth={HATCH_WEIGHT}
-          />
-        </pattern>
-        <pattern
-          id={otherPattern}
-          patternUnits="userSpaceOnUse"
-          width={HATCH_SPACING}
-          height={HATCH_SPACING}
-          patternTransform="rotate(-135)"
-        >
-          <line
-            x1={0}
-            y1={HATCH_SPACING / 2}
-            x2={HATCH_SPACING}
-            y2={HATCH_SPACING / 2}
-            stroke={INK}
-            strokeWidth={HATCH_WEIGHT}
-          />
-        </pattern>
+        <HatchPattern id={apartmentPattern} diagonal={APARTMENT_DIAGONAL} />
+        <HatchPattern id={otherPattern} diagonal={OTHER_DIAGONAL} />
       </defs>
       {/* Both zones carry ONE neutral fill; the hatch overlay tells them apart, not colour. */}
       <path data-role="area_zone_apartment" d={apartmentD} fill={ZONE_FILL} fillRule="evenodd" stroke={OUTLINE} strokeWidth={0.75} />
@@ -265,7 +313,7 @@ export function AreaAllocation({
         <span
           className="aa-bar-apartment"
           data-role="area_bar_apartment"
-          style={{ width: apartmentWidth, ...hatchStyle(45) }}
+          style={{ width: apartmentWidth, ...hatchStyle(APARTMENT_DIAGONAL) }}
         />
         <span
           className="aa-bar-other"
@@ -273,7 +321,7 @@ export function AreaAllocation({
           style={{
             width: otherWidth,
             borderLeft: `1px solid ${OUTLINE}`,
-            ...hatchStyle(135),
+            ...hatchStyle(OTHER_DIAGONAL),
           }}
         />
       </div>

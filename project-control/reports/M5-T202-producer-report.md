@@ -114,3 +114,72 @@ Reset base (brief head): `60d0a096c1b009f29356f4faae5597a8a8f28114`.
 - CI at the merge head (full web + api suites, security gates) is the orchestrator's to read
   green per R639.
 - What M5-T173's accepted sheet will finally print for the measure words and the sq ft split.
+
+---
+
+## Round 2 (builder) — legend/bar hatch direction fix (G3 visual review REQUIRED finding)
+
+### The finding this closes
+G3 visual review (`return-T202-G3v.md`) FAILED round 1 on ONE required defect: the FITTED
+drawing's legend swatches were mirror-inverted against the zones they label and against the PDF
+kernel. The fitted zones are SVG (`patternTransform` rotate(-45)="/" apartment, rotate(-135)="\"
+other, matching the kernel), but the legend swatches and the bar were CSS
+`repeating-linear-gradient` (45deg="\", 135deg="/") — the mirror of the SVG convention in chromium.
+So the "Apartment area" swatch ("\") visually matched the OTHER zone, and vice versa. The bar was
+also the mirror of the kernel bar (reviewer advisory A).
+
+### What changed (two files, both in allowed paths)
+- `AreaAllocation.tsx`: introduced ONE hatch-direction source of truth — `type HatchDiagonal`
+  with `APARTMENT_DIAGONAL="rising"` ("/"), `OTHER_DIAGONAL="falling"` ("\") (the kernel's
+  directions), and two derivation helpers `hatchSvgRotate` (rising→-45, falling→-135) and
+  `hatchCssAngle` (rising→135, falling→45, the chromium mirror). The legend swatches are now drawn
+  with the SAME SVG `<pattern>` the zones use (new `HatchPattern` + `HatchSwatch` components,
+  exactly as the kernel's `_footer` reuses `_HATCH_APARTMENT`/`_HATCH_OTHER`), so the swatch for
+  each zone shows precisely that zone's hatch and can never drift. The zones' own defs now use the
+  shared `HatchPattern` (byte-identical output: rotate(-45)/rotate(-135), unchanged). The bar
+  segments now take a diagonal (`hatchStyle(APARTMENT_DIAGONAL)`/`(OTHER_DIAGONAL)`) → apartment
+  135deg "/", other 45deg "\", matching the kernel bar and the legend.
+- `area-allocation.test.tsx`: new describe "the legend key shows each zone's OWN hatch and matches
+  the PDF kernel direction" with two tests. It carries its OWN independent chromium-verified mapping
+  (`svgRotateToDiagonal`, `cssAngleToDiagonal`) so it does not reuse the component's mapping. FITTED
+  test: each swatch's diagonal == its zone's diagonal, apartment=rising, other=falling, the two
+  differ. BAR test: each bar segment's diagonal == its swatch's diagonal, apartment=rising,
+  other=falling. Also scoped the existing S5 `pattern` count to the zones SVG (the swatches are now
+  their own SVGs with their own patterns).
+
+Geometry, wording, refusal reasons, the fitted/bar branching and the unmounted state are unchanged.
+No api file, contract, token file or lib changed; the api parity test and the golden are untouched.
+
+### Checks (worktree /root/project/nyc-buildability/.claude/worktrees/agent-a43d056b086a37c02)
+- `npm run lint`: EXIT 0 (0 errors; 2 pre-existing warnings in unrelated files, none mine).
+- `npm run typecheck` (tsc --noEmit): EXIT 0.
+- vitest (both touched files, under the heavy-run lock): 2 files, 37 tests passed (35 prior + 2
+  new). EXIT 0.
+- `tools/modularity_check.py --check`: EXIT 0 (AreaAllocation.tsx within thresholds; the warnings
+  are pre-existing api modules, none mine).
+- `tools/research_record_check.py --check`: PASS, EXIT 0. No evidence record's code_paths include
+  any file I edited (grep of docs/research/evidence-records: no match), so no record resync.
+- `scripts/lanes/check_lane_paths.py --coverage`: LANE COVERAGE PASS, EXIT 0.
+- ruff: not run — no services/api file changed this round.
+
+### Mutation proof (each new behaviour test; reverted after)
+- Mutation A — re-invert the legend (swap the two `HatchSwatch` diagonals, i.e. reproduce the r1
+  defect): the FITTED test FAILED (swatch apartment "falling" != zone apartment "rising") AND the
+  BAR test FAILED (bar apartment "rising" != swatch apartment "falling"); 2 failed. Restored.
+- Mutation B — break ONLY the bar direction (swap the two bar `hatchStyle` diagonals; swatches
+  unchanged): the BAR test FAILED (bar apartment "falling" != "rising"), the FITTED test PASSED
+  (1 failed | 1 passed). Restored. This proves the BAR test independently guards the bar.
+- After restore: 37 passed again.
+
+### Chromium render (no server, no port)
+Bundled the frozen component with esbuild (alias @→apps/web/src, nodePaths→apps/web/node_modules,
+CJS), `renderToStaticMarkup` for the benchmark FITTED case and a valid BAR case, screenshot with
+playwright chromium at deviceScaleFactor 2, under the heavy-run lock. Markup confirms: fitted zones
+apartment rotate(-45)/other rotate(-135); legend swatches apartment rotate(-45)/other rotate(-135)
+(== the zones); bar apartment 135deg/other 45deg. The screenshot shows the apartment swatch "/"
+matching the left apartment zone "/" and the other swatch "\" matching the right other zone "\",
+in BOTH the fitted and bar states, and matching the kernel direction.
+Artifacts: `/tmp/claude-0/M5-T202/render/area.html`, `/tmp/claude-0/M5-T202/render/area.png`.
+
+### Still unknown (unchanged from round 1)
+- The final measure wording (M5-T173, not yet accepted) and where M5-T174 mounts this component.
