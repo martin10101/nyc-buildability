@@ -1,1 +1,27 @@
-{}
+{
+  "benchmark": {
+    "fixture": "recorded_215_16_northern_journey",
+    "share": 0.6,
+    "ring": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        100.76,
+        0.0
+      ],
+      [
+        100.76,
+        66.66
+      ],
+      [
+        0.0,
+        66.66
+      ]
+    ],
+    "footprint_area": 6716.6616,
+    "division_x": 60.456,
+    "apartment_fraction": 0.6
+  }
+}
