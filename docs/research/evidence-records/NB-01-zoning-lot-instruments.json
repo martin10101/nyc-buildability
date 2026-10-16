@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-01",
  "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
- "revision": 10,
- "last_changed": "2026-10-15",
+ "revision": 11,
+ "last_changed": "2026-10-16",
  "question": {
   "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -276,7 +276,7 @@
    "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
    "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
    "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
-   "services/api/app/api/v1/study_inputs.py": "8f70a61cab9cb455677b460dbe53bbf43556f3e1b4a8b96e8a2cc7c5b4d72fa0",
+   "services/api/app/api/v1/study_inputs.py": "6c743470ec38d79160f2711d91985f049fb85f10e792b872bab868ecc1d270a3",
    "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
    "services/api/app/scenario/three_answers/result_way_bridge.py": "4e4d209e41b4278a908afa422b7abd63055b203d8393695f7527649b3d76ddea",
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
@@ -316,7 +316,8 @@
    "Revision 9 (M5-T169, option comparison / evidence appendix / run identity): readers.py is edited (a new defensive input_facts reader for the 1.5.0 input_facts block, consumed by the new drawings/report/open_items.py; the nine-bases plain-word labelling lives in open_items.py, not here) and is refreshed to its current LF sha256. The reader returns an empty list on a 1.4.0 document, so readers.py behaviour - including the zoning-lot facade re-export and the open-items wiring that surfaces the recorded-document condition - is byte-identical on a 1.4.0 document. No zoning-lot reading, warning or figure changed; research_status stays access_blocked (reading the instruments themselves is still owed). The NB-01 contingency delta review (an independent G1 check that the zoning-lot behaviour is unchanged) is recorded by the reviewer, not here.",
    "M5-T172 edits three_way_document.py to emit the illustrative placement on the first building alternative and the area allocation on every alternative, and to populate the floor-by-floor table when a building is placed; its code identity is refreshed here, superseding the revision 9 identity. The zoning-lot-instruments reading (whether lots 1 and 70 are one zoning lot; the ACRIS zoning-lot scope row) is unchanged - the placement's conditions still carry the zoning lot as not known. A code-identity resync only; no reading, value, code behaviour or status changed.",
    "M5-T172 round 2 (S12): the illustrative placement and area-allocation wiring (PlacementInputs, _apply_placement, _apply_area_allocation) moved out of three_way_document.py into the new thin module placement_wiring.py so three_way_document.py stays at or under the 750-SLOC justification line; three_way_document.py's code identity is resynced here within the same revision 10. The moved wiring is placement logic, not zoning-lot logic; the zoning-lot-instruments reading and the ACRIS zoning-lot scope row are byte-identical. A code-identity resync only; no reading, value, code behaviour or status changed.",
-   "M5-T172 round 3 (S14/S15): three_way_document.py changed so the page-5 not-checked line, the area-allocation fitted flag and the not-placed sentence follow one placed-AND-drawn predicate (_placement_drawn), not the four lot measures alone; its code identity is resynced here within the same revision 10. No reading, value or status changed."
+   "M5-T172 round 3 (S14/S15): three_way_document.py changed so the page-5 not-checked line, the area-allocation fitted flag and the not-placed sentence follow one placed-AND-drawn predicate (_placement_drawn), not the four lot measures alone; its code identity is resynced here within the same revision 10. No reading, value or status changed.",
+   "Revision 11 (M5-T203, DB-273 one shared street-window fetch): study_inputs.py changed and is refreshed here to its current LF sha256 (it is the only NB-01 code_path this task changed). _live_study_inputs_provider now builds one shared street-window fetch (shared_street_window_fetch in study_live_geometry.py, a per-request memo keyed by the request URL and correlation id) and hands it to both the live geometry provider and the live street-data provider, so the lot's DCM street window's transport runs once per request instead of twice. This is behind LIVE_SPATIAL_PROVIDER_ENABLED (default OFF); with the flag off both providers stay None, no fetch runs and the route output is byte-identical. No zoning-lot reading, warning, figure or research status changed; research_status stays access_blocked (reading the instruments themselves is still owed). A code-identity resync only; no reading, value, zoning-lot code behaviour or status changed."
   ]
  },
  "review": {

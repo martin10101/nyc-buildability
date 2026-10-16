@@ -100,3 +100,60 @@ evidence record and by no review-register entry.
 Full `pytest -q` of `services/api` and the web/e2e suites (CI's job, must be green at the
 accepted head, R639). The full api suite was not run locally (heavy-run policy). I did not
 run the report print (no report page changed). No network was touched.
+
+## Round 2 (session 2026-10-15c) — NB-01 provenance refresh
+
+Scope correction 1 added `docs/research/evidence-records/NB-01-zoning-lot-instruments.json`
+to this packet's allowed paths (S6) and replaced the broad `docs/` forbidden entry with
+specific ones. Round 2 resets to the scope-correction head
+`a3fa709ca8cce6869df098f7ea0dca59db8fd868`, cherry-picks round 1
+(`510632bbeca227dedc464ff77123661c56c63066`), then refreshes NB-01 so the record is not
+stale against round 1's `study_inputs.py` change. No api source was touched in round 2.
+
+What changed in NB-01 (following its own revision convention, matching revisions 6-10 which
+refreshed study_inputs.py the same way):
+
+- `revision` 10 -> 11; `last_changed` 2026-10-15 -> 2026-10-16 (from `date -u`:
+  Fri Oct 16 00:29:24 UTC 2026).
+- `implementation.code_identity["services/api/app/api/v1/study_inputs.py"]`
+  `8f70a61cab9cb455677b460dbe53bbf43556f3e1b4a8b96e8a2cc7c5b4d72fa0` ->
+  `6c743470ec38d79160f2711d91985f049fb85f10e792b872bab868ecc1d270a3` (the new LF sha256,
+  recomputed after the cherry-pick; equals the value the brief named).
+- New `dependency_assessment` entry (Revision 11): the shared street-window fetch behind
+  `LIVE_SPATIAL_PROVIDER_ENABLED` (default OFF); flag off => both providers None, no fetch,
+  byte-identical; no zoning-lot reading, warning, figure or research status changed;
+  `research_status` stays `access_blocked`. No finding of NB-01 was touched.
+
+Disconfirming check: `study_inputs.py` is the ONLY NB-01 code_path that drifted. A per-file
+LF-sha256 comparison of all 13 NB-01 code_paths against the stored `code_identity` reported
+exactly one drift (study_inputs.py, old vs new above) and none after the edit. The record's
+other code_paths (incl. the review-register-pinned three_way_document.py) are unchanged;
+`study_live_geometry.py` is pinned by no evidence record and by no review-register entry, so
+no register resync is owed.
+
+Checks (lanes venv, `PYTHONDONTWRITEBYTECODE=1`, `pytest -p no:cacheprovider`; api from
+`services/api`; heavy run under `flock /root/project/lanes-runtime/heavy-run.lock`):
+
+- `research_record_check.py --check`: EXIT 0. Before the edit, NB-01 `code_current=False`
+  with the drift NOTE "linked code changed after the record was written". After the edit,
+  NB-01 `code_current=True` and NO NB-01 drift NOTE; overall PASS. (The unrelated NB-04 NOTE
+  is pre-existing at the scope-correction head — NB-04 lists neither file this task touched —
+  and is outside this packet's scope.)
+- `ruff check .` (services/api, lanes venv): EXIT 0, "All checks passed!".
+- `modularity_check.py --check`: EXIT 0 (821 files, 0 failures, 33 warnings, all pre-existing
+  review signals; none on a file this task changed).
+- `check_lane_paths.py --coverage`: EXIT 0 ("LANE COVERAGE PASS: 10993 file(s)").
+- Round-1 tests still pass: `pytest -q tests/api/test_study_live_geometry.py
+  tests/api/test_study_inputs_live.py tests/api/test_study_street_window_single_fetch.py
+  tests/api/test_study_live_outline_provider.py`: EXIT 0, 27 passed.
+
+Mutation proof (S6): no new behaviour test in round 2 — NB-01 is a provenance record, not
+executable behaviour; its test is the mechanical `research_record_check`. The red/green
+evidence for that record refresh is the before/after of `code_current` and the drift NOTE
+above (False+NOTE before the hash edit, True+no-NOTE after). Round 1's behaviour mutation
+proof (S5, `assert 4 == 2`) is recorded above and unchanged.
+
+## Round 2 — what I did not check
+
+Full `pytest -q` of `services/api` and the web/e2e suites (CI's job at the accepted head,
+R639). No report print (no report page changed; NB-01 is an evidence record). No network.
