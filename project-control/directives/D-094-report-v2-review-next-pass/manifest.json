@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T23:52:58+00:00",
+ "updated_at": "2026-10-16T01:33:40+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -339,7 +339,7 @@
   "D-094-R315"
  ],
  "requirements_id_digest_sha256": "36f3b1e3902340b3f230249e0c47cc996d39a20424b4aab97a3147f1c1602ada",
- "requirements_content_digest_sha256": "9ed95b1792e22ed1ee627872e56f184145662f86624c434df557d093de140ad5",
+ "requirements_content_digest_sha256": "4d6b292328bda425bc6395421e130e527c8732defbec5e96af8f137f9f7d6955",
  "sources": [
   {
    "file": "source-001.md",
@@ -687,7 +687,8 @@
   "M5-T202",
   "M5-T203",
   "M5-T204",
-  "M5-T205"
+  "M5-T205",
+  "M5-T173"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1236,6 +1237,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T205 (E2 part (M5-T205, record, new file): NB-10 evidence record) to R258, R263 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-16T01:33:40+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T173 (part B wiring: one manifest, footprint to page 4, page-4 basis caption, shared pins, e2e print spec, NB-04, real print) to R043, R052, R053, R072, R082, R096, R098, R196, R201, R202, R206, R223, R227, R235, R279, R280, R281, R282, R283, R284 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }

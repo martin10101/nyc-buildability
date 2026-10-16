@@ -757,3 +757,5 @@ Sweep 2026-10-15 (M5-T202 to M5-T205 contracts, session 2026-10-15c): DB-273 is 
 Sweep 2026-10-15 (M5-T202 to M5-T205 contracts, session 2026-10-15c): DB-273 is taken by M5-T203 (its row moves at that task's acceptance); other rows unchanged.
 
 Sweep 2026-10-15 (M5-T202 to M5-T205 contracts, session 2026-10-15c): DB-273 is taken by M5-T203 (its row moves at that task's acceptance); other rows unchanged.
+
+Sweep 2026-10-16 (M5-T173 wiring-part contract, session 2026-10-15c): DB-227, DB-283, DB-284 and DB-288 stay QUEUED(M5-T173), now held by the wiring part itself; DB-273 RESOLVED by M5-T203 (accepted); other rows unchanged.

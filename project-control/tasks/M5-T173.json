@@ -1,0 +1,189 @@
+{
+  "task_id": "M5-T173",
+  "title": "M5-T173 part B wiring (serial, after M5-T191..M5-T194): the report renders every drawing first and builds one drawn-content manifest for every page; the floor-1 plate reaches the page-4 close frame with its dimensions; the page-4 caption states the clearances on both bases from the document; page 6 carries the scenario drawings; the legacy drawn predicates are removed; the shared pins follow the drawn state; NB-04 revision 4; a real print compared page by page",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "(1) report/builder.py: resolve surroundings, choose the page-4 drawing, embed the scenario drawings (B3 scenario_figures.embed_scenario_drawings), build ONE DrawnManifest (B4 manifest.build_manifest) from those Embedded values before any page renders; pass footprint_drawn to page_option_comparison, page_scenario_sheet and page_site_context and illustration_state to page_evidence. (2) report/page_location.py: a defensive reader of the floor-1 entry of geometry.floor_plates (available, placement 'placed'; None for 1.4.0 or malformed), passed as placed_footprint to the 'close' frame embed ONLY. (3) report/page_site_context.py render(..., footprint_drawn=None): under the page-4 drawing, when drawn, 'Illustrative building footprint on the city map outline (not surveyed; not a design).' then the placement's contradicted_record condition sentence read from the document (33.34 ft printed tax map, 35.31 ft city map; never averaged or chosen); when placed but not drawn, 'The worked-out footprint is not drawn on this map.'; otherwise unchanged. (4) Delete drawings_embed.site_plan_draws_placed_footprint and page_evidence._area_illustration_drawn; rewrite their monkeypatch tests to the manifest. (5) Update the shared pins that follow the drawn state. (6) NB-04 revision 4 (DB-283). (7) Real print, compared page by page with main.",
+  "business_reason": "Audit 2026-10-15c sections 3-4 and 10: pages 4, 5, 6 and 10 must agree with what is drawn, and 33.34, 35.31, 12,090 and 8,060 must appear with their bases. B1-B4 are renderer and page level; this part makes them one report.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/215-16-Northern-Boulevard-report-main-86a450d4-2026-10-15.pdf",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/return-H4-claims-manifest.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/tests/drawings/report/test_report_scenario_integration.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "project-control/reports/M5-T173-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T191",
+    "M5-T192",
+    "M5-T193",
+    "M5-T194"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/tests/drawings/report/test_report_scenario_integration.py",
+    "services/api/tests/drawings/report/test_report_drawn_manifest.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_comparison.py",
+    "services/api/tests/drawings/report/test_report_appendix.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "project-control/reports/M5-T173-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/kit/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/page_scenario_sheet.py",
+    "services/api/app/drawings/report/scenario_figures.py",
+    "services/api/app/drawings/report/manifest.py",
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/cad/",
+    "services/api/app/rules/review_register/register.json",
+    "services/api/tests/drawings/kit/snapshots/",
+    "services/api/tests/drawings/maps/snapshots/",
+    "services/api/tests/cad/snapshots/",
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "apps/web/src/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "any document",
+      "when": "build_report_html runs",
+      "then": "every drawing embedded before the first page; one manifest decides every shown/drawn/placed claim (pages 4, 5, 6, appendix); drawings off (no LANE_E): no drawing, chart 'Worked out; not drawn' for the placed benchmark, appendix 'not yet drawn'; 1.4.0: no new claim"
+    },
+    {
+      "id": "S2",
+      "given": "the placed benchmark with the window map pack, LANE_E on (the real print)",
+      "when": "printed",
+      "then": "page 4: footprint drawn, legend 'Illustrative building footprint', no 'No building placed', caption with the basis line and the document sentence carrying 33.34 and 35.31; page 5 'Shown on the site plan'; page 6: section with 30/45/55 ft lines, zones inside the footprint, caption with 12,090, 8,060, 20,150 sq ft, schedule with the rounding note, unresolved list; appendix 'it is shown as zones inside the placed building footprint on the scenario sheet'; every page compared by pdftotext with the main 86a450d4 print, each difference listed"
+    },
+    {
+      "id": "S3",
+      "given": "the benchmark, LANE_E on, no map document (kit fallback)",
+      "when": "the report renders",
+      "then": "page 4 kit plate as the illustrative footprint, page 5 'Shown on the site plan', same caption statement; the e026a391 'Residential' plate beside 'Worked out; not drawn' is gone"
+    },
+    {
+      "id": "S4",
+      "given": "a test copy of the benchmark with a degenerate floor-1 outline (H4 T2)",
+      "when": "the report renders with maps",
+      "then": "page 4 no footprint and no 'No building placed', caption 'The worked-out footprint is not drawn on this map.'; page 5 'Worked out; not drawn'; page 6 'The footprint is worked out but is not drawn in this report.'; appendix not drawn"
+    },
+    {
+      "id": "S5",
+      "given": "the shared pins",
+      "when": "updated",
+      "then": "only these move, each with before/after: test_report_pages.py:205-220, test_report_comparison.py:107-134, test_report_appendix.py:204-213, test_constraints_page.py:123-127, test_location_sheet.py:252-276, test_constraint_rows.py:320-341 if moved, the legacy cases of test_report_drawn_manifest.py; benchmark JSON and kit, maps and DXF snapshots byte-unchanged; any other red consumer or snapshot move: stop and report"
+    },
+    {
+      "id": "S6",
+      "given": "the budgets",
+      "when": "measured",
+      "then": "plain words at most 2,448 (cap not raised); page 1 unchanged and at most 200; repeat count 0; real print at most 11 pages with no block alone on a blank page (10 at main; DB-270); the e2e report-print spec asserts the site page carries the footprint and the scenario sheet the area illustration, and its text-size and width checks pass in CI at the exact head"
+    },
+    {
+      "id": "S7",
+      "given": "NB-04 (code_current False at e026a391: close_frame_dimensions.py recorded 8394b3e6..., present 3950da23...; DB-283)",
+      "when": "revised",
+      "then": "revision 4: code identity resynced (LF sha256) with a dependency assessment (M5-T188's chip change altered no reading; part B draws GIS-basis footprint dimensions under the one city-map note and states the tax-map clearance separately); maps/placed_footprint.py added to code_paths if the G1 reviewer agrees it implements the record's labelling; status unchanged, so README and RESEARCH_REQUESTS stay untouched; research_record_check shows NB-04 code_current True; independent G1 delta review"
+    },
+    {
+      "id": "S8",
+      "given": "the three print states (maps, kit fallback, drawings off) and H4 T7/T8",
+      "when": "the integration test runs",
+      "then": "every printed shown/drawn/placed/fitted claim matches the manifest; no figure mixes 33.34 and 35.31 and each names its basis; a 40-character commit and a long address change no claim and no page count; the manifest kind literal equals the kit style kind"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (one owner): this part alone holds the shared pins, the e2e print spec and NB-04; it runs after B1-B4 are integrated and before M5-T180, E0 and M5-T174, never beside them.",
+    "RISK 2 (clearance): printed only as the document sentence; measured on the drawing it would read 35.32 ft (215 Place edge 99.98 less 64.66) against the document's 35.31 ft (lot reach 99.97): a different measure, so never drawn.",
+    "RISK 3 (residuals): the kit fallback caption 'Approximate - tax map' (DB-269); the appendix share printed as 0.6 beside the drawing's 60%; DB-227 corner area stays undrawn (not established)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-16T01:33:40.016200+00:00",
+  "updated_at": "2026-10-16T01:33:40.481182+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R043",
+        "D-094-R052",
+        "D-094-R053",
+        "D-094-R072",
+        "D-094-R082",
+        "D-094-R096",
+        "D-094-R098",
+        "D-094-R196",
+        "D-094-R201",
+        "D-094-R202",
+        "D-094-R206",
+        "D-094-R223",
+        "D-094-R227",
+        "D-094-R235",
+        "D-094-R279",
+        "D-094-R280",
+        "D-094-R281",
+        "D-094-R282",
+        "D-094-R283",
+        "D-094-R284"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-16T01:33:40.016511+00:00",
+  "path_notes": "Serial wiring part (after B1-B4). D-093: numbers checked against placement-building-b.json (rows gis-conflict-check, area-allocation, plate) and real-lot.json row L3; NB-04 revised with an independent delta review; NB-01 untouched (readers.py not edited). register.json cites 43 code paths, none under app/drawings: no register event, no zoning-rule-review change. Contract seam: append the part ids to the bound rows (digest resync, audit_log, provisional task_verifications row, same commit); bind the audit-capture rows (D-094 source-028) once indexed. CARRY ITEMS FROM THE PART REVIEWS (all to be closed here): (1) B3 integration: the part B3 commits (M5-T193 round 1 cece9d3e, round 2 when the orchestrator sends it) are cherry-picked onto this part's base by its builder; B3 and this part are accepted at one head (B3's test_constraint_rows pin is this part's). (2) test_constraint_rows.py: scope BOTH assertions (line ~264 'printed tax map' not in, lines ~253-254 in) to the site-and-context section and confirm the slice excludes the scenario sheets (id='scenario-<n>'), so the positive one still tests the page-4 overlay (B3 G3, G4). (3) Manifest None state: after deleting page_evidence._area_illustration_drawn pass an explicit not-drawn illustration_state, or rewrite the None branch (B4). (4) footprint_drawn: pass it from the manifest to page_option_comparison, page_scenario_sheet and page_site_context; confirm B2's height-line detection against B2's real signature (B3). (5) Pin the 'illustrative_footprint' kind literal against the kit style kind in the integration test (B4 G4, cross-part contract with B1). (6) Page 4 and page 5 read one manifest: the kit report frame draws the footprint whenever a floor-1 plate exists, so both page-4 paths (close frame and kit fallback) and the page-5 status must agree (B1 G3 code). (7) Every drawing claim reads the manifest; a claim that keeps readers.building_not_placed() (readers.py:588; page_option_comparison placed_on_site, page_scenario_sheet:88) states placement, never drawing (owner row R204). (8) The kit fallback caption 'Lot outline: Approximate \u2014 tax map' sits over GIS figures (DB-269 schema const): this part's caption must not let it read as the printed tax map; the legend pairs 'Building footprint' and 'Illustrative building footprint' must not confuse (B1 G1). (9) The page-4 caption names the footprint figure as the building width (103.88 ft also repeats the frontage; B1 G3 visual). (10) Page fit: layout.py's figure break-inside rule bumps the whole area figure and leaves page 5 ~40% blank; compose the sheet so it fills its page (design contract section 7; B3 G3 visual REQUIRED-1). (11) On the real print confirm what part B3 round 2 supplies: the section's 'schematic, not to scale' label, the conditional-heights caption (B2 G1 REQUIRED) and section labels at or above 8.5 pt printed (B2 G3 F2). (12) DB-283: NB-04 code identity revision 4 (close_frame_dimensions.py) with an independent G1 delta review. (13) Backlog only (not this part's to fix): 35.31 from rounded operands vs the drawn 35.32 / 99.98 edge (H5 item 3).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings tests/cad tests/api/test_report_read_api.py",
+    "python tools/modularity_check.py --check",
+    "python tools/research_record_check.py --check",
+    "REAL PRINT (no ports): TestClient POST /report with providers carrying the street window and the zoning-lot index (confirm a 1.5.0 placed document first) and recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs; also the kit-fallback and drawings-off states; pdftotext per page against the main 86a450d4 print"
+  ],
+  "worktree": "/root/project/w-wave29"
+}

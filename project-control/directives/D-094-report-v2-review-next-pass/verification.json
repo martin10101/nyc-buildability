@@ -4620,6 +4620,159 @@
      "reviewed_sha": null
     }
    ]
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T173",
+   "applicable_requirement_ids": [
+    "D-094-R043",
+    "D-094-R052",
+    "D-094-R053",
+    "D-094-R072",
+    "D-094-R082",
+    "D-094-R096",
+    "D-094-R098",
+    "D-094-R196",
+    "D-094-R201",
+    "D-094-R202",
+    "D-094-R206",
+    "D-094-R223",
+    "D-094-R227",
+    "D-094-R235",
+    "D-094-R279",
+    "D-094-R280",
+    "D-094-R281",
+    "D-094-R282",
+    "D-094-R283",
+    "D-094-R284"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-094-R043",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R052",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R053",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R072",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R082",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R096",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R098",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R196",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R201",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R202",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R206",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R223",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R227",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R235",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R279",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R280",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R281",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R282",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R283",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R284",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
