@@ -1,0 +1,31 @@
+{
+ "task_id": "M5-T203",
+ "material_commits": [
+  "45d1492d (backend-engineer round 1 (cherry-pick of 510632bb): shared_street_window_fetch (a lock-guarded bounded LRU keyed by (url, correlation_id); a raised fetch is not memoised) built once in _live_study_inputs_provider when LIVE_SPATIAL_PROVIDER_ENABLED is on and handed to both live providers; flag off builds nothing; test_study_street_window_single_fetch.py (S1-S5))",
+  "57f4ee7f (backend-engineer round 2 (cherry-pick of 8c354af7): NB-01 revision 11 re-pins study_inputs.py's code identity and records the change in its dependency assessment (no finding, warning, figure or status changed))"
+ ],
+ "claim_seam_head": "a3fa709c",
+ "files_changed": [
+  "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+  "project-control/reports/M5-T203-producer-report.md",
+  "services/api/app/api/v1/study_inputs.py",
+  "services/api/app/api/v1/study_live_geometry.py",
+  "services/api/tests/api/test_study_street_window_single_fetch.py"
+ ],
+ "what_did_not_change": "No zoning reading, figure, warning, evidence status or report page changed; the live spatial provider stays off by default (byte-identical flag-off path); the lot-geometry fetch stays each provider's own.",
+ "known_limits": [
+  "Live behaviour with the flag on against the real city service was never exercised (the flag stays off); tests use injected fakes and the recorded Northern pack.",
+  "Advisory (G3/G4/G5): the docstring and NB-01 call the memo per-request; it is a process-wide bounded LRU (256) whose reuse is partitioned by the per-request correlation id."
+ ],
+ "checks_at_material_head": [
+  "builder: ruff PASS; the four study test files 27 passed under the heavy-run lock; mutation (return fetch) turns S1 red 4 == 2; research_record_check PASS with no NB-01 drift after round 2; modularity and lane coverage PASS",
+  "orchestrator G2 at 57f4ee7f: whole api suite 10120 passed, 8 skipped (api-suite-M5-T203.log)",
+  "G3 code-reviewer PASS; G4 qa-engineer PASS (cross-request isolation and LRU-bound probe); G5 security-reviewer PASS (no cross-request leakage, thread safe, failures not memoised, flag off byte-identical)",
+  "CI run 38832424311 at 57f4ee7f (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R287": [
+   "The remaining risk named in DB-273 (the same street window fetched twice when the live spatial provider is on) is addressed by one targeted change with focused tests aimed at the real risks (one transport per window, object-for-object equal results, failure surfacing in both providers, flag-off byte identity, NB-01 provenance), not by a bulk of redundant tests; the required gates G2-G5 all PASS at 57f4ee7f."
+  ]
+ }
+}
