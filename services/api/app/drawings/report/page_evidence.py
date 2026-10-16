@@ -146,18 +146,37 @@ def _area_illustration_drawn(results: Mapping) -> bool:
     return False
 
 
-def _area_illustration_method(results: Mapping) -> object | None:
+def _area_illustration_drawing_clause(results: Mapping, illustration_state: str | None,
+                                      how: str) -> str:
+    """The one drawing clause of the method sentence. ``illustration_state`` is the
+    drawn-content manifest's ``area_illustration_state`` (M5-T173 part B4): ``None``
+    reads the legacy :func:`_area_illustration_drawn` predicate, so an unwired caller is
+    byte-identical; ``'zones'`` / ``'bar'`` name WHERE the illustration is drawn on the
+    scenario sheet; any other explicit (not-drawn) state gives the not-yet-drawn clause
+    without reading the legacy predicate - so a page can state a drawn claim from
+    rendered content, never a hard-coded constant."""
+    if illustration_state is None:
+        return (f"it is shown {how}" if _area_illustration_drawn(results)
+                else f"it is not yet drawn in this report; when drawn it will be shown {how}")
+    if illustration_state == "zones":
+        return "it is shown as zones inside the placed building footprint on the scenario sheet"
+    if illustration_state == "bar":
+        return "it is shown as a proportional bar on the scenario sheet"
+    return f"it is not yet drawn in this report; when drawn it will be shown {how}"
+
+
+def _area_illustration_method(results: Mapping,
+                              illustration_state: str | None = None) -> object | None:
     """The area-illustration METHOD (R095/R092), once, when the document carries an
     ``area_allocation`` block: the stated share, the measure, the G-14 conversion
     statement, and the bar-or-zones rule. Absent when there is no block (the benchmark
     until M5-T172), so the appendix is byte-identical then.
 
     The method's facts (the share, the measure, the conversion statement) are honest on
-    their own, so the block is KEPT; only the drawing clause is made honest (S14): unless
-    the illustration is actually drawn (:func:`_area_illustration_drawn`) the method says
-    the illustration is not yet drawn and states, in one clause, HOW it will be drawn -
-    never the present-tense 'it is shown', which would send a reader hunting for a figure
-    that is not in the report."""
+    their own, so the block is KEPT; only the drawing clause is made honest (S14):
+    :func:`_area_illustration_drawing_clause` decides it from ``illustration_state`` (the
+    drawn-content manifest), never the present-tense 'it is shown' unless the illustration
+    is actually drawn, which would send a reader hunting for a figure not in the report."""
     block = _area_allocation(results)
     if block is None:
         return None
@@ -166,8 +185,7 @@ def _area_illustration_method(results: Mapping) -> object | None:
         else str(block.get("measure") or "the building's floor area")
     how = ("as zones inside the placed building footprint" if block.get("fitted")
            else "as a proportional bar beside the building diagram, not yet fitted")
-    drawing = (f"it is shown {how}" if _area_illustration_drawn(results)
-               else f"it is not yet drawn in this report; when drawn it will be shown {how}")
+    drawing = _area_illustration_drawing_clause(results, illustration_state, how)
     sentence = (
         f"The area illustration applies one preliminary share ({share}) of the {measure} "
         f"to split apartment area from other area; {drawing}. "
@@ -204,7 +222,8 @@ def _label_key() -> object:
 
 
 def render(results: Mapping, ident: Mapping, *, maps_present: bool = False,
-           map_context=None, env=None, commit: str | None = None) -> str:
+           map_context=None, env=None, commit: str | None = None,
+           illustration_state: str | None = None) -> str:
     children: list[object] = [
         el("p", "Appendix", class_="type-name"),
         el("h2", QUESTION),
@@ -240,7 +259,7 @@ def render(results: Mapping, ident: Mapping, *, maps_present: bool = False,
             class_="evidence-column"))
     columns.append(_run_identity(results, commit=commit))
     children.append(el("div", *columns, class_="evidence-columns"))
-    method = _area_illustration_method(results)
+    method = _area_illustration_method(results, illustration_state)
     if method is not None:
         children.append(method)
     children.append(el("h3", "Status-label key"))

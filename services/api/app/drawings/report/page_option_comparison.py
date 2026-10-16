@@ -23,7 +23,7 @@ __all__ = ["render"]
 QUESTION = "How do the options compare?"
 
 
-def _chart(results: Mapping, worked: list[dict]) -> object:
+def _chart(results: Mapping, worked: list[dict], *, footprint_drawn: bool | None = None) -> object:
     allowance = readers.named_value(
         readers.answer_block(results, "floor_area_allowance"), "max_residential_floor_area"
     )
@@ -32,6 +32,7 @@ def _chart(results: Mapping, worked: list[dict]) -> object:
         svg = drawings_embed.allowance_bar_chart_svg(
             formatting.format_int_commas(allowance.get("value")), allowance.get("value"), worked,
             placed_on_site=not readers.building_not_placed(results),
+            footprint_drawn=footprint_drawn,
         )
     if svg is None:
         return short_line("No scheduled building is available to chart yet.")
@@ -92,7 +93,8 @@ def _buildings(results: Mapping) -> object:
     return el("div", el("h3", "Worked and not-worked buildings"), el("ul", *items))
 
 
-def render(results: Mapping, ident: Mapping, *, env=None) -> str:
+def render(results: Mapping, ident: Mapping, *, env=None,
+           footprint_drawn: bool | None = None) -> str:
     worked = readers.worked_buildings(results)
     children = [
         el("p", "Option comparison", class_="type-name"),
@@ -102,7 +104,7 @@ def render(results: Mapping, ident: Mapping, *, env=None) -> str:
             _option_rows(results),
             caption="The eleven development options, in the owner-approved order",
         ),
-        _chart(results, worked),
+        _chart(results, worked, footprint_drawn=footprint_drawn),
         _buildings(results),
     ]
     return str(el("section", *children, class_="report-page", id="option-comparison"))

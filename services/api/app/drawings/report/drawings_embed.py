@@ -65,6 +65,12 @@ class Embedded:
     notes: tuple[str, ...] = field(default_factory=tuple)
     attribution: str | None = None
     short_line: str | None = None
+    # The style kinds the drawing actually drew (the kit ``Drawing.kinds_drawn``,
+    # read verbatim). Empty for a short line or a drawing that reports none. It is
+    # NOT rendered - the drawn-content manifest reads it so a page can decide a
+    # "drawn"/"shown" claim from rendered content, never a hard-coded constant
+    # (M5-T173 part B4; :mod:`.manifest`).
+    kinds_drawn: tuple[str, ...] = field(default_factory=tuple)
 
     @property
     def is_drawing(self) -> bool:
@@ -86,6 +92,7 @@ def _from_result(result: object) -> Embedded:
             caption=getattr(result, "caption", None),
             notes=tuple(getattr(result, "notes", ()) or ()),
             attribution=getattr(result, "attribution", None),
+            kinds_drawn=tuple(getattr(result, "kinds_drawn", ()) or ()),
         )
     reason = getattr(result, "reason", None)
     return Embedded(short_line=str(reason) if reason else "This drawing is not shown here.")
@@ -158,11 +165,15 @@ _MAP_UNAVAILABLE = "This map is not shown here."
 # map (M5-T175 S15; code-review advisories 1 and 2). Any OTHER map failure keeps the
 # old behaviour (one short line).
 _OVERLAY_DROPPED_NOTE = "A zoning line could not be drawn on this map; page 3 lists it."
+# When the placed building footprint (M5-T173 part B) cannot be drawn on the close
+# frame, the map is kept WITHOUT the footprint and carries this short note naming
+# what was not drawn, rather than dropping the whole map (S6).
+_FOOTPRINT_DROPPED_NOTE = "The building footprint could not be drawn on this map."
 
 
 def embed_map(
     fn_name: str, map_context: Mapping, *, layers: tuple[str, ...], frame: str = "report", env=None,
-    constraint_lines=None, input_facts=None,
+    constraint_lines=None, input_facts=None, placed_footprint=None,
 ) -> Embedded:
     """A site-context, block or neighbourhood map, captioned in plain words with a
     short "Sources: ..." line (the layers it shows, each with its edit date once)
@@ -170,10 +181,15 @@ def embed_map(
     ``"report"`` (the full-size plan) or ``"summary"`` (the compact page-1 /
     location-sheet thumbnail). ``constraint_lines`` / ``input_facts`` (results
     contract 1.5.0) are forwarded ONLY to the site-context map, which draws the
-    established overlay on its close frames (M5-T175); they are omitted from the call
-    otherwise, so the neighbourhood/block maps and every overlay-free render are
-    byte-identical (S1). An Unavailable, missing keyword or kit failure prints one
-    short line, never an error (S6)."""
+    established overlay on its close frames (M5-T175). ``placed_footprint``
+    (M5-T173 part B) is the placed building footprint drawn on the close frame;
+    like the overlay it is forwarded ONLY when given. Each of these extras is
+    omitted from the call otherwise, so the neighbourhood/block maps and every
+    render without them are byte-identical (S1, S6). If the render fails with an
+    extra, the map is kept by re-rendering WITHOUT both the overlay and the
+    footprint, carrying one note naming what was not drawn (the zoning-line note
+    for the overlay; a footprint note for the footprint). An Unavailable, missing
+    keyword or genuine map failure prints one short line, never an error (S6)."""
     from app.drawings import maps
 
     from . import map_caption
@@ -186,27 +202,36 @@ def embed_map(
         overlay["constraint_lines"] = constraint_lines
     if input_facts is not None:
         overlay["input_facts"] = input_facts
+    if placed_footprint is not None:
+        overlay["placed_footprint"] = placed_footprint
     note: tuple[str, ...] = ()
     try:
         result = fn(map_context, frame=frame, env=env, **overlay)
     except Exception:  # noqa: BLE001 - any kit failure means no map, never an error page
         if not overlay:
             return Embedded(short_line=_MAP_UNAVAILABLE)
-        # The failure may be the overlay's (a label that cannot be placed, or a
-        # malformed established geometry): keep the map by drawing it WITHOUT the
-        # overlay and carry one short note. If it fails without the overlay too, it is
-        # a genuine map failure - today's one short line (S15).
+        # The failure may be an extra's (an overlay label that cannot be placed, a
+        # malformed established geometry, or a footprint that cannot be drawn): keep
+        # the map by drawing it WITHOUT the extras and carry a short note naming what
+        # was not drawn. If it fails without them too, it is a genuine map failure -
+        # today's one short line (S15, S6).
         try:
             result = fn(map_context, frame=frame, env=env)
         except Exception:  # noqa: BLE001
             return Embedded(short_line=_MAP_UNAVAILABLE)
-        note = (_OVERLAY_DROPPED_NOTE,)
+        dropped: list[str] = []
+        if "constraint_lines" in overlay or "input_facts" in overlay:
+            dropped.append(_OVERLAY_DROPPED_NOTE)
+        if "placed_footprint" in overlay:
+            dropped.append(_FOOTPRINT_DROPPED_NOTE)
+        note = tuple(dropped)
     svg = getattr(result, "svg", None)
     if svg is None:
         reason = getattr(result, "reason", None)
         return Embedded(short_line=str(reason) if reason else _MAP_UNAVAILABLE)
     caption = map_caption.figure_caption(result, map_context, layers)
-    return Embedded(svg=size_svg_to_points(svg), caption=caption, notes=note)
+    return Embedded(svg=size_svg_to_points(svg), caption=caption, notes=note,
+                    kinds_drawn=tuple(getattr(result, "kinds_drawn", ()) or ()))
 
 
 def site_plan_draws_placed_footprint() -> bool:
@@ -227,17 +252,20 @@ def allowance_bar_chart_svg(
     buildings: list[dict],
     *,
     placed_on_site: bool = False,
+    footprint_drawn: bool | None = None,
 ) -> str | None:
     """A compact horizontal bar chart distinguishing THREE things on ONE zero-based
     scale (R018/R020): the floor-area allowance, each worked building's scheduled
     area, and whether a building is placed on site. The placed-on-site row is a status,
     never a bar, with three honest states: "Not demonstrated" when nothing is placed
     (not a zero-height bar); "Worked out; not drawn" when the engine placed the building
-    but the site plan does not yet draw the footprint (M5-T173 part B); and "Shown on the
-    site plan" only once :func:`site_plan_draws_placed_footprint` is true (the drawing is
-    actually in the report) - so page 5 never claims a placement the site plan contradicts
-    and the chart never prints two equal bars. Returns ``None`` when there is no allowance
-    to chart. Every printed number is a document figure passed in."""
+    but the site plan does not draw the footprint; and "Shown on the site plan" only when
+    the footprint is actually drawn in the report - so page 5 never claims a placement the
+    site plan contradicts and the chart never prints two equal bars. ``footprint_drawn``
+    carries that drawn state from the drawn-content manifest (M5-T173 part B); when it is
+    ``None`` the legacy :func:`site_plan_draws_placed_footprint` predicate is read, so an
+    unwired caller is byte-identical. Returns ``None`` when there is no allowance to
+    chart. Every printed number is a document figure passed in."""
     if not isinstance(allowance_value, (int, float)) or allowance_value <= 0:
         return None
     bars = [b for b in buildings if isinstance(b.get("scheduled_value"), (int, float))]
@@ -262,11 +290,14 @@ def allowance_bar_chart_svg(
         y += 22
     # placed-on-site: a status, never a bar (an unknown is never a zero-height bar, R020).
     # Three honest states (S14): not placed -> "Not demonstrated"; placed but the site plan
-    # does not yet draw the footprint -> "Worked out; not drawn"; placed AND drawn -> "Shown
-    # on the site plan" (only when site_plan_draws_placed_footprint() is true).
+    # does not draw the footprint -> "Worked out; not drawn"; placed AND drawn -> "Shown on
+    # the site plan". The drawn state is the manifest's ``footprint_drawn`` when given; when
+    # it is None the legacy site_plan_draws_placed_footprint() predicate is read (byte-
+    # identical for an unwired caller).
+    drawn = site_plan_draws_placed_footprint() if footprint_drawn is None else footprint_drawn
     if not placed_on_site:
         placed_text = "Not demonstrated"
-    elif site_plan_draws_placed_footprint():
+    elif drawn:
         placed_text = "Shown on the site plan"
     else:
         placed_text = "Worked out; not drawn"
