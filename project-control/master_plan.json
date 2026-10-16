@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-16T01:35:39+00:00",
+ "updated_at": "2026-10-16T01:49:39+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -122,7 +122,11 @@
     "M5-T172 the first building option placed on the lot, its area split and three floor plates in the results (part B; four rounds) | code: https://github.com/martin10101/nyc-buildability/commit/11b2bb59e76e4d66ffa208f01e52a89cc479d367, https://github.com/martin10101/nyc-buildability/commit/e79ddbc6c369a8a30c5d292245371a1e10eca4c5, https://github.com/martin10101/nyc-buildability/commit/5994e2201116b1c044e5b801022eed99946607a3 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38782795320 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/b15398a007fcfd74a9dec3ca27f6a9cbba222bab) | visible on report pages 3, 5, 6 and the appendix as wording only (page 5 'Worked out; not drawn'; the not-placed sentence and its open item removed; the appendix's area-illustration method says the split is not yet drawn); the footprint, the floor plates and the two-zone illustration are not drawn yet (M5-T173 part B) [corrected 2026-10-15 by the orchestrator: the earlier text said 'three floor plates drawn on page 6', but page 6's floor stack is drawn from the schedule only (the wave-28 PR writer's finding)]",
     "M3-T013 the captured law tables' fingerprints, checked on load (DB-276) | code: https://github.com/martin10101/nyc-buildability/commit/c106173557013163f8cfbd41d6c9fce980129e80, https://github.com/martin10101/nyc-buildability/commit/7785d0dedaa538a2241dbd700813a77388d367ab | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38788713959 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8041c101e71f6a2e8d4bfb92c7842126016223d0) | supporting work, no change in the report: every captured law table carries its own fingerprint, checked when it is loaded",
     "M3-T015 the owed law captures for the open readings (73-11/73-13/73-18, Article VII Chapter 7, 76-131, 35-36; 23-154 still blocked by HTTP 403) | code: https://github.com/martin10101/nyc-buildability/commit/b32a17b36cbde8bb8900fec1194ef605d0f22e41 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38830445854 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/5538559989beccc910d3bd148022a3047fa1fd8f) | supporting work, no change in the report: 19 provenance-pinned law snapshots and the law library's capture flags (71 captured / 2 not); the readings that rest on them stay open",
-    "M5-T203 one shared street-window fetch when the live spatial provider is on (DB-273) | code: https://github.com/martin10101/nyc-buildability/commit/45d1492d91759617961eb1b3bd203a198dfd93d5, https://github.com/martin10101/nyc-buildability/commit/57f4ee7f8e30b114e6122bcf3c0808a0e6a88161 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38834850070 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8e1d5912980ca02b8bdd2fc0acc13a0c40056d76) | supporting work, no visible change yet: the live spatial provider stays off; when it is switched on, the geometry and street providers share one fetch per request"
+    "M5-T203 one shared street-window fetch when the live spatial provider is on (DB-273) | code: https://github.com/martin10101/nyc-buildability/commit/45d1492d91759617961eb1b3bd203a198dfd93d5, https://github.com/martin10101/nyc-buildability/commit/57f4ee7f8e30b114e6122bcf3c0808a0e6a88161 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38834850070 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8e1d5912980ca02b8bdd2fc0acc13a0c40056d76) | supporting work, no visible change yet: the live spatial provider stays off; when it is switched on, the geometry and street providers share one fetch per request",
+    "M5-T191 the page-4 illustrative footprint renderers (scenario drawings part B1) | code: https://github.com/martin10101/nyc-buildability/commit/9e5a2fe9166b0bb1ff7c508915183749bef500c8 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38836291821 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/c4422294fac2a91610f0a0314d02c979d366614e) | supporting work, no visible change yet: the footprint reaches the printed page 4 with the wiring part (M5-T173)",
+    "M5-T192 the section's standard height lines, collision-free labels (scenario drawings part B2) | code: https://github.com/martin10101/nyc-buildability/commit/2c91fe92336275c34fc838fd50abc22abb4a5126, https://github.com/martin10101/nyc-buildability/commit/0bd9d747812cc4a91a6c3720a3d0b1cf4a14d786 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38836291821 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/c4422294fac2a91610f0a0314d02c979d366614e) | supporting work, no visible change yet: the section reaches the printed page 6 with the wiring part (M5-T173)",
+    "M5-T194 the drawn-content manifest: claims read what was actually drawn (scenario drawings part B4) | code: https://github.com/martin10101/nyc-buildability/commit/7f6dc46c63adf0c978aa4e2f4c173bfa52e314fb | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38836291821 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/c4422294fac2a91610f0a0314d02c979d366614e) | supporting work, no visible change yet: every page reads it once the wiring part (M5-T173) builds it",
+    "M0-T198 the helper-briefing skill and the always-loaded helper answer standard (owner, D-094 R307-R315) | code: https://github.com/martin10101/nyc-buildability/commit/d0c2284147a6d871d66cb7023dfc8f0a7b5e0c53 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38836291821 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/c4422294fac2a91610f0a0314d02c979d366614e) | working method, no report change: later sessions brief helpers this way once wave 29 merges to main"
    ],
    "steps": [
     {
@@ -137,7 +141,7 @@
      ],
      "state": "in_progress",
      "waits_for": [],
-     "note": "part B1 (page-4 footprint renderer) contracted and claimed 2026-10-15 part B2 (section height lines) contracted and claimed 2026-10-15 part B3 (scenario-sheet figures) contracted and claimed 2026-10-15 part B4 (drawn-content manifest) contracted and claimed 2026-10-15 part W (wiring: every drawing into the live report, one drawn-content manifest, the real print) contracted and claimed 2026-10-16; B3 folded in"
+     "note": "part B1 (page-4 footprint renderer) contracted and claimed 2026-10-15 part B2 (section height lines) contracted and claimed 2026-10-15 part B3 (scenario-sheet figures) contracted and claimed 2026-10-15 part B4 (drawn-content manifest) contracted and claimed 2026-10-15 part W (wiring: every drawing into the live report, one drawn-content manifest, the real print) contracted and claimed 2026-10-16; B3 folded in M5-T191 accepted 2026-10-16. M5-T192 accepted 2026-10-16. M5-T194 accepted 2026-10-16."
     },
     {
      "wave": 29,
@@ -233,15 +237,6 @@
      ],
      "state": "in_progress",
      "note": "contracted and claimed 2026-10-15 (two new files under tools/; no shared file)"
-    },
-    {
-     "wave": 29,
-     "item": "helper-briefing skill and always-loaded helper answer standard (owner, D-094 R307-R315)",
-     "ids": [
-      "M0-T198"
-     ],
-     "state": "in_progress",
-     "note": "contracted 2026-10-15; orchestrator-produced (governance)"
     },
     {
      "wave": 28,

@@ -147,7 +147,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-16T01:33:40.016200+00:00",
-  "updated_at": "2026-10-16T01:33:44.060014+00:00",
+  "updated_at": "2026-10-16T01:49:37+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -160,12 +160,19 @@
         "D-094-R096",
         "D-094-R098",
         "D-094-R196",
+        "D-094-R198",
+        "D-094-R200",
         "D-094-R201",
         "D-094-R202",
+        "D-094-R203",
+        "D-094-R204",
+        "D-094-R205",
         "D-094-R206",
         "D-094-R223",
         "D-094-R227",
         "D-094-R235",
+        "D-094-R277",
+        "D-094-R278",
         "D-094-R279",
         "D-094-R280",
         "D-094-R281",
@@ -177,7 +184,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-16T01:33:40.016511+00:00",
-  "path_notes": "Serial wiring part (after B1-B4). D-093: numbers checked against placement-building-b.json (rows gis-conflict-check, area-allocation, plate) and real-lot.json row L3; NB-04 revised with an independent delta review; NB-01 untouched (readers.py not edited). register.json cites 43 code paths, none under app/drawings: no register event, no zoning-rule-review change. Contract seam: append the part ids to the bound rows (digest resync, audit_log, provisional task_verifications row, same commit); bind the audit-capture rows (D-094 source-028) once indexed. CARRY ITEMS FROM THE PART REVIEWS (all to be closed here): (1) B3 integration: the part B3 commits (M5-T193 round 1 cece9d3e, round 2 when the orchestrator sends it) are cherry-picked onto this part's base by its builder; B3 and this part are accepted at one head (B3's test_constraint_rows pin is this part's). (2) test_constraint_rows.py: scope BOTH assertions (line ~264 'printed tax map' not in, lines ~253-254 in) to the site-and-context section and confirm the slice excludes the scenario sheets (id='scenario-<n>'), so the positive one still tests the page-4 overlay (B3 G3, G4). (3) Manifest None state: after deleting page_evidence._area_illustration_drawn pass an explicit not-drawn illustration_state, or rewrite the None branch (B4). (4) footprint_drawn: pass it from the manifest to page_option_comparison, page_scenario_sheet and page_site_context; confirm B2's height-line detection against B2's real signature (B3). (5) Pin the 'illustrative_footprint' kind literal against the kit style kind in the integration test (B4 G4, cross-part contract with B1). (6) Page 4 and page 5 read one manifest: the kit report frame draws the footprint whenever a floor-1 plate exists, so both page-4 paths (close frame and kit fallback) and the page-5 status must agree (B1 G3 code). (7) Every drawing claim reads the manifest; a claim that keeps readers.building_not_placed() (readers.py:588; page_option_comparison placed_on_site, page_scenario_sheet:88) states placement, never drawing (owner row R204). (8) The kit fallback caption 'Lot outline: Approximate \u2014 tax map' sits over GIS figures (DB-269 schema const): this part's caption must not let it read as the printed tax map; the legend pairs 'Building footprint' and 'Illustrative building footprint' must not confuse (B1 G1). (9) The page-4 caption names the footprint figure as the building width (103.88 ft also repeats the frontage; B1 G3 visual). (10) Page fit: layout.py's figure break-inside rule bumps the whole area figure and leaves page 5 ~40% blank; compose the sheet so it fills its page (design contract section 7; B3 G3 visual REQUIRED-1). (11) On the real print confirm what part B3 round 2 supplies: the section's 'schematic, not to scale' label, the conditional-heights caption (B2 G1 REQUIRED) and section labels at or above 8.5 pt printed (B2 G3 F2). (12) DB-283: NB-04 code identity revision 4 (close_frame_dimensions.py) with an independent G1 delta review. (13) Backlog only (not this part's to fix): 35.31 from rounded operands vs the drawn 35.32 / 99.98 edge (H5 item 3).",
+  "path_notes": "Serial wiring part (after B1-B4). D-093: numbers checked against placement-building-b.json (rows gis-conflict-check, area-allocation, plate) and real-lot.json row L3; NB-04 revised with an independent delta review; NB-01 untouched (readers.py not edited). register.json cites 43 code paths, none under app/drawings: no register event, no zoning-rule-review change. Contract seam: append the part ids to the bound rows (digest resync, audit_log, provisional task_verifications row, same commit); bind the audit-capture rows (D-094 source-028) once indexed. CARRY ITEMS FROM THE PART REVIEWS (all to be closed here): (1) B3 integration: the part B3 commits (M5-T193 round 1 cece9d3e, round 2 when the orchestrator sends it) are cherry-picked onto this part's base by its builder; B3 and this part are accepted at one head (B3's test_constraint_rows pin is this part's). (2) test_constraint_rows.py: scope BOTH assertions (line ~264 'printed tax map' not in, lines ~253-254 in) to the site-and-context section and confirm the slice excludes the scenario sheets (id='scenario-<n>'), so the positive one still tests the page-4 overlay (B3 G3, G4). (3) Manifest None state: after deleting page_evidence._area_illustration_drawn pass an explicit not-drawn illustration_state, or rewrite the None branch (B4). (4) footprint_drawn: pass it from the manifest to page_option_comparison, page_scenario_sheet and page_site_context; confirm B2's height-line detection against B2's real signature (B3). (5) Pin the 'illustrative_footprint' kind literal against the kit style kind in the integration test (B4 G4, cross-part contract with B1). (6) Page 4 and page 5 read one manifest: the kit report frame draws the footprint whenever a floor-1 plate exists, so both page-4 paths (close frame and kit fallback) and the page-5 status must agree (B1 G3 code). (7) Every drawing claim reads the manifest; a claim that keeps readers.building_not_placed() (readers.py:588; page_option_comparison placed_on_site, page_scenario_sheet:88) states placement, never drawing (owner row R204). (8) The kit fallback caption 'Lot outline: Approximate — tax map' sits over GIS figures (DB-269 schema const): this part's caption must not let it read as the printed tax map; the legend pairs 'Building footprint' and 'Illustrative building footprint' must not confuse (B1 G1). (9) The page-4 caption names the footprint figure as the building width (103.88 ft also repeats the frontage; B1 G3 visual). (10) Page fit: layout.py's figure break-inside rule bumps the whole area figure and leaves page 5 ~40% blank; compose the sheet so it fills its page (design contract section 7; B3 G3 visual REQUIRED-1). (11) On the real print confirm what part B3 round 2 supplies: the section's 'schematic, not to scale' label, the conditional-heights caption (B2 G1 REQUIRED) and section labels at or above 8.5 pt printed (B2 G3 F2). (12) DB-283: NB-04 code identity revision 4 (close_frame_dimensions.py) with an independent G1 delta review. (13) Backlog only (not this part's to fix): 35.31 from rounded operands vs the drawn 35.32 / 99.98 edge (H5 item 3).",
   "documented_test_commands": [
     "cd services/api && python -m ruff check .",
     "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings tests/cad tests/api/test_report_read_api.py",
@@ -193,6 +200,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed for the wiring part; the builder starts from the claim head with part B3 folded in"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-16T01:49:37+00:00",
+      "actor": "orchestrator",
+      "change": "Binding correction: The part B4 (M5-T194) rule check named the wiring part as the holder of these rows' open share (every drawing claim read from the manifest, the legacy predicates deleted, the page references and the three print states on the real print); they were not bound at the wiring part's contract (session 2026-10-15c, after M5-T194's acceptance at c4422294). Rows added: D-094-R198, D-094-R200, D-094-R203, D-094-R204, D-094-R205, D-094-R277, D-094-R278. No allowed path, gate, reviewer or dependency changes."
     }
   ]
 }
