@@ -95,15 +95,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK 1: the section is a renderer, never a law source: no code compares the building with a limit; the setback state on page 6 is part B3's pointer to the appendix item.",
     "RISK 2: the qualifying affordable/senior heights (65 ft) are not drawn for the standard Building B."
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:38.611579+00:00",
-  "updated_at": "2026-10-15T23:40:42.200082+00:00",
+  "updated_at": "2026-10-16T01:30:50.072663+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -133,6 +133,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted and claimed at the wave-29 base; builder dispatched"
+    },
+    {
+      "at": "2026-10-16T01:30:46.616781+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }

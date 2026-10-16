@@ -1,0 +1,48 @@
+{
+ "task_id": "M5-T192",
+ "material_commits": [
+  "2c91fe92 (backend-engineer round 1 (cherry-pick of 7d03dd8a): section_legal_lines.py reads the standard height lines (minimum base 30 ft, maximum base 45 ft, maximum building 55 ft) from permitted_envelope with their sources; kit/section.py draws them as dashed lines on the floor stack when results are given (opt-in; default byte-identical); kit/__init__.py passes results through)",
+  "0bd9d747 (backend-engineer round 2 (cherry-pick of 883d9862): the height-limit labels use the multi-candidate collision fallback (below the line, right gutter), canvas widens only with legal lines (capped at 515.9 pt); benchmark and None outputs byte-identical to round 1)"
+ ],
+ "claim_seam_head": "34834181",
+ "files_changed": [
+  "project-control/reports/M5-T192-producer-report.md",
+  "services/api/app/drawings/kit/__init__.py",
+  "services/api/app/drawings/kit/section.py",
+  "services/api/app/drawings/kit/section_legal_lines.py",
+  "services/api/tests/drawings/kit/test_section_legal_lines.py"
+ ],
+ "what_did_not_change": "No zoning reading or figure changed; without results the section is byte-identical; envelope rows never become a line; the live report does not pass results until the wiring part (M5-T173).",
+ "known_limits": [
+  "Renderer level only; the wiring part (M5-T173) places the section on the scenario sheet.",
+  "The heights are 'conditional' in value_states; the '(Conditional)' caption must reach the printed page (W carry item from G1).",
+  "Labels are 8.0 pt; the printed size against the 8.5 pt contract minimum is checked in W.",
+  "'Never overlaps' holds for buildings within their envelope; at 22+ storeys labels crowd (G3/G4 delta advisory)."
+ ],
+ "checks_at_material_head": [
+  "builder round 1: ruff PASS; tests/drawings/kit 507 passed; round 2: test_section_legal_lines.py 26 passed; tests/drawings/kit 511 passed; mutation (single candidate) turns the three F1 cases red",
+  "orchestrator G2 at 8e1d5912: whole api suite 10179 passed, 8 skipped (api-suite-B124.log)",
+  "G1 data-contract-verifier PASS; G3 code-reviewer PASS (round 1) and delta PASS (round 2); G3 visual round 1 FAIL (F1 label collisions) then delta PASS; G4 qa-engineer PASS (round 1) and the round-2 code/test delta PASS",
+  "CI run 38834850070 at 8e1d5912 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R017": [
+   "The section draws only the three height lines that permitted_envelope establishes with their sources; envelope rows and any malformed or absent state draw no line (S3, S4)."
+  ],
+  "D-094-R021": [
+   "The section stays a compact schematic: the floor stack with the established height lines, drawn only when results are given.",
+   "The 'schematic, not to scale' sheet label is supplied on the sheet by the scenario sheet and wiring parts (M5-T193, M5-T173)."
+  ],
+  "D-094-R043": [
+   "This part supplies the section with its height limits, one of the four pieces of the spatial example.",
+   "The footprint (M5-T191), sheet (M5-T193) and wiring (M5-T173) complete the scenario."
+  ],
+  "D-094-R076": [
+   "The building diagram gains the height limits the building is measured against (30, 45, 55 ft) beside the storeys.",
+   "The footprint and placement are drawn by M5-T191 and reach the page through M5-T173."
+  ],
+  "D-094-R208": [
+   "Levels and heights come from the result: each line's number is the document value at its source (test_s2_every_line_number_is_the_document_value_at_its_source); storeys from the scenario."
+  ]
+ }
+}

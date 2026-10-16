@@ -95,15 +95,15 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "study_inputs.py may be large: check modularity before growing it; prefer the smallest change",
     "No live network in tests; injected fakes only"
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:52:47.320405+00:00",
-  "updated_at": "2026-10-16T01:07:28.145639+00:00",
+  "updated_at": "2026-10-16T01:31:07.324322+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -143,5 +143,7 @@
       "actor": "orchestrator",
       "change": "Scope correction 1 (session 2026-10-15c, after the builder's round 1 at 510632bb): NB-01 pins study_inputs.py in its code identity (equal to the contract head before this task), so this task must refresh it; the contract seam missed it (the CODING_RULES lesson of M5-T170). NB-01 joins the allowed paths (S6); the broad 'docs/' forbidden entry is replaced by specific ones so nothing else under docs/ opens. No row, gate, reviewer or dependency changes. NB-01 is held by no task in flight (M5-T180 and the E0 serial part, which also edit it, are not contracted yet)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-16T01:31:07.323607+00:00"
 }

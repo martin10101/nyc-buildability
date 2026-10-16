@@ -4547,18 +4547,25 @@
     "D-094-R287"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "8e1d5912980ca02b8bdd2fc0acc13a0c40056d76",
+   "reviewed_manifest_sha256": "933a3cdd1a92fee99c6cd0534ae590d9da11c08aecacfca649a40fbb5648178e",
    "requirements": [
     {
      "id": "D-094-R287",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source is primary: `source-028-amendment.md` line 311 (owner verbatim) \"Run the required existing gates and targeted tests that address the remaining risks. Do not substitute large counts of redundant tests for checking the real output.\" and the matrix line 478 maps it to R287 (harness); requirements.json R287 text reproduces both quoted sentences without softening.",
+      "Required gates all recorded PASS: G0 (orchestrator, f334b273 scope-correction head), G2 (orchestrator self-check), G3 (code-reviewer), G4 (qa-engineer), G5 (security-reviewer); G2\u2013G5 sit at ONE content identity (content_manifest 933a3cdd\u2026, reviewed_sha 57f4ee7f), matching the packet's required_gates [G0,G2,G3,G4,G5] and producer\u2260reviewer.",
+      "Tests are targeted, not padded: I read `test_study_street_window_single_fetch.py` at the frozen head \u2014 4 focused functions (S1 fetch-count = one window not two; S2 object-for-object SiteGeometry/StreetData equality vs both the composition reference and the un-shared two-fetch result; S3 both providers surface None and the failure is not memoised; S4 flag-off builds zero shared fetches, flag-on exactly one) plus the S5 mutation (`assert 4==2`) recorded and independently re-reproduced by G3/G4/G5; these check real output, so the \"no redundant bulk\" clause holds. DB-273 (backlog line 403) is exactly this remaining risk (same window fetched twice when LIVE_SPATIAL_PROVIDER_ENABLED is on; off by default).",
+      "Stays open: nothing stays open for THIS TASK'S SHARE \u2014 the row's gates and targeted tests for M5-T203 are complete. R287 is a standing harness rule and remains applicable to future tasks via D-094-BOOTSTRAP; that continuing applicability is not an M5-T203 debt.",
+      "Verifier's carry-forward condition met at 8e1d5912: the task's allowed-path files are identical to those verified at 06278fe4 (content identity 933a3cdd), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (20 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check (whole api suite 10120 passed on the increment); G3 code-reviewer; G4 qa-engineer (cross-request isolation and cache-bound probe); G5 security-reviewer). DCV report: project-control/reports/M5-T203-DCV.md."
+     ],
+     "reviewed_sha": "8e1d5912980ca02b8bdd2fc0acc13a0c40056d76"
     }
-   ]
+   ],
+   "verified_at": "2026-10-16T01:31:06+00:00"
   },
   {
    "directive_id": "D-094",

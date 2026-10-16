@@ -1,0 +1,38 @@
+{
+ "task_id": "M0-T198",
+ "material_commits": [
+  "d0c22841 (orchestrator (governance producer): .claude/skills/dispatch-brief/SKILL.md (the five-part helper brief, the return contract and the standing clauses) and .claude/rules/helper-briefing.md (always loaded, no paths frontmatter: the main session runs /dispatch-brief before any helper; every helper follows the answer standard))"
+ ],
+ "claim_seam_head": "2d6cdbfd",
+ "files_changed": [
+  ".claude/rules/helper-briefing.md",
+  ".claude/skills/dispatch-brief/SKILL.md",
+  "project-control/reports/M0-T198-producer-report.md"
+ ],
+ "what_did_not_change": "No product code, record, report page or ledger tool changed; the owner's private attachment is referenced by path and digest only in the directive source, never copied into the repository.",
+ "known_limits": [
+  "The rule reaches later sessions once this branch is merged to main; until then only sessions that load this branch's files see it (G3 advisory 1).",
+  "A subagent inherits its parent session's start-time instructions, so mid-session helpers get the standard through their brief (PROGRAM_KNOWLEDGE)."
+ ],
+ "checks_at_material_head": [
+  "orchestrator G2 at 8e1d5912: the skill file has valid frontmatter (name, description); the rule file has no paths frontmatter so it is always loaded; lane coverage PASS; the briefs of this session's later dispatches follow the five parts (prompt-review-*-r2.md files in the session folder)",
+  "G3 code-reviewer PASS (no required findings)",
+  "CI run 38834850070 at 8e1d5912 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R307": [
+   "The orchestrator built, for its own use, a way to brief helpers in the style of the owner's attached prompt: the /dispatch-brief skill (.claude/skills/dispatch-brief/SKILL.md); it is the approach the owner then chose (R309-R311), not the owner-facing skill of the attachment."
+  ],
+  "D-094-R309": [
+   "The project skill is committed under .claude/skills/dispatch-brief/; its five parts name the exact answer needed and the decision it serves, the exact scope (branch, pinned commit, files, records), the evidence that could change the answer, what stays unknown, and the depth and stopping point (SKILL.md 'The five parts').",
+   "The always-loaded rule tells the main session to run it before every helper dispatch (.claude/rules/helper-briefing.md)."
+  ],
+  "D-094-R310": [
+   "The helper answer standard (go to the original source; tie each finding to its evidence and to what it changes; keep verified facts, reported claims, inferences, assumptions and unknowns apart; say what was not checked; lead with the answer, then the support) is in the always-loaded rule .claude/rules/helper-briefing.md and in the skill's return contract appended to every brief."
+  ],
+  "D-094-R314": [
+   "The carry-over is an always-loaded rule (no paths frontmatter) naming the skill and the helper standard, so later sessions apply it without the owner restating it and nothing depends on chat history or one session's memory.",
+   "Stays open: the rule takes effect for every later session once this branch is merged to main (the wave-29 merge)."
+  ]
+ }
+}

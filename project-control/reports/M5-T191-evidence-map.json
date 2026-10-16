@@ -1,0 +1,67 @@
+{
+ "task_id": "M5-T191",
+ "material_commits": [
+  "9e5a2fe9 (backend-engineer (cherry-pick of 2030acd6): maps/placed_footprint.py draws the floor-1 GIS plate on the page-4 close frame with its two edge dimensions (103.88 ft, 64.66 ft) sourced to the results document; kit/site_plan.py draws the report-frame plate as the illustrative footprint (kind illustrative_footprint, not a use colour); styles.py adds the illustrative hatch and CAD layer; site_context_plan.py and maps/__init__.py pass placed_footprint through (opt-in; default byte-identical))"
+ ],
+ "claim_seam_head": "591a1a11",
+ "files_changed": [
+  "project-control/reports/M5-T191-producer-report.md",
+  "services/api/app/drawings/kit/site_plan.py",
+  "services/api/app/drawings/kit/styles.py",
+  "services/api/app/drawings/maps/__init__.py",
+  "services/api/app/drawings/maps/placed_footprint.py",
+  "services/api/app/drawings/maps/site_context_plan.py",
+  "services/api/tests/drawings/kit/test_site_plan_footprint.py",
+  "services/api/tests/drawings/maps/test_placed_footprint.py"
+ ],
+ "what_did_not_change": "No zoning reading, figure, warning or evidence status changed; without placed_footprint every map frame, kit sheet, snapshot and DXF is byte-identical; the live report does not call the new path until the wiring part (M5-T173).",
+ "known_limits": [
+  "Renderer level only: the live report and the page-5 status are wired by M5-T173 (W).",
+  "The kit report frame draws the footprint whenever a floor-1 plate exists; W makes page 4 and page 5 read one drawn-content manifest (G3 code advisory).",
+  "The footprint back edge and the lot frontage both read 103.88 ft; W's caption names the building width (G3 visual advisory)."
+ ],
+ "checks_at_material_head": [
+  "builder: ruff PASS; the two new test files 25 passed; tests/drawings + tests/cad 1958 passed, 6 skipped under the lock (snapshots byte-identical); mutations A-D red then restored",
+  "orchestrator G2 at 8e1d5912: whole api suite 10179 passed, 8 skipped (api-suite-B124.log)",
+  "G1 data-contract-verifier PASS; G3 code-reviewer PASS (reproduced 1958 passed, 6 skipped on an isolated copy); G3 visual-quality-reviewer PASS; G4 qa-engineer PASS",
+  "CI run 38834850070 at 8e1d5912 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R017": [
+   "The footprint is drawn as an illustrative building only; no yard or setback area is drawn from it (the renderer draws no constraint area; test_placed_footprint S2 and the G1 review).",
+   "Yard and setback areas stay governed by their established geometry elsewhere; nothing of this row is changed by this part."
+  ],
+  "D-094-R043": [
+   "This part supplies the placed footprint on the site (page-4 close frame and the kit report frame), one of the four pieces of the spatial example.",
+   "Stays open for the scenario as a whole: the wiring part W (M5-T173) puts it into the live report and the real print; this part's share is the renderer; the section is M5-T192, the sheet M5-T193."
+  ],
+  "D-094-R044": [
+   "The drawn ring is the document's geometry.floor_plates entry 0 outline 0 (vertices equal to the document plus the overlay offset within 0.01 ft; test_s2_footprint_vertices_are_the_document_vertices_plus_the_overlay_offset); a degenerate or unplaceable footprint draws nothing (S4, S5).",
+   "No geometry is invented to fill the layout; the tax-map outline (100.76 x 66.66) is never drawn as the footprint (G1, G3 code)."
+  ],
+  "D-094-R053": [
+   "The footprint carries two anchored edge dimensions (103.88 ft, 64.66 ft) whose data-source names the document ring edge; labels at least 8.5 pt with no collisions (test_s2_every_footprint_label_is_at_least_8_5pt_no_collisions).",
+   "It is marked illustrative by its own hatch, legend 'Illustrative building footprint' and CAD layer A-BLDG-ILLUS; the visual reviewer confirmed it reads as illustrative.",
+   "Verification on the printed page: the wiring part W (M5-T173) puts it into the live report and the real print; this part's share is the renderer."
+  ],
+  "D-094-R082": [
+   "This part draws the dimensioned footprint on the site (renderer).",
+   "The section (M5-T192), reconciled schedule (M5-T193) and the report wiring (M5-T173) complete the row; the wiring part W (M5-T173) puts it into the live report and the real print; this part's share is the renderer."
+  ],
+  "D-094-R197": [
+   "When a footprint is passed, the close frame draws it and drops 'No building placed'; without one it keeps 'No building placed' byte-identically (S1, S2, S4).",
+   "Stays open: the wiring part W (M5-T173) puts it into the live report and the real print; this part's share is the renderer, so the printed page 4 changes there."
+  ],
+  "D-094-R225": [
+   "The footprint and its dimensions are on the city-map (GIS) basis only, with the single note 'All dimensions: city map outline, not surveyed.'; no 33.34, 35.31, 100.76 or 66.66 figure appears in the drawing (G3 code item 4).",
+   "The two clearances on both bases are stated by the page-4 caption in the wiring part (M5-T173); never averaged or mixed here."
+  ],
+  "D-094-R226": [
+   "The footprint's edges are drawn in the illustrative style only and never as a yard, setback or legal line (translation by the existing overlay offset; G3 code item 4; G1)."
+  ],
+  "D-094-R235": [
+   "The site plan can now show the proposed footprint with dimensions and its source basis (renderer).",
+   "Stays open: the wiring part W (M5-T173) puts it into the live report and the real print; this part's share is the renderer; relevant constraints stay as drawn today."
+  ]
+ }
+}

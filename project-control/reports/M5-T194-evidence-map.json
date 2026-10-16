@@ -1,0 +1,64 @@
+{
+ "task_id": "M5-T194",
+ "material_commits": [
+  "7f6dc46c (backend-engineer (cherry-pick of f9fee602): manifest.py DrawnManifest built only from rendered Embedded values (site-plan kinds_drawn, the kernel's area SVG data-roles, embedded sections); drawings_embed.py Embedded.kinds_drawn and the chart's footprint_drawn; page_option_comparison and page_evidence take the manifest's state (None keeps the legacy output))"
+ ],
+ "claim_seam_head": "d01268e6",
+ "files_changed": [
+  "project-control/reports/M5-T194-producer-report.md",
+  "services/api/app/drawings/report/drawings_embed.py",
+  "services/api/app/drawings/report/manifest.py",
+  "services/api/app/drawings/report/page_evidence.py",
+  "services/api/app/drawings/report/page_option_comparison.py",
+  "services/api/tests/drawings/report/test_report_drawn_manifest.py"
+ ],
+ "what_did_not_change": "Every keyword defaults to today's output (tests/drawings/report 235 passed unedited); the legacy predicates stay until the wiring part removes them; no figure changed.",
+ "known_limits": [
+  "The report builder does not build the manifest yet: the wiring part (M5-T173) builds it before any page renders and deletes the legacy predicates.",
+  "After the legacy predicate is deleted, the None state needs an explicit not-drawn illustration state (W carry item)."
+ ],
+ "checks_at_material_head": [
+  "builder: ruff PASS; test_report_drawn_manifest.py 8 passed; tests/drawings/report 235 passed under the lock (existing pins unedited); mutations 1-2 red then restored",
+  "orchestrator G2 at 8e1d5912: whole api suite 10179 passed, 8 skipped (api-suite-B124.log)",
+  "G3 code-reviewer PASS; G4 qa-engineer PASS (reproduced 8 and 235 passed)",
+  "CI run 38834850070 at 8e1d5912 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R050": [
+   "The six status meanings are kept: the chart's 'Shown on the site plan' / 'Worked out; not drawn' wording is unchanged and only its selection moves to the manifest (S2)."
+  ],
+  "D-094-R095": [
+   "The appendix method sentence for the area illustration is one fixed sentence per manifest state ('zones' or 'bar' on the scenario sheet; otherwise 'not yet drawn'); figures still come from the document (S3)."
+  ],
+  "D-094-R098": [
+   "This part gives the report one record of what was actually drawn, so readability and consistency can be checked against the rendered content.",
+   "The real-print check happens in the wiring part (M5-T173), which uses this manifest."
+  ],
+  "D-094-R198": [
+   "The chart's 'Shown on the site plan' is selected by the manifest's footprint flag, read from the rendered site plan (S2); with no footprint drawn it reads 'Worked out; not drawn'.",
+   "The builder passes the manifest in the wiring part (M5-T173)."
+  ],
+  "D-094-R200": [
+   "The appendix states the zones' page only when the manifest says zones or a bar were drawn; otherwise it says not yet drawn (S3, test_s3_explicit_not_drawn_state_ignores_the_legacy_predicate)."
+  ],
+  "D-094-R203": [
+   "The manifest reads rendered output only (site-plan kinds_drawn, SVG data-roles, embedded sections), never placement.status, floor plates or area_allocation.fitted (G3 code, manifest.py)."
+  ],
+  "D-094-R204": [
+   "The readers that decide these claims were inspected: readers.building_not_placed() (readers.py:588) still keys on floor_plates and feeds page_option_comparison's placed_on_site and the scenario sheet's not-placed sentence; this part adds the rendered-content basis (DrawnManifest) and moves the chart's 'Shown on the site plan' status onto it (S2).",
+   "Stays open for the wiring part (M5-T173): every drawing claim reads the manifest and the legacy drawn predicates are deleted; a claim that keeps building_not_placed() must state placement (data), never drawing."
+  ],
+  "D-094-R205": [
+   "Claims about visible content now depend on what the output includes (manifest from Embedded values); the chart and the appendix read it (S2, S3).",
+   "Page references, legends and statuses are corrected together in the wiring part, which passes the manifest to every page."
+  ],
+  "D-094-R277": [
+   "Case placement data with the drawing rendered: with the manifest's footprint flag True the chart says 'Shown on the site plan' (S2); with zones or a bar drawn the appendix names the scenario sheet (S3).",
+   "The printed page reference is checked on the real print in the wiring part (M5-T173 S2, S8)."
+  ],
+  "D-094-R278": [
+   "Case placement data without a rendered drawing: with the footprint flag False the chart says 'Worked out; not drawn' (S2); an explicit not-drawn illustration state gives 'not yet drawn' without the legacy read (test_s3_explicit_not_drawn_state_ignores_the_legacy_predicate); a failing map footprint keeps the map with a note (S6).",
+   "The degenerate-footprint print state is the wiring part's (M5-T173 S4)."
+  ]
+ }
+}
