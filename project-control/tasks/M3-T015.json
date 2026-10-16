@@ -219,8 +219,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "R1: 23-154 is likely to stay 403 (H12 re-confirmed HTTP 403 on the article page 2026-10-15). Treat it as a CONDITIONAL output; do NOT block the batch on it; keep the honest unknown and the existing index note.",
     "R2 (M3-T013/DB-276 table-digest discipline): a table-bearing capture MUST carry table_digest_sha256 == sha256 of the canonical JSON of the PARSED payload (json.dumps(payload,sort_keys=True,ensure_ascii=False,separators=(',',':'))); a non-table capture MUST NOT carry the key \u2014 snapshots.py fails closed either way and tests/rules/test_zr_snapshot_table_digest.py guards it. All owed sections verified prose this pass; the producer re-checks the page read this pass.",
@@ -232,7 +232,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:31:36.464338+00:00",
-  "updated_at": "2026-10-15T23:31:40.969951+00:00",
+  "updated_at": "2026-10-16T00:25:13.798634+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -260,6 +260,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted and claimed at the wave-29 base; captures dispatched"
+    },
+    {
+      "at": "2026-10-16T00:25:04.122364+00:00",
+      "agent": "official-source-researcher",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }

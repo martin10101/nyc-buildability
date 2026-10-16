@@ -1,0 +1,12 @@
+{
+  "task_id": "M3-T015",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M3-T015-reviews.md",
+  "reviewed_at": "2026-10-16T00:25:12.585133+00:00",
+  "content_manifest_sha256": "82f87a4e82c4295275854e8e1a31578d54a64634c1703a7506a0e790ad922d41",
+  "reviewed_sha": "b32a17b36cbde8bb8900fec1194ef605d0f22e41",
+  "updated_at": "2026-10-16T00:25:13.793151+00:00"
+}
