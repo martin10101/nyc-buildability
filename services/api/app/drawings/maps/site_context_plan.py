@@ -85,6 +85,7 @@ from .model import (
     TaxLotLayer,
     Unavailable,
 )
+from .placed_footprint import draw_placed_footprint
 from .street_areas import (
     MIN_STREET_AREA_SQFT,
     clip_polygon_to_rect,
@@ -651,12 +652,16 @@ def unavailable_layer(name: str, layer: object, source: str) -> Unavailable | No
 # The site context plan.
 # --------------------------------------------------------------------------- #
 def draw_site_context_plan(context: MapContext, *, frame: str = "sheet",
-                           constraint_lines=None, input_facts=None) -> Drawing | Unavailable:
+                           constraint_lines=None, input_facts=None,
+                           placed_footprint=None) -> Drawing | Unavailable:
     """The site plan among its surroundings. Needs the tax lots, the streets and
     the building footprints; any one unavailable returns Unavailable (S6).
     ``constraint_lines`` / ``input_facts`` (results contract 1.5.0) are drawn only on
     the close frames; both default to None, so existing callers are byte-identical
-    (S1) and the overlay body lives in constraint_overlay.py (M5-T175)."""
+    (S1) and the overlay body lives in constraint_overlay.py (M5-T175).
+    ``placed_footprint`` (the engine's results-local floor-1 plate ring, part W threads
+    it) is drawn as an illustrative footprint on the CLOSE frame only (M5-T173 B1); None
+    keeps every frame byte-identical (S1/S6)."""
     drawing = "site_context_plan"
     for name, layer, source in (
         ("tax_lots", context.tax_lots, "/map_context/tax_lots"),
@@ -733,9 +738,19 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet",
         # items that draw nothing, so its frame stays clamped and byte-identical, as a
         # frame with no overlay at all does (S4; DB-263 F1, correcting round 1's
         # bool(constraint_lines) which grew the benchmark frame 470 -> 474).
+        # The engine's floor-1 plate, drawn as an illustrative footprint on the map lot
+        # (part B1): an invalid ring or an unplaceable label draws nothing. The
+        # 'No building placed' row drops only when a footprint was PASSED (the engine
+        # placed the building, even if a degenerate ring draws nothing; S4); a drawn
+        # footprint's own legend entry needs the frame's full height, like a constraint
+        # overlay's (overlay_present).
+        footprint = (None if placed_footprint is None else
+                     draw_placed_footprint(sheet, placed_footprint, context.subject_lot.outline,
+                                           fr, rect))
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
-                               mode="close", not_placed_legend=True, basis_note=GIS_BASIS_NOTE,
-                               overlay_present=overlay_was_drawn(sheet))
+                               mode="close", not_placed_legend=placed_footprint is None,
+                               basis_note=GIS_BASIS_NOTE,
+                               overlay_present=overlay_was_drawn(sheet) or footprint is not None)
     report = frame == "report"
     region, margin = ((REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN))
     fr = fit_view(view, region, margin, alpha=alpha, top_band=TITLE_BAND_PT)

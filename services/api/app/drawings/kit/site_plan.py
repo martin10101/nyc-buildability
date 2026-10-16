@@ -30,7 +30,7 @@ from .furniture import (
     scope_notes,
 )
 from .hatches import hatch_defs
-from .labels import YARD_KIND_NAMES, Box, format_feet, format_number
+from .labels import YARD_KIND_NAMES, Box, format_feet, format_number, text_box
 from .model import Drawing, DrawingInput, Label, LayerUnavailable, Point, Polygon
 from .sheet import Sheet
 from .styles import TYPOGRAPHY, style_for
@@ -262,13 +262,152 @@ def _setbacks(sheet: Sheet, data: DrawingInput, frame: _Frame) -> None:
                     source=f"{entry.source}/floor", role="setback_floor", anchor="middle")
 
 
-def _footprint(sheet: Sheet, data: DrawingInput, frame: _Frame) -> None:
+def _footprint(sheet: Sheet, data: DrawingInput, frame: _Frame, *, report: bool = False) -> None:
     if isinstance(data.floor_plates, LayerUnavailable):
         return
     for plate in data.floor_plates:
-        if plate.floor == 1:
+        if plate.floor == 1 and not report:
+            # Sheet frame: the use-coloured plate (byte-identical). The report frame draws
+            # the floor-1 plate as an ILLUSTRATIVE footprint, added last (M5-T173 B1:
+            # _report_footprint, so its labels yield to the street/dimension labels).
             sheet.area(path_data(_px_rings(plate.outline, frame)), plate.use,
                        [("data-source", plate.source), ("data-floor", plate.floor)])
+
+
+def _plate_one(data: DrawingInput):
+    """The floor-1 plate, or None (not available / absent)."""
+    if isinstance(data.floor_plates, LayerUnavailable):
+        return None
+    return next((p for p in data.floor_plates if p.floor == 1), None)
+
+
+def _point_seg_dist(p: Point, a: Point, b: Point) -> float:
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    length_sq = dx * dx + dy * dy
+    if length_sq == 0.0:
+        return math.hypot(p[0] - a[0], p[1] - a[1])
+    t = max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / length_sq))
+    return math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy))
+
+
+def _dist_to_lot(mid: Point, lot_ring) -> float:
+    return min(_point_seg_dist(mid, lot_ring[i], lot_ring[i + 1])
+               for i in range(len(lot_ring) - 1))
+
+
+def _footprint_edges(verts, n: int, lot_ring) -> tuple[int, int]:
+    """The width (back) edge and one depth edge of the plate: the longest edge whose
+    midpoint is farthest from the lot boundary (the frontage long edge sits on it), and a
+    shortest edge adjacent to it, also farthest from the boundary - so both dimension
+    lines fall on the lot-interior side, clear of the lot-edge dimensions."""
+    lengths = [geo.edge_length(verts[i], verts[(i + 1) % n]) for i in range(n)]
+    mids = [((verts[i][0] + verts[(i + 1) % n][0]) / 2.0,
+             (verts[i][1] + verts[(i + 1) % n][1]) / 2.0) for i in range(n)]
+    dists = [_dist_to_lot(mids[i], lot_ring) for i in range(n)]
+    lmax, lmin = max(lengths), min(lengths)
+    wide = [i for i in range(n) if lengths[i] >= lmax - 0.5]
+    back = max(wide, key=lambda i: (dists[i], -i))
+    deep = [i for i in range(n) if lengths[i] <= lmin + 0.5 and i != back]
+    adj = [i for i in deep if i in ((back + 1) % n, (back - 1) % n)]
+    pool = adj or deep or [i for i in range(n) if i != back]
+    depth = max(pool, key=lambda i: (dists[i], -i))
+    return back, depth
+
+
+def _halo(x: float, y: float, text: str, size: float, rot: float) -> str:
+    """A white background behind one footprint dimension label, so the figure reads over
+    the illustrative footprint's fill and hatch."""
+    width = len(text) * size * TYPOGRAPHY.char_width_em
+    transform = f"rotate({rot:.2f} {x:.2f} {y:.2f})" if rot else None
+    return element("rect", [("x", x - width / 2.0 - 0.6), ("y", y - 0.8 * size - 0.6),
+                            ("width", width + 1.2), ("height", 1.05 * size + 1.2),
+                            ("transform", transform), ("fill", "#FFFFFF"), ("stroke", "none"),
+                            ("data-role", "label-background")])
+
+
+def _place_footprint_label(sheet: Sheet, cands, text: str, size: float, source: str) -> Box | None:
+    """Place a figure-only footprint label at the first candidate clear of every placed
+    box and reserved dimension segment; returns the box or None (then the whole footprint
+    is withheld - never shrunk or partial, S5). A white halo keeps it legible over the
+    footprint fill."""
+    for x, y, rot in cands:
+        box = text_box(x, y, text, size, "middle", rot)
+        if any(box.overlaps(other) for other in sheet.boxes):
+            continue
+        sheet.parts.append(_halo(x, y, text, size, rot))
+        sheet.parts.append(text_element(x, y, text, size=size, source=source, role="dimension",
+                                        anchor="middle", rotate=rot))
+        sheet.boxes.append(box)
+        sheet.labels.append(Label(text, source, "dimension"))
+        return box
+    return None
+
+
+def _footprint_dim(sheet: Sheet, verts, i: int, n: int, centroid: Point, frame: _Frame,
+                   source: str, size: float) -> bool:
+    """Draw one plate edge's dimension geometry on the lot-interior side (toward
+    ``centroid``) and place its figure-only label. Returns False if the label cannot be
+    placed, so the caller withholds the whole footprint."""
+    a, b = verts[i], verts[(i + 1) % n]
+    pa, pb = frame.px(a), frame.px(b)
+    elen = math.hypot(pb[0] - pa[0], pb[1] - pa[1]) or 1.0
+    ux, uy = (pb[0] - pa[0]) / elen, (pb[1] - pa[1]) / elen
+    nx, ny = -uy, ux
+    mx, my = (pa[0] + pb[0]) / 2.0, (pa[1] + pb[1]) / 2.0
+    if nx * (centroid[0] - mx) + ny * (centroid[1] - my) < 0.0:
+        nx, ny = -nx, -ny
+    da = (pa[0] + nx * DIM_OFFSET, pa[1] + ny * DIM_OFFSET)
+    db = (pb[0] + nx * DIM_OFFSET, pb[1] + ny * DIM_OFFSET)
+    dim = style_for("dimension")
+    sheet.parts.append(element("path", [
+        ("d", " ".join(polyline_data(seg) for seg in ((pa, da), (pb, db), (da, db)))),
+        ("fill", "none"), ("stroke", dim.outline), ("stroke-width", float(dim.line_weight_pt)),
+        ("data-role", "footprint-dimension-geometry")]))
+    for p, q in ((pa, da), (pb, db), (da, db)):
+        _reserve_seg(sheet, p, q)
+    ang = _readable(math.degrees(math.atan2(pb[1] - pa[1], pb[0] - pa[0])))
+    bmx, bmy = (da[0] + db[0]) / 2.0, (da[1] + db[1]) / 2.0
+    cands = [(bmx + nx * (3.0 + j * (size + 2.0)) + ux * al * (size + 2.0),
+              bmy + ny * (3.0 + j * (size + 2.0)) + uy * al * (size + 2.0), ang)
+             for j in range(8) for al in (0, 1, -1, 2, -2)]
+    text = format_feet(geo.edge_length(a, b))
+    return _place_footprint_label(sheet, cands, text, size, source) is not None
+
+
+def _report_footprint(sheet: Sheet, data: DrawingInput, frame: _Frame) -> None:
+    """Draw the floor-1 plate as an illustrative footprint on the report frame (called
+    LAST, after the lot/street/dimension labels): the plate in kind
+    ``illustrative_footprint`` (not its use colour) plus the width (back) edge and one
+    depth edge dimensioned on the lot-interior side. The fill is spliced to the BOTTOM so
+    the lot lines read over it; the dimensions go on top. An unplaceable label withholds
+    the WHOLE footprint (plan-then-commit; never shrunk or partial, S5)."""
+    plate = _plate_one(data)
+    if plate is None:
+        return
+    ring = plate.outline.exterior
+    verts = list(ring[:-1]) if len(ring) > 1 and ring[0] == ring[-1] else list(ring)
+    n = len(verts)
+    if n < 3:
+        return
+    tmp = Sheet()
+    tmp.boxes = list(sheet.boxes)
+    base = len(tmp.boxes)
+    tmp.area(path_data(_px_rings(plate.outline, frame)), "illustrative_footprint",
+             [("data-source", plate.source), ("data-floor", plate.floor)])
+    area_len = len(tmp.parts)  # the fill (+ hatch) parts, spliced to the bottom on success
+    centroid = (sum(frame.px(v)[0] for v in verts) / n, sum(frame.px(v)[1] for v in verts) / n)
+    back, depth = _footprint_edges(verts, n, data.lot.exterior)
+    size = TYPOGRAPHY.dimension_pt + 0.5  # 8.5 pt (D-094 R053: the footprint labels >= 8.5 pt)
+    for i in (back, depth):
+        source = f"edge:{plate.outline.source}/0#{i}"
+        if not _footprint_dim(tmp, verts, i, n, centroid, frame, source, size):
+            return  # a dimension could not be placed: withhold the whole footprint
+    sheet.parts[0:0] = tmp.parts[:area_len]       # the fill sits at the bottom (lot lines over it)
+    sheet.parts.extend(tmp.parts[area_len:])      # the dimension lines and labels on top
+    for kind in tmp.kinds:                        # the drawn area kind (illustrative_footprint)
+        sheet.use_kind(kind)
+    sheet.labels.extend(tmp.labels)
+    sheet.boxes.extend(tmp.boxes[base:])
 
 
 def _notes(data: DrawingInput) -> list[Note]:
@@ -299,7 +438,7 @@ def draw_site_plan(data: DrawingInput, *, frame: str = "sheet") -> Drawing:
     fr = (_frame(data.lot, REPORT_PLAN, REPORT_PLAN_MARGIN, REPORT_TOP_BIAS) if report
           else _frame(data.lot))
     sheet = Sheet()
-    _footprint(sheet, data, fr)
+    _footprint(sheet, data, fr, report=report)
     _yards(sheet, data, fr)
     _setbacks(sheet, data, fr)
     sheet.line(path_data(_px_rings(data.lot, fr)), "lot_line",
@@ -308,6 +447,7 @@ def draw_site_plan(data: DrawingInput, *, frame: str = "sheet") -> Drawing:
     _streets(sheet, data, fr)
 
     if report:
+        _report_footprint(sheet, data, fr)  # illustrative footprint added last (M5-T173 B1)
         return _compose_report(sheet, fr, data)
 
     panel = north_arrow(PANEL_X + 20.0, 16.0)

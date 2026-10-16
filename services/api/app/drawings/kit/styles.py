@@ -167,6 +167,17 @@ STYLE_TABLE: tuple[ShapeStyle, ...] = (
                _hatch(135, 3.0, False, "#4A6572"), "A-ZONE-DIST", True, 8),
     ShapeStyle("building_footprint", "Building footprint", AREA, "#E0E0E0", "#9E9E9E", 0.4, (),
                _hatch(90, 3.0, False, "#9E9E9E"), "A-BLDG-FTPR", True, 9),
+    # The ILLUSTRATIVE building footprint (M5-T173 part B1, D-094 R043/R044/R053): the
+    # engine's floor-1 plate drawn on the lot as an illustrative footprint on the site
+    # close frame and the report-frame kit fallback. It is NOT a use colour (never the
+    # residential yellow) and not a real/surveyed building: a quiet neutral wash with a
+    # distinct crossed diagonal hatch and a dashed outline marks it as illustrative, so a
+    # reader never reads it as a measured plan. Additive only - no existing drawing draws
+    # this kind, so every existing output is byte-identical; the legend (generated from the
+    # drawn kinds) names it "Illustrative building footprint".
+    ShapeStyle("illustrative_footprint", "Illustrative building footprint", AREA, "#E8EEF2",
+               "#5B7083", 0.8, (3.0, 2.0), Hatch(45, 4.0, True, "#5B7083", 0.4),
+               "A-BLDG-ILLUS", True, 8),
     # Site-and-context drawings (M5-T155, D-090 R936-R938): the lot among its
     # neighbours. The two surrounding kinds use the presentation tokens' neutral
     # greys (page #F2F5F6, divider-ish #C9CFD4, supporting #52616C) so they stay
