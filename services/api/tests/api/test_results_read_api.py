@@ -728,11 +728,13 @@ def test_t9_rate_limit_precedes_the_bbl_check(enabled, monkeypatch) -> None:
 )
 def test_t10_example_and_lot_fact_fields_are_refused(enabled, field, value) -> None:
     """T10 / S13 / ruling R3: a body carrying ANY field beyond the housing program, the
-    floor-to-floor height and the density statement is refused with a typed 422 - one case each for
-    a lot area, a lot type, an overlay flag, a special-district flag, a corner condition, a lot
-    geometry and an attested-fact provenance. The example-value guard (real_property_guard) has
-    nothing to check in this body: no lot fact can enter it, so the refusal happens at the body
-    gate, before any guard. The provider is never reached."""
+    floor-to-floor height, the density statement and the provenance-tagged entered_facts channel
+    (M5-T178) is refused with a typed 422 - one case each for a BARE lot area, a lot type, an
+    overlay flag, a special-district flag, a corner condition, a lot geometry and an attested-fact
+    provenance. A raw lot fact stays refused (only an explicitly provenance-tagged survey
+    measurement enters through entered_facts); the example-value guard (real_property_guard) has
+    nothing to check in this body, so the refusal happens at the body gate, before any guard. The
+    provider is never reached."""
     calls = []
 
     def spy(bbl, correlation_id, *, selected=None):

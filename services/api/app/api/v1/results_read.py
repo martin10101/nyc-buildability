@@ -65,6 +65,7 @@ from app.scenario.three_answers.result_way_engine_bridge import (
     run_engine_and_result_ways_from_evidence,
 )
 
+from .entered_facts import EnteredFactsError, merge_entered_facts
 from .results_request import ResultsRequestError, build_option, read_results_request
 from .study_inputs import (
     StudyInputsProvider,
@@ -351,7 +352,20 @@ async def post_results(
             study_id=uuid.uuid4().hex,
             revision={"number": 1, "created_at": computed_at, "parent": None},
         )
+        # Merge the architect's survey measurements (M5-T178) BEFORE build_evaluator_inputs, so
+        # a survey value governs its engine input and the city fact stays visible in `displaced`.
+        # With no entered facts the SAME study is returned unchanged (document byte-identical to
+        # the city-record baseline). An entered value that cannot be placed beside a single
+        # recorded value fails closed (EnteredFactsError below), never a fabricated document.
+        study = merge_entered_facts(study, req.entered_facts, retrieved_at=computed_at)
         evaluator_inputs = build_evaluator_inputs(study, option_id)
+    except EnteredFactsError as exc:
+        # The architect's survey value cannot be placed beside a single recorded value for its
+        # input (none at all, or several on different streets/tax lots). Fail safe: a bounded 503,
+        # never a guess and never a fabricated document (directive D-094-R285).
+        logger.info("results_v1 lot_conditions_unconfirmed stage=entered_facts "
+                    "code=%s correlation_id=%s", exc.code, correlation_id)
+        return _lot_conditions_unconfirmed_503(correlation_id)
     except EvaluatorInputsError as exc:
         # The lot's evidence cannot be turned into a runnable input set (no known value, an
         # ambiguous multi-frontage lot, or a visible conflict). Fail safe: a bounded 503, never a

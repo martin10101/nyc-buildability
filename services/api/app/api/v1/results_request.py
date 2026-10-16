@@ -18,10 +18,19 @@ THE BODY CARRIES ONLY (R3 of the orchestrator's rulings; work order section 4 it
   a boolean (``true`` = the lot is NOT in a special density area, the one statement the program
   acts on), or absent (no statement). It is a STATEMENT, never a recorded fact, and the route
   never stores it or returns it as a fact (R255).
+* ``entered_facts`` - OPTIONAL. The architect's own SURVEY measurements of lot values (task
+  M5-T178, directive D-094-R103): a list of ``{input, value, basis}`` where ``input`` is one of
+  {lot_area, lot_frontage, lot_depth}, ``value`` a positive finite number and ``basis`` the
+  closed enum {survey}. This is the ONE provenance-tagged channel through which a lot measure may
+  enter the request: each entry becomes a ``survey_entered`` site fact that GOVERNS its engine
+  input and keeps the city record visible (:mod:`app.api.v1.entered_facts`). A RAW lot fact (a
+  bare ``lot_area_sq_ft``, ``lot_type``, overlay, geometry, …) is still refused - the city's
+  records supply those; only an explicitly provenance-tagged survey measurement is accepted.
 
-ANY OTHER FIELD IS REFUSED with a typed 422 (R3): so no lot area, frontage, depth, lot type,
+ANY OTHER FIELD IS REFUSED with a typed 422 (R3): so no bare lot area, frontage, depth, lot type,
 district, overlay, special district, corner condition, geometry or attested fact can be sent
-through this body. Every refusal names the offending field; no message echoes a caller value.
+through this body - a lot measure enters only through the provenance-tagged ``entered_facts``
+channel. Every refusal names the offending field; no message echoes a free-text caller value.
 
 No truthiness test is run on a value that MAY be absent: presence is tested with ``in`` and the
 type checked explicitly, so an absent optional value is distinct from a present ``0``/``false``.
@@ -33,6 +42,8 @@ import math
 from dataclasses import dataclass
 
 from app.scenario.three_answers import DEFAULT_FLOOR_TO_FLOOR_FT
+
+from .entered_facts import EnteredFact, EnteredFactsError, parse_entered_facts
 
 __all__ = [
     "ALLOWED_BODY_FIELDS",
@@ -49,9 +60,11 @@ HOUSING_PROGRAMS: frozenset[str] = frozenset(
     {"standard_residence", "qualifying_affordable_housing", "qualifying_senior_housing"}
 )
 
-#: The ONLY fields the body may carry. Any other key is refused (R3).
+#: The ONLY fields the body may carry. Any other key is refused (R3). ``entered_facts`` (M5-T178)
+#: is the one provenance-tagged channel for an architect's survey lot measurements; a bare lot
+#: fact is still not a member and stays refused.
 ALLOWED_BODY_FIELDS: frozenset[str] = frozenset(
-    {"housing_program", "floor_to_floor_ft", "special_density_statement"}
+    {"housing_program", "floor_to_floor_ft", "special_density_statement", "entered_facts"}
 )
 
 #: The neutral display name for the minted option (not a fact about the lot; R2). The route
@@ -85,11 +98,14 @@ class ResultsRequestError(Exception):
 class ResultsRequest:
     """The checked body: the user's option choices only. ``floor_to_floor_ft`` is None when the
     user supplied none (the engine's stated starting value is used and printed);
-    ``special_density_statement`` is None when the user made no statement."""
+    ``special_density_statement`` is None when the user made no statement. ``entered_facts`` is
+    the empty tuple when the architect entered no survey measurement (the no-channel path is
+    byte-identical to today); otherwise it carries the checked survey facts (M5-T178)."""
 
     housing_program: str
     floor_to_floor_ft: float | None
     special_density_statement: bool | None
+    entered_facts: tuple[EnteredFact, ...] = ()
 
 
 def _is_number(value: object) -> bool:
@@ -114,8 +130,10 @@ def read_results_request(body: object) -> ResultsRequest:
         raise ResultsRequestError(
             "field_not_accepted",
             "this field is not accepted; the request carries only the housing program, an "
-            "optional floor-to-floor height and an optional statement about the special "
-            "density area. Facts about the lot come from the city's records, not the request",
+            "optional floor-to-floor height, an optional statement about the special density "
+            "area and optional architect-entered survey facts (entered_facts). A bare lot fact "
+            "is not accepted: the city's records supply the lot's values unless the architect "
+            "enters a survey measurement through the entered_facts channel",
             field=field,
         )
 
@@ -164,10 +182,23 @@ def read_results_request(body: object) -> ResultsRequest:
             )
         special_density_statement = raw
 
+    # The architect's survey measurements (M5-T178). Presence is tested with ``in`` so an absent
+    # channel (no key) is distinct from a present null/empty list, and the parsed block is carried
+    # on the request. A malformed block is a typed 422 at this body gate (the merge into the study
+    # and any fail-closed placement happen later, in the route); the dedicated channel error is
+    # re-raised as a ResultsRequestError so the route's existing 422 path is unchanged.
+    entered_facts: tuple[EnteredFact, ...] = ()
+    if "entered_facts" in body:
+        try:
+            entered_facts = parse_entered_facts(body["entered_facts"])
+        except EnteredFactsError as exc:
+            raise ResultsRequestError(exc.code, exc.message, field=exc.field) from exc
+
     return ResultsRequest(
         housing_program=housing_program,
         floor_to_floor_ft=floor_to_floor_ft,
         special_density_statement=special_density_statement,
+        entered_facts=entered_facts,
     )
 
 
