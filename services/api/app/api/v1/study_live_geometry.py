@@ -40,6 +40,8 @@ outline the adapter refuses (multi-part / holed / repaired beyond shape) is also
 from __future__ import annotations
 
 import logging
+import threading
+from collections import OrderedDict
 from collections.abc import Callable
 
 from app.api.v1.study_inputs import GeometryProvider, OutlineProvider
@@ -63,9 +65,70 @@ from app.spatial.site_geometry import (
 )
 from app.spatial.site_geometry.outline import PreparedOutline, prepare_outline
 
-__all__ = ["live_geometry_provider", "live_outline_provider"]
+__all__ = [
+    "live_geometry_provider",
+    "live_outline_provider",
+    "shared_street_window_fetch",
+]
 
 logger = logging.getLogger("app.api.v1.study_live_geometry")
+
+# Bound on the shared street-window memo (DB-273). Each request contributes at most a handful of
+# entries (one metadata URL + the envelope page URLs) and never reuses another request's, so this
+# only caps memory under a burst; it is intentionally far larger than any single window.
+_SHARED_STREET_WINDOW_CACHE_MAX = 256
+
+
+def shared_street_window_fetch(
+    fetch: Callable[[str, str], DcmTransport] = default_fetch,
+) -> Callable[[str, str], DcmTransport]:
+    """Wrap a DCM street ``fetch`` so one request's street window is transported ONCE even when
+    both the geometry provider and the street-data provider fetch it (DB-273).
+
+    :func:`live_geometry_provider` and :func:`app.api.v1.study_inputs.live_street_data_provider`
+    build the SAME envelope for the same lot in one request, so each asks the accepted paged fetch
+    for the SAME metadata/page URLs. Behind ``LIVE_SPATIAL_PROVIDER_ENABLED`` (default off),
+    :func:`app.api.v1.study_inputs._live_study_inputs_provider` hands this ONE wrapper to BOTH
+    providers, so the window's HTTP transport runs once per request instead of twice. The flag is
+    off by default, so no live behaviour changes; with it on the merged result is byte-identical to
+    the two-fetch behaviour (the second provider reuses the first provider's transports).
+
+    It is a thin pass-through: a SUCCESSFUL transport is memoised keyed by
+    ``(url, correlation_id)`` -- the URL identifies the street window (the envelope is baked into
+    it) and the correlation id scopes the memo to one request, so a fresh id never reuses another
+    request's (or another lot's) entry and nothing is cached across requests. A fetch that RAISES is
+    NOT memoised, so an unavailable window surfaces in BOTH providers exactly as the unwrapped fetch
+    would (each still sees the failure and fails closed independently). The cache is bounded (LRU)
+    and lock-guarded, so a burst of concurrent requests never grows it without limit and never
+    returns a stale window; under contention the only effect is a missed reuse (a re-fetch).
+
+    ``fetch`` defaults to the production
+    :func:`~app.connectors.dcm_street_centerline_arcgis.default_fetch`; tests inject a counting
+    double. The lot-geometry fetch is each provider's own and is not shared here (DB-273 is the
+    street window only).
+    """
+    cache: OrderedDict[tuple[str, str], DcmTransport] = OrderedDict()
+    lock = threading.Lock()
+
+    def memoised_fetch(url: str, correlation_id: str) -> DcmTransport:
+        key = (url, correlation_id)
+        with lock:
+            hit = cache.get(key)
+            if hit is not None:
+                cache.move_to_end(key)
+                return hit
+        # The fetch runs OUTSIDE the lock (it is I/O), so concurrent requests never serialise and a
+        # raised failure never reaches the cache. A rare same-key race just fetches twice and stores
+        # identical bytes -- in practice one request's two providers run sequentially on one thread.
+        transport = fetch(url, correlation_id)
+        with lock:
+            cache[key] = transport
+            cache.move_to_end(key)
+            while len(cache) > _SHARED_STREET_WINDOW_CACHE_MAX:
+                cache.popitem(last=False)
+        return transport
+
+    return memoised_fetch
 
 # (canonical_bbl, correlation_id) -> MapPLUTO LotGeometryResult. The existing live
 # MapPLUTO lot-geometry fetch wrapped to the geometry-seam call convention (the

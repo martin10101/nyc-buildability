@@ -690,12 +690,21 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     from app.api.v1.study_live_geometry import (
         live_geometry_provider,
         live_outline_provider,
+        shared_street_window_fetch,
     )
     from app.config import internal_zoning_lot_index_enabled
     from app.spatial.live_provider import live_spatial_provider_enabled
 
     live_spatial = live_spatial_provider_enabled()
-    geometry_provider = live_geometry_provider() if live_spatial else None
+    # DB-273: the geometry provider and the street-data provider build the SAME street window for
+    # the lot in one request; hand BOTH one shared fetch so the window's transport runs once rather
+    # than twice. Still behind LIVE_SPATIAL_PROVIDER_ENABLED (off by default), so nothing live
+    # changes; with the flag on the merged result is byte-identical to the two-fetch behaviour. The
+    # lot-geometry fetch stays each provider's own (DB-273 is the street window only).
+    shared_streets = shared_street_window_fetch() if live_spatial else None
+    geometry_provider = (
+        live_geometry_provider(fetch_streets=shared_streets) if live_spatial else None
+    )
     # The outline seam (M5-T134, reading O21) is bound behind the SAME flag as geometry: OFF in
     # production, so the prepared_outline carrier stays absent and the live study read is unchanged.
     outline_provider = live_outline_provider() if live_spatial else None
@@ -709,7 +718,9 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     # PROVIDER_ENABLED flag as geometry/outline: OFF in production, so street_data stays None; the
     # results route emits a 1.4.0 document (no rear-yard check applied). ON, the live window is
     # fetched and carried, so the route emits the engine's conditional ZR 23-344 rear-yard result.
-    street_data_provider = live_street_data_provider() if live_spatial else None
+    street_data_provider = (
+        live_street_data_provider(fetch_streets=shared_streets) if live_spatial else None
+    )
     return pluto_study_inputs_provider(
         get_pluto_fetcher(),
         version_probe=cached_default_version_probe(),
