@@ -15,8 +15,8 @@
   "coverage_status_vocabulary": "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md section 2. Producer mapping: partial = captured AND a rule file formally cites/computes it (unreviewed draft, full closure incomplete); not_evaluated = captured, in scope, no rule yet; not_applicable = captured but the district line / R1-R5 / tower / other-equivalency / special-geography body affirmatively excludes an R6B / C2-2 lot (title-only captures stay not_evaluated because applicability to a mapped special area is not resolved); missing = required for an option but NOT CAPTURED.",
   "counts": {
     "sections_total": 73,
-    "captured": 70,
-    "not_captured": 3,
+    "captured": 71,
+    "not_captured": 2,
     "handled": 6,
     "not_handled": 67,
     "defined_terms_total": 38,
@@ -1602,8 +1602,9 @@
         },
         {
           "section_id": "35-36",
-          "captured": false,
-          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+          "captured": true,
+          "snapshot_id": "zr-35-36",
+          "reason": "special FAR/bulk provisions for certain areas; CAPTURED (M3-T015; zr-35-36.snapshot.json, heading, children 35-361/35-362 deferred); not followed for this lot (SPDist1 null)"
         },
         {
           "section_id": "35-361",
@@ -1640,8 +1641,9 @@
         },
         {
           "section_id": "35-36",
-          "captured": false,
-          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+          "captured": true,
+          "snapshot_id": "zr-35-36",
+          "reason": "special FAR/bulk provisions for certain areas; CAPTURED (M3-T015; zr-35-36.snapshot.json, heading, children 35-361/35-362 deferred); not followed for this lot (SPDist1 null)"
         }
       ],
       "handled_by": [
@@ -2047,18 +2049,21 @@
         },
         {
           "section_id": "73-11",
-          "captured": false,
-          "reason": "permit-required use (Agriculture and Open Uses) named in the captured text; NOT CAPTURED; not followed"
+          "captured": true,
+          "snapshot_id": "zr-73-11",
+          "reason": "permit-required use (Agriculture and Open Uses) named in the captured text; CAPTURED (M3-T015; zr-73-11.snapshot.json, parent heading, children 73-111/73-112); project-specific carve-out, not followed"
         },
         {
           "section_id": "73-13",
-          "captured": false,
-          "reason": "permit-required use (Community Facilities) named in the captured text; NOT CAPTURED; not followed"
+          "captured": true,
+          "snapshot_id": "zr-73-13",
+          "reason": "permit-required use (Community Facilities) named in the captured text; CAPTURED (M3-T015; zr-73-13.snapshot.json, parent heading, children 73-131..73-136); project-specific carve-out, not followed"
         },
         {
           "section_id": "73-18",
-          "captured": false,
-          "reason": "permit-required use (Recreation, Entertainment and Assembly Spaces) named in the captured text; NOT CAPTURED; not followed"
+          "captured": true,
+          "snapshot_id": "zr-73-18",
+          "reason": "permit-required use (Recreation, Entertainment and Assembly Spaces) named in the captured text; CAPTURED (M3-T015; zr-73-18.snapshot.json, parent heading, children 73-181..73-185); project-specific carve-out, not followed"
         },
         {
           "section_id": "74-902",
@@ -2097,19 +2102,21 @@
     },
     {
       "section_id": "77-00",
-      "title": "Special Provisions for Zoning Lots Divided by District Boundaries (family; not captured)",
+      "title": "GENERAL PROVISIONS (Article VII Chapter 7, zoning lots divided by district boundaries; heading captured)",
       "zr_url": "https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-00",
       "capture_status": {
-        "state": "NOT CAPTURED"
+        "state": "captured",
+        "snapshot_id": "zr-77-00",
+        "content_digest_sha256": "bd37979c47d186ad1eb520b3ba81617db4f3880dc875e3daea8ea9c37ac4b3ba"
       },
       "cross_references_out": [],
       "handled_by": [
-        "NOT HANDLED: zoning-lots-divided-by-district-boundaries family not captured"
+        "NOT HANDLED: zoning-lots-divided-by-district-boundaries family; no rule file computes it"
       ],
-      "coverage_status": "missing",
-      "last_amended": null,
+      "coverage_status": "not_evaluated",
+      "last_amended": "1987-08-14",
       "scope_status": "conditional: option 8 only IF \"split lot\" means a lot divided by a district boundary",
-      "notes": "Article VII Ch 7 family (zoning lots divided by district boundaries). NOT fetched. The \"split lot\" meaning is an OPEN question (two buildings on one zoning lot vs a district-boundary split) - see options-sections.md. 36-64 (captured) is only a loading-berth pointer into Article VII, Chapter 7 (accessory off-street loading berths), not a general C-district counterpart."
+      "notes": "Article VII Ch 7 family (zoning lots divided by district boundaries). Captured M3-T015: 77-00 is the heading/container only (empty own body; Last Amended 8/14/1987; snapshot zr-77-00). The Chapter 7 subset captured this pass (all prose, no tables): 77-00, 77-01, 77-10, 77-11, 77-12, 77-20, 77-21, 77-211, 77-22, 77-24, 77-25, 77-26, 77-27, 77-28 (plus 76-131 and 35-36). Deferred (adjacent-not-in-batch, see the M3-T015 producer report): 77-02/03/23/29/30/31/32/321/322/33/331/332. The \"split lot\" meaning is an OPEN question (owner N1: two buildings on one zoning lot vs a district-boundary split) - see options-sections.md; nothing here asserts option 8's meaning or that 77-xx applies to the benchmark lot. 36-64 (captured) is only a loading-berth pointer into Article VII, Chapter 7 (accessory off-street loading berths), not a general C-district counterpart."
     },
     {
       "section_id": "shared-housing-use-and-standards",

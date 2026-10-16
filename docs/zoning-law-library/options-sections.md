@@ -111,14 +111,14 @@ Model two separate buildings with per-building and per-site figures kept apart.
       multiple buildings with residential + commercial/CF use [C][nH]; the normal R6B bulk applies per
       building, but there is no two-building modelling rule; or
   (b) **a zoning lot divided by a zoning-district boundary** → the governing family is ZR Article VII
-      Chapter 7, 77-00 [NC][nH], with 36-64 [C][nH] as the C-district counterpart.
+      Chapter 7, 77-00 [C][nH], with 36-64 [C][nH] as the C-district counterpart.
   The producer is **not sure** which reading the sample intends. Next step: read the sample "split lot"
   page and the official 77-00 vs multiple-buildings provisions. **This question stays open.**
 - **Second pass → `options/option-08-split-lot.md`.** The two readings are kept apart: A.1 subdivide
   into two independent zoning lots (12-10 zoning-lot subdivision clause, captured) and A.2 two
   buildings on one zoning lot (23-371/23-372 and the 23-35 court group 23-351/23-352/23-353, all CAPTURED M3-T010; 35-01 captured);
   B a zoning lot crossed by a district boundary (Article VII Chapter 7 — 77-01/77-11/77-12/77-21/
-  77-211/77-22/77-24/77-25/77-26/77-27/77-28, all NOT CAPTURED, bodies read live). CORRECTED: 36-64
+  77-211/77-22/77-24/77-25/77-26/77-27/77-28, all CAPTURED M3-T015, bodies also read live). CORRECTED: 36-64
   is only a loading-berth pointer into Chapter 7 (checked), not a general C-district rule. The
   sample is Reading A.1 (pp. 2, 5, 82-87; "Split Zone = No"). Still open and UNRESOLVED: whether a
   C2-2 overlay edge is a Chapter-7 district boundary (not settled by the text — both readings
@@ -204,5 +204,5 @@ floor area).
 - 25-xx parking + 66-11 + Appendix I transit zone — options 10, 11
 - 23-154 UAP (NOT CAPTURED) — options 2, 11
 - shared-housing use/density/parking sections (unidentified) — options 9, 10, 11
-- two-building / split-lot modelling (12-10 zoning lot captured; 77-00 NOT CAPTURED under reading (b)) —
+- two-building / split-lot modelling (12-10 zoning lot captured; 77-00 captured, M3-T015, under reading (b)) —
   options 8, 11

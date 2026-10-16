@@ -56,20 +56,20 @@ no figure is computed here.
 ## Reading B — one zoning lot divided by a zoning-district boundary (Article VII, Chapter 7)
 
 Governing family: ZR Article VII Chapter 7, "Special Provisions for Zoning Lots Divided by
-District Boundaries" (none captured; bodies read live by HD/HX1):
+District Boundaries" (captured M3-T015; bodies also read live by HD/HX1):
 
 | id | title | official URL | last amended | capture | handled |
 |---|---|---|---|---|---|
-| 77-01 | Applicability of This Chapter | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-01 | 12/15/1961 | NOT CAPTURED | NOT HANDLED |
-| 77-11 | Conditions for Application of Use Regulations to Entire Zoning Lot (>50% / 25 ft) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-11 | 6/29/1989 | NOT CAPTURED | NOT HANDLED |
-| 77-12 | Application of Use Regulations Under All Other Conditions | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-12 | 6/25/1964 | NOT CAPTURED | NOT HANDLED |
-| 77-21 / 77-211 | General Provisions (bulk) / Conditions for whole-lot bulk | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-21 | 9/27/1962 / 12/5/1990 | NOT CAPTURED | NOT HANDLED |
-| 77-22 | Floor Area Ratio (apportion by area %, then sum) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-22 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 77-24 | Lot Coverage (adjusted maximum) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-24 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 77-25 | Density Requirements (sum of each portion's permitted units) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-25 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 77-26 | Minimum Lot Area and Lot Width for Residences (more restrictive governs) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-26 | 2/2/2011 | NOT CAPTURED | NOT HANDLED |
-| 77-27 | Yard Regulations (each portion by its district) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-27 | 2/2/2011 | NOT CAPTURED | NOT HANDLED |
-| 77-28 | Height and Setback Regulations (apportioned by frontage %) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-28 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
+| 77-01 | Applicability of This Chapter | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-01 | 12/15/1961 | zr-77-01.snapshot.json | NOT HANDLED |
+| 77-11 | Conditions for Application of Use Regulations to Entire Zoning Lot (>50% / 25 ft) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-11 | 6/29/1989 | zr-77-11.snapshot.json | NOT HANDLED |
+| 77-12 | Application of Use Regulations Under All Other Conditions | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-12 | 6/25/1964 | zr-77-12.snapshot.json | NOT HANDLED |
+| 77-21 / 77-211 | General Provisions (bulk) / Conditions for whole-lot bulk | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-21 | 9/27/1962 / 12/5/1990 | zr-77-21.snapshot.json / zr-77-211.snapshot.json | NOT HANDLED |
+| 77-22 | Floor Area Ratio (apportion by area %, then sum) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-22 | 12/5/2024 | zr-77-22.snapshot.json | NOT HANDLED |
+| 77-24 | Lot Coverage (adjusted maximum) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-24 | 12/5/2024 | zr-77-24.snapshot.json | NOT HANDLED |
+| 77-25 | Density Requirements (sum of each portion's permitted units) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-25 | 12/5/2024 | zr-77-25.snapshot.json | NOT HANDLED |
+| 77-26 | Minimum Lot Area and Lot Width for Residences (more restrictive governs) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-26 | 2/2/2011 | zr-77-26.snapshot.json | NOT HANDLED |
+| 77-27 | Yard Regulations (each portion by its district) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-27 | 2/2/2011 | zr-77-27.snapshot.json | NOT HANDLED |
+| 77-28 | Height and Setback Regulations (apportioned by frontage %) | https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-28 | 12/5/2024 | zr-77-28.snapshot.json | NOT HANDLED |
 | 36-64 | Special Provisions for Zoning Lots Divided by District Boundaries (**loading-berth pointer only**) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-6/36-64 | 6/6/2024 | zr-36-64.snapshot.json | NOT HANDLED |
 
 Reading B keeps **one** zoning lot and **blends** the two districts' numbers: use by the district

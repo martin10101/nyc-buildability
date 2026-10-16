@@ -63,7 +63,7 @@ Grouped plainly (sections captured unless marked NOT CAPTURED):
   Options 9, 10, 11.
 - **Two buildings on one lot / split lot** — 12-10 "zoning lot" (captured) is used for scope; no rule
   models subdivision/aggregation or two buildings on one zoning lot. If "split lot" instead means a lot
-  divided by a district boundary, the family is 77-00 (**NOT CAPTURED**); 36-64 (captured) is only a
+  divided by a district boundary, the family is 77-00 (**captured, M3-T015**); 36-64 (captured) is only a
   loading-berth pointer into Article VII, Chapter 7 (accessory off-street loading berths), not a general
   C-district counterpart. The meaning is an **open question** (see `options-sections.md`). Options 8, 11.
 - **Multi-use FAR combination** — 23-20 (captured) and 35-31; no rule computes the combined ceiling.

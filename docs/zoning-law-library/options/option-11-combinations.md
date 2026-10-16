@@ -32,9 +32,9 @@ only rule-backed add-on inputs today.
 as NOT CAPTURED. The folder is authoritative on capture (PROGRAM_KNOWLEDGE): the producer listed
 `docs/research/zr-snapshots/v1/` and confirmed **all seven ARE captured** (HG read capture state
 off `benchmark-r6b-sections.json`'s `not_evaluated/missing` flags instead of listing the folder).
-Of the sections this file touches, only 23-154 (UAP), 77-00 and the shared-housing use/standards
-sections remain not captured; 24-11 and 24-111 are now captured (M3-T009). Capture state throughout
-this file is from the folder.
+Of the sections this file touches, only 23-154 (UAP) and the shared-housing use/standards
+sections remain not captured; 24-11 and 24-111 (M3-T009) and the 77-00 split-lot family (Article VII
+Chapter 7 subset, M3-T015) are now captured. Capture state throughout this file is from the folder.
 
 ## Reading (unreviewed draft)
 
