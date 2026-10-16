@@ -23,6 +23,7 @@ from collections.abc import Mapping
 from .errors import DrawingInputError
 from .model import Drawing, Unavailable
 from .presentation_tokens import COLOR
+from .section_legal_lines import LegalLine
 from .sheet import Sheet
 from .styles import TYPOGRAPHY
 from .svg import element, num, polyline_data, svg_document, text_element
@@ -41,6 +42,14 @@ _AXIS_X = _STACK_X0 - 8.0  # the height-axis labels sit left of the stack
 _STACK_TOP = 44.0  # top of the stack region; leaves room above for the minimum-base label
 _STACK_H = 300.0  # the stack fills this many points in height
 _CAPTION_GAP = 18.0
+
+# The compact layout used ONLY when legal (height-limit) lines are drawn: the height axis then
+# reaches the highest limit, not just the building top, so the drawing is kept short (at most 260 pt
+# tall) by compressing the stack. Without legal lines the stack keeps its full size above, so the
+# default render stays byte-identical.
+_LEGAL_STACK_TOP = 24.0  # leaves room above the highest limit line for its label
+_LEGAL_STACK_H = 200.0  # 24 + 200 + a 14 pt (or caption 32 pt) foot stays well inside 260 pt
+_LEGAL_COINCIDE_TOL = 1e-9
 
 # Shared tokens (no colour literal): a quiet neutral band, a medium outline, a dark grade line, a
 # quiet reference colour for the minimum-base line, a faint axis tick.
@@ -66,10 +75,21 @@ def _num_ft(value: object) -> str:
     return f"{text or '0'} ft"
 
 
-def draw_floor_stack(alternative: Mapping, *, caption: bool = True) -> Drawing | Unavailable:
+def draw_floor_stack(
+    alternative: Mapping,
+    *,
+    caption: bool = True,
+    legal_lines: tuple[LegalLine, ...] | None = None,
+) -> Drawing | Unavailable:
     """The floor-stack section for one worked building, or ``Unavailable`` when the alternative
     carries no floor schedule to draw. ``caption=False`` (the report frame, K7) omits the drawing's
-    own caption because the report prints one beneath it; the default keeps the caption."""
+    own caption because the report prints one beneath it; the default keeps the caption.
+
+    ``legal_lines`` (part B2) are the STANDARD height limits read from the document
+    (:func:`section_legal_lines.section_legal_lines`): each is drawn as a dashed reference line
+    labelled with the document's own label and number, the height axis reaching the highest of them,
+    in a compact layout at most 260 pt tall. ``legal_lines=None`` draws exactly today's section,
+    byte-for-byte: the renderer adds nothing and compares nothing with the building."""
     rows = _rows(alternative)
     if not rows:
         return Unavailable("floor_stack", "The building has no floor schedule to draw.",
@@ -80,8 +100,16 @@ def draw_floor_stack(alternative: Mapping, *, caption: bool = True) -> Drawing |
     if max_top <= 0.0:
         raise DrawingInputError("floor_stack_degenerate", "the schedule has no positive height",
                                 location="/floor_schedule")
-    k = _STACK_H / max_top  # points per foot (height axis to scale)
-    grade_y = _STACK_TOP + _STACK_H
+    lines = legal_lines or ()
+    if lines:
+        # The axis reaches the highest limit, and the stack is compressed into a short compact
+        # region so the whole drawing stays at most 260 pt tall.
+        axis_max = max(max_top, max(line.value_ft for line in lines))
+        stack_top, stack_h = _LEGAL_STACK_TOP, _LEGAL_STACK_H
+    else:
+        axis_max, stack_top, stack_h = max_top, _STACK_TOP, _STACK_H
+    k = stack_h / axis_max  # points per foot (height axis to scale)
+    grade_y = stack_top + stack_h
 
     def y_of(ft: float) -> float:
         return grade_y - ft * k
@@ -125,12 +153,29 @@ def draw_floor_stack(alternative: Mapping, *, caption: bool = True) -> Drawing |
                     source=f"/floor_schedule/top_ft/{storey}", role="floor_stack_top",
                     anchor="end")
 
+    # The STANDARD height-limit lines (part B2), drawn only when the document gives them. Each is a
+    # dashed reference line labelled with the document's own label and number, carrying the pointer
+    # of the value it was read from. Nothing is computed; nothing is compared with the building.
+    coincides_with_min_base_top = False
+    for line in lines:
+        y = y_of(line.value_ft)
+        sheet.parts.append(element("path", [
+            ("d", polyline_data([(_STACK_X0 - 6.0, y), (_STACK_X0 + _STACK_W + 2.0, y)])),
+            ("fill", "none"), ("stroke", _REFERENCE_STROKE), ("stroke-width", 1.0),
+            ("stroke-dasharray", "4.00 2.00")]))
+        sheet.label([(_STACK_X0, y - 7.0, 0.0)], f"{line.label} {_num_ft(line.value_ft)}",
+                    size=size, source=line.source, role="floor_stack_legal_line")
+        if abs(line.value_ft - max_top) <= _LEGAL_COINCIDE_TOL:
+            coincides_with_min_base_top = True
+
     # The minimum base height line: drawn only where the document gives it - a 'to_min_base'
     # building reaches the minimum base height at its building height (the top of its last storey, a
     # schedule figure). It starts clear of the left height-axis labels, and its label reads in full
     # ABOVE the line (clear of the line and of the top-height label). No maximum height line: the
-    # alternative carries none, so none is drawn.
-    if alternative.get("fill_rule") == "to_min_base":
+    # alternative carries none, so none is drawn. When a legal line already sits at the building top
+    # (the legal minimum base height coincides with the to_min_base top), that one line carries the
+    # document's value and this bare reference is not drawn a second time.
+    if alternative.get("fill_rule") == "to_min_base" and not coincides_with_min_base_top:
         y = y_of(max_top)
         sheet.parts.append(element("path", [
             ("d", polyline_data([(_STACK_X0 - 6.0, y), (_STACK_X0 + _STACK_W + 2.0, y)])),

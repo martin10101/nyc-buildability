@@ -26,6 +26,7 @@ from .flag import DrawingKitDisabled, drawing_kit_enabled
 from .massing import draw_massing
 from .model import Drawing, DrawingInput, Label, Unavailable
 from .section import draw_floor_stack
+from .section_legal_lines import section_legal_lines
 from .site_plan import draw_site_plan
 from .styles import STYLE_TABLE, style_for, style_table_as_dict
 
@@ -77,17 +78,27 @@ def render_massing(
 
 
 def render_floor_stack(
-    alternative: Mapping, *, frame: str = "report", env: Mapping[str, str] | None = None
+    alternative: Mapping,
+    *,
+    frame: str = "report",
+    env: Mapping[str, str] | None = None,
+    results: Mapping | None = None,
 ) -> Drawing | Unavailable:
     """The floor-stack section of ONE worked building, drawn from its floor schedule only
     (ruling X9 b): storey bands with their floor-to-floor and top heights, the minimum base height
     line where the document gives it, and a caption that it is drawn from the schedule with no
     placement on the lot. Report frame only. Gated behind the Lane E flag like the other
-    renderers; ``Unavailable`` when the building carries no floor schedule."""
+    renderers; ``Unavailable`` when the building carries no floor schedule.
+
+    ``results`` (part B2, opt-in) is the whole results document: when given, the STANDARD height
+    limits it carries in ``answers.permitted_envelope`` are drawn as dashed reference lines (nothing
+    computed; a missing or malformed limit is dropped). Omitted, the section is byte-identical to
+    today's."""
     if not drawing_kit_enabled(env):
         raise DrawingKitDisabled("the drawing kit is off (LANE_E_ENABLED is not set)")
     if frame != "report":
         raise DrawingInputError("unknown_frame", f"the floor stack has no {frame!r} frame",
                                 location="/floor_schedule")
+    legal_lines = section_legal_lines(results) if results is not None else None
     # The report frame omits the drawing's own caption: the report prints one beneath it (K7).
-    return draw_floor_stack(alternative, caption=False)
+    return draw_floor_stack(alternative, caption=False, legal_lines=legal_lines)
