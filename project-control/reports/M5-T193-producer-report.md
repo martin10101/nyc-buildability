@@ -157,3 +157,112 @@ No other forbidden pin broke (benchmark pins green). No source file outside allo
 - `footprint_drawn` defaults to None, so at this head the section caption keeps "…with no placement on
   the lot" (the audit-noted wording) until W passes `footprint_drawn=True` — the staged delivery the H5
   split intends.
+
+---
+
+## Round 2 (2026-10-16): closing the review items in B3's files
+
+Base reset to 95e6f299 (wave-29 base), round-1 commit cece9d3e cherry-picked. One material
+finding on reset: **part B2 (M5-T192) is now landed at this base** — `render_floor_stack` carries
+the `results=` keyword (sig confirmed), so the benchmark section now draws the permitted-envelope
+height lines by DEFAULT (not only under a stub). The round-1 S4/S7 tests that assumed B2 absent were
+adapted to this reality (see item notes). All six brief items done; every check below passed. Default
+render unchanged except where an item requires it.
+
+### Items (each: code → evidence → test → mutation)
+
+a. **Caption join (G1 advisory).** `page_scenario_sheet._area_caption` joins the caption token with a
+   colon, not a full stop, so the figures are one sentence, never a lower-case second sentence
+   (`page_scenario_sheet.py` `_area_caption`, the `f"{token}: apartment area …"` line). Printed caption
+   (page 5): "Illustrative area allocation—not a floor plan: apartment area 12,090 sq ft; …". Test
+   `test_r2_area_caption_joins_the_token_with_a_colon`. Mutation (`:`→`.`) → FAILED at line 356 (RED),
+   restored.
+
+b. **Duplicate schedule columns (G3v advisory 1).** FIELD PATHS: col "Zoning floor area per storey" read
+   `/building_alternatives/{i}/floor_schedule/{j}/plan_area_sqft` ("Plan area of this storey", schema
+   results.schema.json:539); col "Floor area" read `…/floor_area_sqft` ("Zoning floor area of this
+   storey", :540). CASE: the SOLE producer `first_building_options.StoreyRow` sets them to the SAME value
+   in BOTH paths — `plan_area_sqft=footprint_area, floor_area_sqft=footprint_area` (building_a, :229-230)
+   and `=plan_area` (building_b, :321-322); every fixture carries them equal (plain stack, no gross-up,
+   the conversion statement). They are ONE measure under two field names, not two distinct measures.
+   RESOLUTION: dropped the duplicate column; kept one "Zoning floor area per storey" reading
+   `floor_area_sqft` (the schema's zoning-floor-area field, also what the reconciliation uses). Rows now
+   have five cells. Test `test_r2_schedule_drops_the_duplicate_plate_column`. Mutation (re-add the column)
+   → FAILED at line 367 (RED), restored.
+
+c. **'Schematic, not to scale' (section F3 / owner R021).** `page_scenario_sheet._SCHEMATIC_NOTE =
+   "Horizontal width is schematic, not to scale."` appended to the section caption (`_section_caption`),
+   so the fixed "schematic, not to scale" label (contract page-type-4, line 64/111) sits once beneath the
+   section, scoped to the horizontal, and only when the section is drawn. Printed on page 5. Test
+   `test_r2_section_caption_carries_the_schematic_label_once_when_drawn`. Mutation (drop the append) →
+   FAILED at line 382 (RED), restored.
+
+d. **Conditional heights (section G1 REQUIRED).** The "(Conditional)" marker is now READ from the
+   document, never hard-coded: `scenario_figures._standard_heights_conditional(results)` reads
+   `answers.permitted_envelope.value_states[<standard key>].way` for the standard heights that carry a
+   drawable value and returns True iff any is `conditional`; carried on `ScenarioDrawings.
+   section_heights_conditional` and passed into `_section_caption`. B2's `section_legal_lines.LegalLine`
+   exposes key/label/value_ft/zr_sections/source only — NO `way` field — so the conditional state is read
+   from value_states here (a document read, no law evaluated). Benchmark value_states: the three standard
+   heights are `conditional` → caption shows "(Conditional)" (printed page 5). Test
+   `test_r2_conditional_marker_is_read_from_value_states` (benchmark → marked; a settled-value_states doc
+   → not marked). Mutation (hard-code `(Conditional)` always) → FAILED at line 406 (RED), restored.
+
+e. **Printed label size (section G3 / visual F2).** Measured embed scale: `size_svg_to_points` stamps
+   width/height = viewBox, so the kit's 8.0 pt section labels print at 8.0 pt (< 8.5). The forbidden
+   benchmark pin `test_report_pages.py::test_d1_d2` asserts stamped width == viewBox for every SVG, and
+   the kit/layout are forbidden, so `scenario_figures._enlarge_to_min_label_pt` grows the viewBox AND the
+   stamped point size by one factor and scales the body in a `<g transform="scale(f)">`: the invariant
+   `stamped == viewBox` holds, and the smallest label now prints at `8.0 × 1.0625 = 8.5 pt`. Measured on
+   the real embed: viewBox W 382.50, stamped W 382.50pt, factor 1.0625, smallest printed 8.5 pt. Applied
+   to both the B2 and fallback section paths; the area illustration is untouched (not in this item).
+   Test `test_r2_embedded_section_labels_print_at_least_8_5_pt`. Mutation (disable enlargement) → FAILED
+   at line 428 (RED), restored. NOTE for W: the enlarged section (382.5 pt) narrows the "Why it has this
+   shape" side column of `.scenario-row`; the page-fit/layout composition is W's (RISK 2 / DB-270).
+
+f. **No rounding note when exact (G3 code advisory 2).** Positive test added:
+   `test_r2_no_rounding_note_when_the_schedule_reconciles_exactly` (a schedule whose shown storey figures
+   add exactly to the shown total shows NO reconciliation note). Mutation (force `_needs_rounding_note`
+   True) → FAILED at line 447 (RED), restored. (The note-SHOWN case stays S5.)
+
+### Checks (lanes venv, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider, api from services/api)
+
+- `ruff check .` → All checks passed (exit 0).
+- `pytest tests/drawings/report/test_scenario_sheet.py` → 26 passed (exit 0).
+- `pytest tests/drawings/report tests/drawings/kit` (flock) → **3 failed, 773 passed** (exit 1). All 3
+  reds are in FORBIDDEN, W-owned files and are cross-part collisions I may not fix (common-builder
+  "STOP that part and report"); every B3 test and the benchmark pins (test_report_pages/benchmark,
+  minus the 3) are green. STOPPED / routed to W:
+  1. `test_constraint_rows.py::test_s12_1_4_0_report_with_maps_draws_no_overlay` (line 264, `assert
+     "printed tax map" not in html`) — the page-6 caption basis; the round-1 collision (H5 re-pin, W).
+  2. `test_report_pages.py::test_f4_no_stale_caption_and_single_floor_stack_caption` (line 265) and
+  3. `test_report_pages.py::test_q1_drawing_caption_carries_a_label` (line 311) — both assert
+     `"Floor-stack section (Illustrative)"` for the benchmark. With B2 landed the benchmark section draws
+     height lines, so the caption is "Section (Illustrative): …". These were already red at round-1 on
+     this B2-landed base (round-1 `_section_caption` also returns "Section (Illustrative)…" when height
+     lines are drawn); my round-2 edits do not change that substring. W should re-scope them to
+     "Section (Illustrative)" (still carries the Illustrative label).
+- `python tools/modularity_check.py --check` → exit 0 (scenario_figures.py 283, page_scenario_sheet.py
+  357 lines; neither flagged).
+- `python3 tools/research_record_check.py --check` → PASS (exit 0). No evidence record pins either
+  edited file (grep of docs/research/evidence-records confirms none). NB-04 code_current=False is the
+  pre-existing DB-283 on close_frame_dimensions.py (W's file), not touched here.
+- `python3 scripts/lanes/check_lane_paths.py --coverage` → LANE COVERAGE PASS (exit 0).
+
+### Print comparison (render and LOOK)
+
+build_report_html(benchmark, LANE_E) → print-report-pdf.mjs → 9 pp A4. Scenario sheet on physical
+pages 5-6 (page 5 the sheet; the Unresolved list spills to page 6 — the layout break-inside W owns).
+Images: `/tmp/claude-0/M5-T193-builder-288a51/page-5.png`, `page-6.png` (PDF `report-lane-e.pdf`).
+Page 5 confirms visually: the section with three dashed height lines; caption "Section (Illustrative):
+… permitted envelope (Conditional). Horizontal width is schematic, not to scale."; the area caption
+colon-joined with 12,090 / 8,060 / 20,150 and "printed tax map"; one "Zoning floor area per storey"
+column; the rounding note (shown here, correct); section labels legible at the enlarged size. No page-6
+before/after diff: the LIVE page-6 print is W's after it threads footprint_drawn/the manifest (the
+brief's stated UNKNOWN).
+
+### Scope note
+
+No file outside allowed_paths changed. The print used a read-only symlink to the primary checkout's
+`apps/web/node_modules` (playwright), removed immediately after; git status showed only the three
+allowed code/test files + this report.

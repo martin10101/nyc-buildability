@@ -26,7 +26,12 @@ from pathlib import Path
 import pytest
 
 from app.drawings.kit import area_allocation
-from app.drawings.report import build_report_html, page_scenario_sheet, readers
+from app.drawings.report import (
+    build_report_html,
+    page_scenario_sheet,
+    readers,
+    scenario_figures,
+)
 
 _FIXTURES = (
     Path(__file__).resolve().parents[5]
@@ -179,22 +184,33 @@ def test_s3_degenerate_block_prints_the_kernel_reason(mutate) -> None:
 
 
 # =========================================================================== S4
+# Part B2 (render_floor_stack with results=) is landed at this head, so the benchmark
+# section draws the permitted-envelope height lines; the "drawn from the schedule only"
+# caption with its footprint_drawn clause is the NO-height-lines branch, so these tests
+# use a document whose permitted envelope carries no heights (it keeps the placed
+# building and its floor plates, so the placement line is unchanged).
+def _no_height_lines_doc() -> dict:
+    doc = copy.deepcopy(benchmark())
+    doc["answers"]["permitted_envelope"] = {"status": "not_available"}
+    return doc
+
+
 def test_s4_footprint_drawn_none_keeps_todays_section_caption_and_no_placement_line() -> None:
-    text = visible_text(render(benchmark(), env=_LANE_E, footprint_drawn=None))
+    text = visible_text(render(_no_height_lines_doc(), env=_LANE_E, footprint_drawn=None))
     assert ("Floor-stack section (Illustrative): drawn from the schedule only, "
             "with no placement on the lot.") in text
     assert "is worked out but is not drawn" not in text
 
 
 def test_s4_footprint_drawn_false_says_worked_out_but_not_drawn() -> None:
-    text = visible_text(render(benchmark(), env=_LANE_E, footprint_drawn=False))
+    text = visible_text(render(_no_height_lines_doc(), env=_LANE_E, footprint_drawn=False))
     assert "The footprint is worked out but is not drawn in this report." in text
     # the section caption keeps the "no placement" clause while the footprint is not drawn.
     assert "with no placement on the lot." in text
 
 
 def test_s4_footprint_drawn_true_drops_the_no_placement_clause_and_says_nothing() -> None:
-    text = visible_text(render(benchmark(), env=_LANE_E, footprint_drawn=True))
+    text = visible_text(render(_no_height_lines_doc(), env=_LANE_E, footprint_drawn=True))
     assert "Floor-stack section (Illustrative): drawn from the schedule only." in text
     assert "with no placement on the lot" not in text
     assert "is worked out but is not drawn" not in text
@@ -304,8 +320,128 @@ def test_s7_with_part_b2_the_section_caption_names_the_height_lines(monkeypatch)
     assert "Floor-stack section (Illustrative)" not in text
 
 
-def test_s7_without_part_b2_the_section_keeps_todays_caption_and_does_not_error() -> None:
-    # the real render_floor_stack carries no results= keyword at this head.
-    text = visible_text(render(benchmark(), env=_LANE_E))
+def test_s7_without_height_lines_the_section_keeps_todays_caption_and_does_not_error() -> None:
+    # Part B2 is landed (render_floor_stack has results=), but a document whose
+    # permitted envelope carries no heights draws no lines: the section keeps today's
+    # schedule-only caption and does not error.
+    text = visible_text(render(_no_height_lines_doc(), env=_LANE_E))
     assert "Floor-stack section (Illustrative): drawn from the schedule only" in text
     assert "height limits from the permitted envelope" not in text
+
+
+def test_s7_with_part_b2_landed_the_benchmark_section_names_the_height_lines() -> None:
+    # the REAL render_floor_stack (part B2) draws the benchmark's standard heights.
+    text = visible_text(render(benchmark(), env=_LANE_E, footprint_drawn=None))
+    assert ("Section (Illustrative): storeys from the floor schedule; height limits "
+            "from the permitted envelope (Conditional).") in text
+    assert "Floor-stack section (Illustrative)" not in text
+
+
+# ==================================================================== ROUND 2
+# The review items that live in this part's files (returns T193-G1/G3/G3v/G4 and the
+# section reviews T192-G1/G3v). Each test pins one item; its mutation proof is in the
+# producer report's Round 2 section.
+
+
+def _schedule_header_cells(html: str) -> list[str]:
+    anchor = html.index("Floor schedule for this building")
+    thead = html[html.index("<thead", anchor):html.index("</thead>", anchor)]
+    return [visible_text(cell).strip() for cell in re.findall(r"<th>(.*?)</th>", thead, flags=re.S)]
+
+
+# item (a) - G1 advisory: the caption is one sentence; the figures follow the token
+# after a colon, never a second sentence beginning lower-case.
+def test_r2_area_caption_joins_the_token_with_a_colon() -> None:
+    caption = page_scenario_sheet._area_caption(_building(benchmark()))
+    assert caption.startswith(f"{_CAPTION_TOKEN}: apartment area")
+    assert ". apartment area" not in caption
+
+
+# item (b) - G3v advisory 1: the duplicate plate column is gone. plan_area_sqft and
+# floor_area_sqft are the same measure under two field names (the engine sets them
+# equal in every path), so ONE "Zoning floor area per storey" column reading
+# floor_area_sqft remains; every body row now has five cells, not six.
+def test_r2_schedule_drops_the_duplicate_plate_column() -> None:
+    html = render(benchmark(), env=_LANE_E)
+    headers = _schedule_header_cells(html)
+    assert headers == ["Storey", "Floor-to-floor", "Top of floor",
+                       "Zoning floor area per storey", "Running total"]
+    assert "Floor area" not in headers
+    anchor = html.index("Floor schedule for this building")
+    tbody = html[html.index("<tbody>", anchor):html.index("</tbody>", anchor)]
+    rows = re.findall(r"<tr>(.*?)</tr>", tbody, flags=re.S)
+    assert rows
+    for row in rows:
+        assert len(re.findall(r"<td>.*?</td>", row, flags=re.S)) == 5
+
+
+# item (c) - section F3 / owner R021: the fixed "schematic, not to scale" label sits
+# once near the section when it is drawn, and never when there is no drawing.
+def test_r2_section_caption_carries_the_schematic_label_once_when_drawn() -> None:
+    drawn = visible_text(render(benchmark(), env=_LANE_E))
+    assert page_scenario_sheet._SCHEMATIC_NOTE in drawn
+    assert drawn.count(page_scenario_sheet._SCHEMATIC_NOTE) == 1
+    assert "schematic, not to scale" in drawn
+    plain = visible_text(render(benchmark()))  # no section drawn -> no label
+    assert page_scenario_sheet._SCHEMATIC_NOTE not in plain
+
+
+def _settled_heights_doc() -> dict:
+    doc = copy.deepcopy(benchmark())
+    states = doc["answers"]["permitted_envelope"]["value_states"]
+    for key in ("min_base_height", "max_base_height", "max_building_height"):
+        states[key] = {"way": "settled"}
+    return doc
+
+
+# item (d) - section G1 REQUIRED: whether the drawn height lines are marked
+# (Conditional) is READ from the document's value_states, never hard-coded. Part B2
+# is landed, so the real render_floor_stack draws the lines for both documents.
+def test_r2_conditional_marker_is_read_from_value_states() -> None:
+    # benchmark: the three standard heights are conditional -> the caption marks it.
+    conditional = visible_text(render(benchmark(), env=_LANE_E, footprint_drawn=None))
+    assert "height limits from the permitted envelope (Conditional)." in conditional
+    # settled value_states -> the height-line caption stays but is NOT marked conditional.
+    settled = visible_text(render(_settled_heights_doc(), env=_LANE_E, footprint_drawn=None))
+    assert "height limits from the permitted envelope." in settled
+    assert "(Conditional)" not in settled
+
+
+# item (e) - section G3 / visual F2: the embedded section's smallest label prints at
+# or above the contract's 8.5 pt, while the stamped point size still equals the
+# viewBox (the D1/D2 embed invariant the benchmark pins enforce).
+def test_r2_embedded_section_labels_print_at_least_8_5_pt() -> None:
+    emb = scenario_figures.embed_section(_building(benchmark()), benchmark(), env=_LANE_E)
+    assert emb.is_drawing
+    svg = emb.svg
+    vb = re.search(r'viewBox="[-\d.]+ [-\d.]+ ([-\d.]+) ([-\d.]+)"', svg)
+    width = re.search(r'width="([-\d.]+)pt"', svg)
+    height = re.search(r'height="([-\d.]+)pt"', svg)
+    assert vb and width and height
+    assert abs(float(width.group(1)) - float(vb.group(1))) < 0.01
+    assert abs(float(height.group(1)) - float(vb.group(2))) < 0.01
+    scale = re.search(r'<g transform="scale\(([\d.]+)\)"', svg)
+    factor = float(scale.group(1)) if scale else 1.0
+    fonts = [float(size) for size in re.findall(r'font-size="([\d.]+)"', svg)]
+    assert fonts
+    smallest_printed = min(fonts) * factor
+    assert smallest_printed >= 8.5, f"smallest section label prints at {smallest_printed} pt"
+
+
+def _reconciling_schedule_doc() -> dict:
+    doc = copy.deepcopy(benchmark())
+    running = 0.0
+    for floor in _building(doc)["floor_schedule"]:
+        floor["floor_area_sqft"] = 6000.0
+        floor["plan_area_sqft"] = 6000.0
+        running += 6000.0
+        floor["running_total_sqft"] = running
+    return doc
+
+
+# item (f) - G3 code advisory 2: no reconciliation note when the shown storey figures
+# add exactly to the shown total (the positive counterpart of S5's note-shown case).
+def test_r2_no_rounding_note_when_the_schedule_reconciles_exactly() -> None:
+    text = visible_text(render(_reconciling_schedule_doc(), env=_LANE_E))
+    assert "6,000 sq ft" in text  # the schedule rendered
+    assert page_scenario_sheet._ROUNDING_NOTE not in text

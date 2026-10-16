@@ -29,12 +29,19 @@ from .html import el, escape, escape_attr, raw, table
 __all__ = ["render"]
 
 QUESTION = "What is this option?"
+# ONE plate column. The document's ``plan_area_sqft`` ("Plan area of this storey")
+# and ``floor_area_sqft`` ("Zoning floor area of this storey") are set to the SAME
+# value by the sole producer (first_building_options.StoreyRow, both building A and
+# building B) in every code path - the plain stack has no gross-up, so the plan area
+# equals the zoning floor area per storey (the document's conversion statement). They
+# are one measure under two field names, so a second identical column would imply a
+# distinction the data does not carry; we keep the zoning-floor-area column and read
+# it from ``floor_area_sqft`` (the field the schema names "Zoning floor area").
 _SCHEDULE_HEADERS = (
     "Storey",
     "Floor-to-floor",
     "Top of floor",
     "Zoning floor area per storey",
-    "Floor area",
     "Running total",
 )
 
@@ -49,6 +56,12 @@ _ROUNDING_NOTE = (
     "Storey areas are shown rounded; the running total adds the unrounded areas."
 )
 
+# The fixed "schematic, not to scale" label (presentation contract page type 4,
+# R021), scoped to the horizontal: the section's vertical carries the scheduled
+# heights, but its horizontal width is schematic. Printed in the section caption,
+# so it sits once beneath the drawing and only when the section is drawn.
+_SCHEMATIC_NOTE = "Horizontal width is schematic, not to scale."
+
 
 def _schedule_rows(building: Mapping) -> list[list[object]]:
     rows: list[list[object]] = []
@@ -60,7 +73,6 @@ def _schedule_rows(building: Mapping) -> list[list[object]]:
                 formatting.format_int_commas(floor.get("storey")),
                 formatting.format_feet(floor.get("floor_to_floor_ft")),
                 formatting.format_feet(floor.get("top_ft")),
-                formatting.format_sqft(floor.get("plan_area_sqft")),
                 formatting.format_sqft(floor.get("floor_area_sqft")),
                 formatting.format_sqft(floor.get("running_total_sqft")),
             ]
@@ -87,8 +99,10 @@ def _area_caption(building: Mapping) -> str:
     total = formatting.format_int_commas(block.get("total_sqft"))
     if apartment is None or other is None or total is None:
         return f"{token}."
+    # ONE caption, one sentence: the token introduces the clause list with a colon, so
+    # the figures never read as a second sentence beginning lower-case (G1 advisory).
     text = (
-        f"{token}. apartment area {apartment} sq ft; other building area {other} sq ft; "
+        f"{token}: apartment area {apartment} sq ft; other building area {other} sq ft; "
         f"of {total} sq ft residential floor area"
     )
     if block.get("fitted") is True:
@@ -142,19 +156,24 @@ def _needs_rounding_note(building: Mapping) -> bool:
     return abs(round(sum(shown), 2) - round(total, 2)) > 0.005
 
 
-def _section_caption(has_height_lines: bool, footprint_drawn: object) -> str:
-    """The floor-stack section caption. With the permitted-envelope height lines it
-    names them; otherwise today's wording, dropping the 'no placement on the lot'
-    clause only when the footprint is drawn on page 4 (``footprint_drawn`` True)."""
+def _section_caption(has_height_lines: bool, heights_conditional: bool,
+                     footprint_drawn: object) -> str:
+    """The floor-stack section caption, always carrying the fixed 'schematic, not to
+    scale' label (R021). With the permitted-envelope height lines it names them and
+    marks them ``(Conditional)`` ONLY when the document says so (``heights_conditional``,
+    read from ``value_states``, never hard-coded); otherwise today's wording, dropping
+    the 'no placement on the lot' clause only when the footprint is drawn on page 4
+    (``footprint_drawn`` True)."""
     if has_height_lines:
-        return (
+        base = (
             "Section (Illustrative): storeys from the floor schedule; height limits "
-            "from the permitted envelope (Conditional)."
+            "from the permitted envelope"
         )
+        head = f"{base} (Conditional)." if heights_conditional else f"{base}."
+        return f"{head} {_SCHEMATIC_NOTE}"
     base = "Floor-stack section (Illustrative): drawn from the schedule only"
-    if footprint_drawn is True:
-        return f"{base}."
-    return f"{base}, with no placement on the lot."
+    head = f"{base}." if footprint_drawn is True else f"{base}, with no placement on the lot."
+    return f"{head} {_SCHEMATIC_NOTE}"
 
 
 def _floor_plates_available(results: Mapping) -> bool:
@@ -262,7 +281,8 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env,
     # illustration sits under that row; the floor schedule needs the full width.
     section_fig = figure(
         draw.section,
-        _section_caption(draw.section_has_height_lines, footprint_drawn),
+        _section_caption(draw.section_has_height_lines, draw.section_heights_conditional,
+                         footprint_drawn),
         line_when_absent="The floor-stack section is not shown here.",
     )
     side: list[object] = []

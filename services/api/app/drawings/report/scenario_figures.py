@@ -22,8 +22,9 @@ from __future__ import annotations
 
 import inspect
 import math
+import re
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from . import drawings_embed
 
@@ -43,17 +44,35 @@ _SECTION_UNAVAILABLE = "The floor-stack section is not available for this report
 # are not drawn for the standard building, so they are not counted here.
 _HEIGHT_KEYS = ("min_base_height", "max_base_height", "max_building_height")
 
+# The document's own way vocabulary (contract 1.3.0+). A standard height carried as
+# "conditional" in ``permitted_envelope.value_states`` must say so on the section
+# caption (owner's standard: conditional stays conditional).
+_CONDITIONAL_WAY = "conditional"
+
+# The smallest point size a drawing label may print at (presentation contract, print
+# type scale, change of 2026-10-11: "drawing labels at least 8.5 pt at the printed
+# size"; the superseded rule was >= 7 pt). The kit draws its section labels at a
+# fixed 8.0 pt native size, so the embed enlarges the section just enough that the
+# smallest label prints at or above this.
+_MIN_LABEL_PT = 8.5
+
+_VIEWBOX_RE = re.compile(r'viewBox="([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)"')
+_FONT_SIZE_RE = re.compile(r'font-size="([\d.]+)"')
+_SVG_OPEN_RE = re.compile(r"<svg\b[^>]*>")
+
 
 @dataclass(frozen=True)
 class ScenarioDrawings:
-    """The two scenario-sheet drawings for one worked building, plus whether the
-    section actually carries the permitted-envelope height lines (part B2). Part W
-    embeds these once and passes them to :func:`page_scenario_sheet.render`; the
-    page embeds its own when none are passed."""
+    """The two scenario-sheet drawings for one worked building, whether the section
+    actually carries the permitted-envelope height lines (part B2), and whether those
+    standard height lines are CONDITIONAL in the document (read from
+    ``value_states``, never hard-coded). Part W embeds these once and passes them to
+    :func:`page_scenario_sheet.render`; the page embeds its own when none are passed."""
 
     area_illustration: drawings_embed.Embedded | None
     section: drawings_embed.Embedded
     section_has_height_lines: bool
+    section_heights_conditional: bool = False
 
 
 def _finite_nonneg(value: object) -> bool:
@@ -100,6 +119,56 @@ def _embedded_from_drawing(result: object) -> drawings_embed.Embedded:
     return drawings_embed.Embedded(short_line=str(reason) if reason else _SECTION_UNAVAILABLE)
 
 
+def _enlarge_to_min_label_pt(svg: str, min_pt: float = _MIN_LABEL_PT) -> str:
+    """Enlarge a point-sized SVG so its SMALLEST text label prints at or above
+    ``min_pt``, without ever breaking the embed invariant that the stamped point
+    width/height equal the viewBox (so the drawing prints at its designed point
+    size, checks D1/D2).
+
+    :func:`.drawings_embed.size_svg_to_points` stamps ``width``/``height`` equal to
+    the viewBox, so a label of font-size ``s`` (viewBox units) prints at ``s`` pt.
+    The kit's section labels are a fixed 8.0 pt, below the contract's 8.5 pt. We
+    cannot change the kit (forbidden) or the ``width==viewBox`` invariant, so we
+    grow the viewBox AND the stamped point size by one factor and scale the whole
+    body by the same factor: the stamped size still equals the viewBox, and every
+    label now occupies ``s * factor`` viewBox units, so it prints at ``s * factor``
+    pt. The factor is the smallest that lifts the smallest label to ``min_pt``; a
+    drawing already at or above it, or with no measurable label, is returned
+    unchanged."""
+    open_match = _SVG_OPEN_RE.search(svg)
+    viewbox = _VIEWBOX_RE.search(svg)
+    close = svg.rfind("</svg>")
+    if open_match is None or viewbox is None or close < open_match.end():
+        return svg
+    fonts = [float(size) for size in _FONT_SIZE_RE.findall(svg)]
+    smallest = min(fonts, default=0.0)
+    if smallest <= 0.0 or smallest >= min_pt:
+        return svg
+    factor = min_pt / smallest
+    new_w = float(viewbox.group(3)) * factor
+    new_h = float(viewbox.group(4)) * factor
+    open_tag = _VIEWBOX_RE.sub(
+        f'viewBox="{viewbox.group(1)} {viewbox.group(2)} {new_w:.2f} {new_h:.2f}"',
+        open_match.group(0), count=1,
+    )
+    open_tag = re.sub(r'\swidth="[^"]*"', f' width="{new_w:.2f}pt"', open_tag, count=1)
+    open_tag = re.sub(r'\sheight="[^"]*"', f' height="{new_h:.2f}pt"', open_tag, count=1)
+    body = svg[open_match.end():close]
+    tail = svg[close:]  # "</svg>" and any trailing whitespace the kit emits
+    return f'{open_tag}<g transform="scale({factor:.6f})">{body}</g>{tail}'
+
+
+def _with_min_label_pt(embedded: drawings_embed.Embedded) -> drawings_embed.Embedded:
+    """Return the embedded section with its labels enlarged to at least the contract
+    minimum point size; a short line (no drawing) is returned unchanged."""
+    if not embedded.is_drawing or not embedded.svg:
+        return embedded
+    enlarged = _enlarge_to_min_label_pt(embedded.svg)
+    if enlarged == embedded.svg:
+        return embedded
+    return replace(embedded, svg=enlarged)
+
+
 def embed_area_illustration(building: Mapping, *, env=None) -> drawings_embed.Embedded | None:
     """The two-zone area illustration for one worked building, behind the Lane E
     flag. ``None`` when the kit is off or the building carries no ``area_allocation``
@@ -141,9 +210,15 @@ def embed_section(building: Mapping, results: Mapping, *, env=None) -> drawings_
         try:
             result = fn(building, results=results, env=env)
         except Exception:  # noqa: BLE001 - fall back to today's call, never an error page
-            return drawings_embed.embed_floor_stack(building, env=env)
-        return _embedded_from_drawing(result)
-    return drawings_embed.embed_floor_stack(building, env=env)
+            embedded = drawings_embed.embed_floor_stack(building, env=env)
+        else:
+            embedded = _embedded_from_drawing(result)
+    else:
+        embedded = drawings_embed.embed_floor_stack(building, env=env)
+    # The kit draws the section labels at a fixed 8.0 pt; enlarge the whole section
+    # so the smallest label prints at or above the contract's 8.5 pt (part B2's and
+    # the visual reviewer's open item), keeping the drawing's point-size invariant.
+    return _with_min_label_pt(embedded)
 
 
 def _section_has_height_lines(results: Mapping, section: drawings_embed.Embedded) -> bool:
@@ -158,12 +233,44 @@ def _section_has_height_lines(results: Mapping, section: drawings_embed.Embedded
     return section.is_drawing and _permitted_envelope_has_height(results)
 
 
+def _standard_heights_conditional(results: Mapping) -> bool:
+    """Whether the STANDARD-case permitted-envelope heights the section draws are
+    CONDITIONAL in the document. A document read only: it reads the
+    ``value_states`` way (contract 1.3.0+) of the standard height keys that actually
+    carry a drawable value, and returns True when any of them is ``conditional``.
+    No law is evaluated and nothing is hard-coded - a document whose heights are
+    settled returns False, so the section caption never calls a settled height
+    conditional or a conditional height settled."""
+    answers = results.get("answers") if isinstance(results, Mapping) else None
+    block = answers.get("permitted_envelope") if isinstance(answers, Mapping) else None
+    if not isinstance(block, Mapping):
+        return False
+    states = block.get("value_states")
+    if not isinstance(states, Mapping):
+        return False
+    drawn: set[str] = set()
+    for value in block.get("values") or []:
+        if not isinstance(value, Mapping):
+            continue
+        if value.get("key") in _HEIGHT_KEYS and value.get("unit") == "feet":
+            if _finite_nonneg(value.get("value")):
+                drawn.add(value.get("key"))
+    for key in drawn:
+        entry = states.get(key)
+        if isinstance(entry, Mapping) and entry.get("way") == _CONDITIONAL_WAY:
+            return True
+    return False
+
+
 def scenario_drawings_for(building: Mapping, results: Mapping, *, env=None) -> ScenarioDrawings:
     """Both scenario-sheet drawings for one worked building, with the section's
-    height-line state."""
+    height-line state and whether those height lines are conditional in the
+    document (only meaningful, and only read, when the lines are drawn)."""
     area = embed_area_illustration(building, env=env)
     section = embed_section(building, results, env=env)
-    return ScenarioDrawings(area, section, _section_has_height_lines(results, section))
+    has_lines = _section_has_height_lines(results, section)
+    conditional = has_lines and _standard_heights_conditional(results)
+    return ScenarioDrawings(area, section, has_lines, conditional)
 
 
 def embed_scenario_drawings(results: Mapping, *, env=None) -> list[ScenarioDrawings]:
