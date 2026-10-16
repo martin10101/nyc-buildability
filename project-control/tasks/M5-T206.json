@@ -1,0 +1,156 @@
+{
+  "task_id": "M5-T206",
+  "title": "website parity build part (M5-T206) (unmounted, parallel to M5-T173): the web-side exact-section law-link primitive \u2014 zr-section-urls.ts (ZR_SECTION_URLS section-page->URL map + zrSectionPageNumber + sectionUrl) and ZrSectionLinks.tsx mirror services/api law_links.py section_url/_section_index and sources.py zr_section_page_number, so every ZR citation resolves to its exact captured section (never the bare host) and a citation with no snapshot shows plain text; a Python parity test writes the golden the web test reads; no mounting (M5-T174 mounts it)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Build the unmounted web-side exact-section law-link primitive that mirrors services/api/app/drawings/report/law_links.py + sources.py, with NO change to the Results flow (M5-T174 mounts it). (1) apps/web/src/lib/architect/zr-section-urls.ts: ZR_SECTION_URLS = the committed section-page->URL map (one entry per captured section page, each URL re-validated through officialZoningTextUrl so a bad or host-only URL is dropped, never the homepage); zrSectionPageNumber(cited) = TS port of sources.zr_section_page_number (strip a leading 'ZR', then match /^\\d{1,3}-\\d{1,4}/, drop any sub-paragraph, no number -> ''); sectionUrl(cited) = ZR_SECTION_URLS[zrSectionPageNumber(cited)] ?? null. (2) apps/web/src/components/architect/ZrSectionLinks.tsx: a presentational component that, given a list of cited section labels, renders each resolvable one as an anchor (href = its exact section URL, target _blank, rel noopener noreferrer, visible text = the cited label verbatim with its sub-paragraph) and each unresolvable one as plain text; invents nothing for a missing/blank citation. (3) services/api/tests/drawings/report/test_web_parity_links.py: under UPDATE_GOLDEN=1 writes apps/web/src/test-support/report-parity-law-links.json FROM law_links._section_index()/section_url + sources.zr_section_page_number (never by hand) and asserts the golden equals the freshly computed values; the pattern of services/api/tests/drawings/kit/test_web_parity_area_zones.py. (4) apps/web/src/lib/architect/__tests__/zr-section-urls.test.ts + apps/web/src/components/architect/__tests__/zr-section-links.test.tsx: read the SAME golden and assert ZR_SECTION_URLS, zrSectionPageNumber and sectionUrl reproduce every golden entry and every citation/forbidden case, and that ZrSectionLinks renders a link vs plain text accordingly. Editing one golden number reddens both surfaces.",
+  "business_reason": "The website currently links a law citation only when the data carries a per-citation URL (CalculationEvidence.tsx:144); the appendix/page-8 bare citations the PDF links (ZR 23-362, ZR 12-10, ZR 23-52(b)) show as plain text on the website. This part delivers the missing web resolver + parity guard (D-094 R027/R246) so M5-T174 can show the same exact-section links the PDF shows.",
+  "inputs": [
+    "services/api/app/drawings/report/law_links.py (official_zoning_text_url L51-81, _section_index L90-108, section_url L111-117; READ)",
+    "services/api/app/drawings/report/sources.py (zr_section_number L99-102, zr_section_page_number L112-117, _SECTION_PAGE_RE L109; READ)",
+    "services/api/app/rules/snapshots.py + services/api/app/_zr_snapshots/v1/*.snapshot.json (the 181-section-page capture set the index is built from; READ)",
+    "apps/web/src/lib/architect/source-links.ts (officialZoningTextUrl, imported read-only for defence-in-depth revalidation)",
+    "services/api/tests/drawings/kit/test_web_parity_area_zones.py + apps/web/src/test-support/report-parity-area-zones.json (the Python-writes-golden / web-reads-golden pattern to mirror; READ)",
+    "project-control/directives/D-094-report-v2-review-next-pass/requirements.json (D-094 R027 exact text; READ)",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/print-main-065e3fb5/report.pdf (the printed page-8 citations to reproduce; READ)",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/draft-spec-M5-T174.json (the consumer: M5-T174 imports ZrSectionLinks.tsx + sectionUrl read-only; READ)"
+  ],
+  "outputs": [
+    "apps/web/src/lib/architect/zr-section-urls.ts",
+    "apps/web/src/components/architect/ZrSectionLinks.tsx",
+    "apps/web/src/lib/architect/__tests__/zr-section-urls.test.ts",
+    "apps/web/src/components/architect/__tests__/zr-section-links.test.tsx",
+    "apps/web/src/test-support/report-parity-law-links.json",
+    "services/api/tests/drawings/report/test_web_parity_links.py",
+    "project-control/reports/M5-T206-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/lib/architect/zr-section-urls.ts",
+    "apps/web/src/components/architect/ZrSectionLinks.tsx",
+    "apps/web/src/lib/architect/__tests__/zr-section-urls.test.ts",
+    "apps/web/src/components/architect/__tests__/zr-section-links.test.tsx",
+    "apps/web/src/test-support/report-parity-law-links.json",
+    "services/api/tests/drawings/report/test_web_parity_links.py",
+    "project-control/reports/M5-T206-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/",
+    "services/api/app/_zr_snapshots/",
+    "packages/contracts/",
+    "apps/web/src/lib/architect/source-links.ts",
+    "apps/web/src/lib/architect/__tests__/source-links-parity.test.ts",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+    "apps/web/src/components/architect/CalculationEvidence.tsx",
+    "apps/web/src/components/architect/answers/",
+    "apps/web/src/lib/architect/area-allocation.ts",
+    "apps/web/src/lib/architect/area-allocation-tokens.ts",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/first-building-options.ts",
+    "apps/web/src/lib/architect/result-status.ts",
+    "apps/web/src/lib/architect/option-list.ts",
+    "apps/web/src/lib/architect/label-words.ts",
+    "apps/web/src/lib/architect/report-open-items.ts",
+    "apps/web/src/components/architect/OptionList.tsx",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/test-support/report-parity-area-zones.json",
+    "apps/web/e2e/",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "services/api/tests/drawings/kit/test_web_parity_area_zones.py",
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/research/evidence-records/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "citations in the forms the report carries",
+      "when": "zrSectionPageNumber(cited) runs",
+      "then": "it equals sources.zr_section_page_number for a pinned case table: 'ZR 23-52(b)'->'23-52', '12-10'->'12-10', 'ZR 23-344(c)(3)'->'23-344', 'ZR 23-362'->'23-362'; a value with no leading <n>-<n> (null, 123, '', 'Appendix A', 'New York City Zoning Resolution (official text)')->''; the sub-paragraph is dropped for the page but kept in the visible label"
+    },
+    {
+      "id": "S2",
+      "given": "each captured section page",
+      "when": "sectionUrl(cited) runs",
+      "then": "it returns the exact official section URL equal to law_links.section_url and the golden: '23-362'->'https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362', '12-10'->'https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10', 'ZR 23-52(b)'->'https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52'; never a bare host link"
+    },
+    {
+      "id": "S3",
+      "given": "a citation with no qualifying snapshot (e.g. 'ZR 11-25', whose snapshot request_url is None at b561450e)",
+      "when": "sectionUrl runs and ZrSectionLinks renders it",
+      "then": "sectionUrl returns null and the component shows the cited label as plain text (no anchor, never the homepage) \u2014 matching the PDF, which prints 11-25 as plain text"
+    },
+    {
+      "id": "S4",
+      "given": "the golden report-parity-law-links.json",
+      "when": "test_web_parity_links.py runs",
+      "then": "its section_index deep-equals law_links._section_index() (181 distinct section pages at b561450e) and its citation/forbidden case tables equal section_url/zr_section_page_number output; UPDATE_GOLDEN=1 regenerates it from the server code; the web zr-section-urls.test.ts reads the SAME golden and asserts ZR_SECTION_URLS === golden.section_index and each case; any hand edit reddens both"
+    },
+    {
+      "id": "S5",
+      "given": "the committed ZR_SECTION_URLS map",
+      "when": "built",
+      "then": "every value passes officialZoningTextUrl (https, host zoningresolution.planning.nyc.gov, article/chapter[/section] path, optional valid anchor, no query/credentials/port); a URL that fails is dropped (its page absent, sectionUrl->null), never coerced to the host homepage; a probe value of the bare host returns null"
+    },
+    {
+      "id": "S6",
+      "given": "a list of cited section labels (resolvable, unresolvable, and a blank/missing one)",
+      "when": "ZrSectionLinks renders",
+      "then": "each resolvable label is an anchor with href = its exact section URL, target='_blank', rel='noopener noreferrer', text = the label verbatim; each unresolvable label is plain text; a blank/missing citation renders nothing (nothing invented)"
+    },
+    {
+      "id": "S7",
+      "given": "the finished diff",
+      "when": "listed",
+      "then": "only allowed_paths; no services/api/app or packages/contracts edit; source-links.ts, AreaAllocation.tsx, report-parity-area-zones.json, the Results-flow components and all apps/web/e2e specs untouched; the _zr_snapshots set byte-unchanged; the component is NOT mounted in any Results-flow file (M5-T174 mounts it); no internal/development language in any web-authored string"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (golden source): ZR_SECTION_URLS and the golden are derived from services/api/app/_zr_snapshots/v1 (181 distinct section pages at b561450e). This part does NOT edit snapshots; if a later task changes the capture set, the Python parity test fails closed and both the golden and zr-section-urls.ts must be regenerated (UPDATE_GOLDEN=1 writes the golden; the builder re-emits the TS map to match). Correctness of the captures is the reference cases/snapshots, not this part.",
+    "RISK 2 (cross-language regex): the TS zrSectionPageNumber must match Python re.match semantics (anchored at start, NOT end) \u2014 use /^\\d{1,3}-\\d{1,4}/ and strip a leading 'ZR' case-insensitively before matching; the pinned case table in S1 (shared with the Python side via the golden) guards it.",
+    "RISK 3 (production independence): production code must read ZR_SECTION_URLS from zr-section-urls.ts, never import from apps/web/src/test-support (test-only); the golden only guards the committed map. The part is unmounted \u2014 no visible change until M5-T174.",
+    "RISK 4 (stale ledger status): the primary-checkout project-control state is stale (state.json current_milestone=M4, last_checkpoint D-063; the live work is wave-29). The forbidden list was built from the concurrent wave-29 set, not the stale per-file flags; M4-T005 nominally holds apps/web/src/test-support/** and M5-T125 apps/web/src/lib/contract.ts but both are long accepted \u2014 the accepted sibling M5-T202 already placed a golden under apps/web/src/test-support, so the pattern is established. The orchestrator should re-confirm the live holds at the contract seam."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-16T02:06:43.758880+00:00",
+  "updated_at": "2026-10-16T02:06:44.286133+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R027",
+        "D-094-R246"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-16T02:06:43.759146+00:00",
+  "path_notes": "Unmounted web build part, parallel to M5-T173 (not serial): law_links.py/sources.py/snapshots are accepted (M5-T159) and independent of M5-T180 wording and M5-T199 option rows, so this part has no hard dependency and can be built now on NEW files no open task holds. The ledger id M5-T206 is a placeholder; the orchestrator substitutes the next free M5-T id (contract_task_multi.py requires M<d>-T<d>) in the title, the producer-report path and M5-T174's dependency list. CONSUMER: M5-T174 imports ZrSectionLinks.tsx + sectionUrl read-only and mounts them in the Results flow; M5-T174 lists the M5-T206 files as read-only forbidden paths (disjoint by design). D-093: this part changes no fact, rule, calculation or verification label \u2014 the golden is PARITY to the report's own code, correctness is the reference cases + the snapshot captures; no evidence record pins law_links.py or source-links.ts (checked: zero hits under docs/research/evidence-records), so no research-record change; it touches no *.rule.json, so no review_register.json and no docs/zoning-rule-review change. Modularity: all files are new and small; no existing file grows (modularity_check --check must pass). SEEDS: every new allowed_paths file is seeded with a committed placeholder (G0 fails closed on zero tracked files); the two .test files get a trivial passing test (an empty .test.ts fails vitest 'no suite'); empty .py is fine but seed a module docstring. CONTRACT SEAM: append the task id to D-094 R027 and R246 (digest resync + audit_log + a provisional task_verifications row, same commit); R246 is a source-028 row \u2014 bind once indexed.",
+  "documented_test_commands": [
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund",
+    "cd apps/web && npm run lint && npm run typecheck",
+    "cd apps/web && npx vitest run src/lib/architect/__tests__/zr-section-urls.test.ts src/components/architect/__tests__/zr-section-links.test.tsx",
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/report/test_web_parity_links.py",
+    "regenerate the golden after a server/snapshot change: cd services/api && UPDATE_GOLDEN=1 python -m pytest -q tests/drawings/report/test_web_parity_links.py",
+    "python tools/modularity_check.py --check",
+    "python tools/research_record_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
