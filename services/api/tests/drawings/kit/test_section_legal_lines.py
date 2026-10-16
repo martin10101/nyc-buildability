@@ -153,6 +153,82 @@ def test_s2_one_line_where_the_minimum_base_coincides_with_the_building_top():
     assert sum(1 for y in line_ys if math.isclose(y, at_building_top, abs_tol=1e-6)) == 1
 
 
+# ------------------------------------------------------------- F1 (round 2, G3 visual review)
+# A worked building TALLER than its minimum base puts one or more legal lines INSIDE the band
+# stack; the label placement must stay collision-free there (G3 finding F1). Round 1 placed the
+# legal-line label at one fixed candidate above the line at the stack's left edge, so for these
+# buildings it printed over the storey band and its floor-to-floor label. These are the exact
+# buildings the reviewer reproduced, each drawn with the benchmark's own 30 / 45 / 55 ft limits
+# (reference case real-lot.json row L3, ZR 23-432 capture), never a program run.
+_WORKED_CASES = [
+    (4, 10.0),  # 40 ft: the 30 ft minimum-base line lands between storeys 3 and 4
+    (5, 11.0),  # 55 ft: the 45 ft maximum-base line lands inside the stack
+    (7, 10.0),  # 70 ft: taller than the 55 ft maximum-building line
+]
+
+
+def _worked(storeys: int, ff: float) -> dict:
+    """A synthetic worked building: ``storeys`` storeys of ``ff`` ft that fills the envelope, so
+    its limit lines fall inside the band stack (unlike the to_min_base benchmark whose lines sit at
+    or above the building top)."""
+    return {
+        "fill_rule": "fill_envelope",
+        "floor_schedule": [
+            {"storey": i + 1, "top_ft": (i + 1) * ff, "floor_to_floor_ft": ff}
+            for i in range(storeys)
+        ],
+    }
+
+
+@pytest.mark.parametrize(
+    ("storeys", "ff"), _WORKED_CASES, ids=[f"{n}x{int(ff)}ft" for n, ff in _WORKED_CASES]
+)
+def test_f1_worked_building_taller_than_min_base_has_no_overlapping_labels(storeys, ff):
+    doc = load(BENCHMARK)
+    drawing = render_floor_stack(_worked(storeys, ff), env=ENV_ON, results=doc)
+    root = parse(drawing.svg)
+
+    # The finding: no label overlaps any other, anywhere on the section.
+    assert overlapping_labels(drawing.svg) == []
+
+    # Every legal line still prints its value - the label is never dropped to dodge the overlap.
+    drawn = {text for _src, text in _legal_texts(root)}
+    assert drawn == {
+        "Minimum base height 30 ft",
+        "Maximum base height 45 ft",
+        "Maximum building height 55 ft",
+    }
+
+    # Provenance survives the fallback placement: each label's source resolves to its number.
+    for source, text in _legal_texts(root):
+        assert source is not None
+        printed = numbers_in(text)
+        assert len(printed) == 1
+        assert math.isclose(printed[0], float(resolve(doc, source)), abs_tol=1e-9)
+
+    # Still a compact A4 drawing (the right-hand label gutter widens it, never past the A4 width)
+    # and every label legible.
+    w, h = float(root.get("width")), float(root.get("height"))
+    assert w <= MAX_W_PT and h <= MAX_H_PT, (w, h)
+    assert min(float(el.get("font-size")) for el in root.iter(f"{SVG_NS}text")) >= MIN_LABEL_PT
+
+
+def test_f1_benchmark_keeps_every_legal_label_at_candidate_zero():
+    """The to_min_base benchmark lines sit at or above the 30 ft building top in free airspace, so
+    first_free keeps candidate 0 (above the line at the stack's left edge) for all three. This pins
+    that the fallback candidates added for F1 do not move the benchmark labels, so the benchmark
+    section (its SVG and its 360 pt width) is unchanged."""
+    doc = load(BENCHMARK)
+    root = parse(render_floor_stack(doc["building_alternatives"][0], env=ENV_ON, results=doc).svg)
+    xs = {
+        el.get("x")
+        for el in root.iter(f"{SVG_NS}text")
+        if el.get("data-role") == "floor_stack_legal_line"
+    }
+    assert xs == {"150.00"}  # _STACK_X0 == candidate 0; no benchmark label fell through to a gutter
+    assert float(root.get("width")) == 360.0
+
+
 # --------------------------------------------------------------------------- S3
 def _value(**overrides) -> dict:
     base = {

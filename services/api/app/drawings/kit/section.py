@@ -163,8 +163,27 @@ def draw_floor_stack(
             ("d", polyline_data([(_STACK_X0 - 6.0, y), (_STACK_X0 + _STACK_W + 2.0, y)])),
             ("fill", "none"), ("stroke", _REFERENCE_STROKE), ("stroke-width", 1.0),
             ("stroke-dasharray", "4.00 2.00")]))
-        sheet.label([(_STACK_X0, y - 7.0, 0.0)], f"{line.label} {_num_ft(line.value_ft)}",
-                    size=size, source=line.source, role="floor_stack_legal_line")
+        # The label gets the same multi-candidate / first_free placement as the storey and
+        # floor-to-floor labels, so a line that falls inside the band stack (any worked building
+        # taller than its minimum base) never prints its label over a storey band or over another
+        # line's label. Candidate 0 is above the line at the stack's left edge: where a line sits in
+        # free airspace above the building (the to_min_base benchmark) it is free and chosen, so
+        # that output is byte-identical. The fallbacks are, in order: below the line at the left
+        # edge, then a right-hand label gutter clear of the bands (centred on the line, then nudged
+        # up/down so two nearby lines do not collide). The line and its value always draw; the label
+        # is never dropped and never overlaps. When a label uses the right gutter the drawing widens
+        # to fit it (still within the A4 report width), so the stack geometry is unchanged.
+        label_text = f"{line.label} {_num_ft(line.value_ft)}"
+        rg_x = _STACK_X0 + _STACK_W + 6.0  # right of the stack, clear of every band label
+        sheet.label(
+            [(_STACK_X0, y - 7.0, 0.0),
+             (_STACK_X0, y + size + 2.0, 0.0),
+             (rg_x, y + size * 0.35, 0.0),
+             (rg_x, y - size - 1.0, 0.0),
+             (rg_x, y + size + 3.0, 0.0),
+             (rg_x, y - 2.0 * size - 2.0, 0.0),
+             (rg_x, y + 2.0 * size + 4.0, 0.0)],
+            label_text, size=size, source=line.source, role="floor_stack_legal_line")
         if abs(line.value_ft - max_top) <= _LEGAL_COINCIDE_TOL:
             coincides_with_min_base_top = True
 
@@ -192,6 +211,16 @@ def draw_floor_stack(
     else:
         bottom = grade_y
     height = min(REPORT_MAX_H_PT, bottom + 14.0)
-    svg = svg_document(width=_CANVAS_W, height=height, drawing="floor_stack",
+    # With legal lines a label may sit in the right-hand gutter (the collision fallback above); the
+    # canvas widens to fit it, capped at the A4 report width. Without legal lines the width is the
+    # fixed canvas, so every default and ``legal_lines=None`` output is byte-identical. The bench-
+    # mark places all three labels at the stack's left edge (candidate 0), so its width is the fixed
+    # canvas too and that output is unchanged.
+    if lines:
+        right = max((box.x1 for box in sheet.boxes), default=_CANVAS_W)
+        width = min(REPORT_MAX_W_PT, max(_CANVAS_W, right + 6.0))
+    else:
+        width = _CANVAS_W
+    svg = svg_document(width=width, height=height, drawing="floor_stack",
                        title="Floor-stack section", defs="", body=sheet.parts)
     return Drawing("floor_stack", svg, tuple(sheet.labels), tuple(sheet.kinds))

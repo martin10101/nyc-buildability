@@ -104,3 +104,62 @@ with the installed chromium (no server, no ports).
   in either order. No cross-part import.
 - Full api pytest, vitest/e2e and the real report print are not part of B2 (renderer/page level); they
   are part W's and CI's at the integrated head.
+
+## Round 2 — G3 visual review finding F1 (collision-free legal-line labels)
+
+Round-2 base: reset to `b9e9d563`, then cherry-pick round 1 (`7d03dd8a`). Only `section.py` changed in
+round 2; `section_legal_lines.py` and `kit/__init__.py` are byte-identical to round 1.
+
+**The finding.** The G3 visual reviewer (PASS, `return-T192-G3v.md`) found F1 (REQUIRED): the legal-line
+label was placed with a single fixed candidate `[(_STACK_X0, y - 7.0, 0.0)]` and no collision fallback,
+unlike the storey/floor-to-floor labels (two candidates each through `sheet.label` -> `first_free`). The
+benchmark is a `to_min_base` 30 ft building, so its 30/45/55 ft lines sit at or above the building top in
+free airspace and do not collide. But any worked building taller than its minimum base puts a limit line
+inside the band stack, and the single candidate then printed the label over a storey band and its ff
+label. Reproduced on the restored round-1 tree: 4x10 ft and 7x10 ft -> "Minimum base height 30 ft" over
+"Storey 4" + "10 ft"; 5x11 ft -> "Maximum base height 45 ft" over "Storey 5" + "11 ft".
+
+**The fix (`section.py`, two spots).**
+1. The legal-line label now gets the same multi-candidate `first_free` placement as the storey/ff
+   labels. Candidate 0 is unchanged (`(_STACK_X0, y - 7.0, 0.0)`), so wherever a line sits in free
+   airspace (the benchmark) `first_free` keeps candidate 0 and the output is byte-identical. The
+   fallbacks, in order: below the line at the stack's left edge, then a right-hand label gutter clear of
+   the bands (`rg_x = _STACK_X0 + _STACK_W + 6`), centred on the line then nudged up/down so two nearby
+   lines never collide. The line and its value always draw; the label is never dropped.
+2. When legal lines are present the canvas width widens to fit any right-gutter label
+   (`width = min(REPORT_MAX_W_PT, max(_CANVAS_W, right + 6))`), capped at the A4 report width 515.9 pt.
+   Without legal lines the width is the fixed 360 pt canvas, so every default / `legal_lines=None` output
+   is byte-identical. The benchmark places all three labels at candidate 0, so its width stays 360 pt and
+   its SVG is unchanged. The stack geometry (bands, axis, grade) never depends on the width, so widening
+   affects only the right-hand labels.
+
+**How the label is handled when the stack is dense.** Candidate 0/1 (stack-left above/below the line) are
+tried first; if both collide, the label moves to the right gutter with five y-nudge candidates. The right
+gutter is right of the band stack and carries no band label, so it is structurally free (only the bottom
+"Grade" label lives there, far from any limit line). Across a sweep of floor-to-floor 6-16 ft x 1-10
+storeys, `overlapping_labels` was empty for every case (max width 451.2 pt). For 4x10 and 5x11 the
+below-line stack-left fallback is free so the width stays 360 pt; 7x10 uses the right gutter (width 432
+pt). The value is never dropped and the label never overlaps.
+
+**Checks (lanes venv, `PYTHONDONTWRITEBYTECODE=1`, `-p no:cacheprovider`, api cwd `services/api`).**
+- `python -m ruff check .` -> `All checks passed!`, exit 0.
+- `tests/drawings/kit/test_section_legal_lines.py` -> 26 passed (22 round-1 + 4 new: 3 parametrized F1
+  worked-building cases + `test_f1_benchmark_keeps_every_legal_label_at_candidate_zero`), exit 0.
+- `flock heavy-run.lock pytest -q tests/drawings/kit` -> 511 passed in 27.45s, exit 0 (507 round-1 + 4
+  new; the 88 report-frame tests unedited and green, so the `legal_lines=None` baseline is intact).
+- `tools/modularity_check.py --check` -> exit 0 (section.py not flagged).
+- `tools/research_record_check.py --check` -> PASS, exit 0 (no evidence record cites a drawings module;
+  nothing to resync; NB-06 read only).
+- `scripts/lanes/check_lane_paths.py --coverage` -> LANE COVERAGE PASS, exit 0.
+- Byte-identity vs round 1 (executed round-1 `section.py` alongside the new one on the benchmark alt):
+  benchmark+lines (caption on/off) and `legal_lines=None` (caption on/off) all byte-identical.
+
+**Mutation proof.** Restored the single candidate `[(_STACK_X0, y - 7.0, 0.0)]` in `section.py`:
+`pytest -k f1` -> 3 failed (all three worked cases, each reporting the reviewer's exact overlaps, e.g.
+`('Storey 4', 'Minimum base height 30 ft')`), 1 passed (the benchmark-candidate-zero test, correctly
+invariant). Restored the fix; the 26 tests pass again.
+
+**Not changed in B2 (per the brief).** Typography (8.0 pt label size vs the contract's 8.5 pt — advisory
+F2) and the "schematic, not to scale" sheet label (advisory F3) belong to the wiring part; no typography
+changed here. SVG pictures for the visual review are in `/tmp/claude-0/M5-T192/pics/` (benchmark +
+worked 4x10 / 5x11 / 7x10); no rasterizer is installed here, so the reviewer renders them as in round 1.
