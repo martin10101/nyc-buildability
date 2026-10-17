@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 315,
+ "requirement_count": 320,
  "producer": "orchestrator",
- "updated_at": "2026-10-16T02:08:59+00:00",
+ "updated_at": "2026-10-17T03:47:29+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -10424,6 +10424,161 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured in session 2026-10-15c; the eight builders were dispatched at once.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R316",
+   "text": "'I would not rely on \u201c55\u201360% complete\u201d or the delivery dates yet.': progress is not stated as a percentage or with delivery dates; it is shown by visible proof (what the printed report and the website actually show) and by the named unfinished scope.",
+   "source_ref": "source-033-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-17"
+   },
+   "dependencies": [],
+   "required_harness": "Owner updates after this capture carry no completion percentage and no delivery date unless the owner asks, and then only with the visible-proof basis and the unfinished scope beside it.",
+   "required_evidence": "Owner updates in the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c (resumed 2026-10-17) before the next build step.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R317",
+   "text": "'The next meaningful proof should be PDF #6\u2014with the building visibly placed, the area split drawn, and the schedule matching\u2014not another percentage estimate.': PDF #6 is the next deliverable: the building visibly placed on page 4, the two-zone area split drawn, and the floor schedule matching the calculations, printed from the real program.",
+   "source_ref": "source-033-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-17"
+   },
+   "dependencies": [],
+   "required_harness": "PDF #6 printed from the real preview at the accepted head shows the placed footprint, the drawn area split and a schedule that reconciles with the figures; checked page by page before it is sent.",
+   "required_evidence": "The PDF #6 package and its page-by-page check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c (resumed 2026-10-17) before the next build step.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R318",
+   "text": "'Even option 1 still needs its finished visual presentation.': option 1's finished visual presentation is owed work, not done: the drawings must reach the printed report and website in their finished form.",
+   "source_ref": "source-033-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-17"
+   },
+   "dependencies": [],
+   "required_harness": "Option 1's drawings appear in the printed report and on the website, reviewed visually.",
+   "required_evidence": "The accepted wiring part and website mount, with their visual reviews.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c (resumed 2026-10-17) before the next build step.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R319",
+   "text": "'The saved plan still includes substantial unfinished scope: additional scenarios, website integration, design cleanup, parking/bicycle requirements, broader property coverage, and production PDF export/storage decisions.': progress statements keep the unfinished scope visible: additional scenarios, website integration, design cleanup, parking/bicycle requirements, broader property coverage, and production PDF export/storage decisions.",
+   "source_ref": "source-033-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-17"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff and owner updates list this unfinished scope beside any progress statement.",
+   "required_evidence": "The handoff and the master plan's report programme.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c (resumed 2026-10-17) before the next build step.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R320",
+   "text": "'Those checks cover the saved code\u2014not unfinished work on his server.': a claim about work in progress says whether it is saved and pushed (and so checked) or only on the build server; unsaved work is never counted as done.",
+   "source_ref": "source-033-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-17"
+   },
+   "dependencies": [],
+   "required_harness": "Owner updates and handoffs name saved/pushed versus unsaved work separately.",
+   "required_evidence": "Owner updates and handoffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c (resumed 2026-10-17) before the next build step.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-16T02:08:59+00:00",
+ "updated_at": "2026-10-17T03:47:29+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -336,10 +336,15 @@
   "D-094-R312",
   "D-094-R313",
   "D-094-R314",
-  "D-094-R315"
+  "D-094-R315",
+  "D-094-R316",
+  "D-094-R317",
+  "D-094-R318",
+  "D-094-R319",
+  "D-094-R320"
  ],
- "requirements_id_digest_sha256": "36f3b1e3902340b3f230249e0c47cc996d39a20424b4aab97a3147f1c1602ada",
- "requirements_content_digest_sha256": "dd73d87ed2953eab42bb3ea40ca530750fcc39dd9951bc6f0c72fe5dee091dc6",
+ "requirements_id_digest_sha256": "c838e3a103bce39e7ad2d01f0bb44d226df9d0e13ea52e65bb75800576835314",
+ "requirements_content_digest_sha256": "31f488a5662658a535f2de5f282e39affd636b8946609527ba33516158059e82",
  "sources": [
   {
    "file": "source-001.md",
@@ -595,6 +600,14 @@
    "recorded_at": "2026-10-15T23:47:04+00:00",
    "content_digest_sha256": "173498070d0fcb34a81ae1fdff3021ac07cc8a03ca01a55fd2a0da6f12517b96",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-033-amendment.md",
+   "kind": "amendment",
+   "sequence": 33,
+   "recorded_at": "2026-10-17T03:47:29+00:00",
+   "content_digest_sha256": "f6b4f4079c96036fdbd541b3d343c3aacca45d1e3964e43a31caf5c2e415e1eb",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -628,7 +641,8 @@
   "source-029-amendment.md",
   "source-030-amendment.md",
   "source-031-amendment.md",
-  "source-032-amendment.md"
+  "source-032-amendment.md",
+  "source-033-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1263,6 +1277,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T178 (architect-entered facts feed the results: a provenance-tagged entered_facts request channel (survey-basis lot area, frontage, depth) that becomes survey_entered site facts before the evaluator inputs, displacing the city fact (kept visible), conflicts visible, missing stays missing) to R103, R285 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-17T03:47:29+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-033 (the owner's forwarded outside check of the progress claims) and requirements D-094-R316 to R320, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
