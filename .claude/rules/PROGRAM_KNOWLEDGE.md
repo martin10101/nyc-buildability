@@ -140,6 +140,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - At a serial part's contract, bind every row its parts' evidence maps leave 'open for the serial part': M5-T173 missed seven
   (R198-R278), caught only by the M5-T194 rule check (binding correction b561450e, 2026-10-16).
 
+- A usage-limit stop kills every running helper mid-step (2026-10-17, twice): save each worktree's `git diff --binary HEAD`
+  into the session folder at once; a FRESH builder applies the patch (`git apply --index`) on the same base; never resume.
+
 ## Key files / commands
 
 - Ledger: `python tools/project_control.py status|new-task|claim|progress|submit|gate|accept|
