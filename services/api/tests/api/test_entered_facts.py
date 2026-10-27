@@ -4,9 +4,10 @@ The acceptance pack S1-S8 for :mod:`app.api.v1.entered_facts` and its wiring thr
 ``app.api.v1.results_request`` / ``app.api.v1.results_read``: an architect's SURVEY
 measurement of a lot value (area, frontage, depth) becomes a ``survey_entered`` site fact
 that GOVERNS its engine input and keeps the city fact visible in ``displaced``; a malformed
-block is a typed 422 at the body gate; an unplaceable value fails closed to the existing
-``lot_conditions_unconfirmed`` 503; and an absent channel leaves the document byte-identical
-to the city-record baseline.
+block is a typed 422 at the body gate; an unplaceable value fails closed to a typed 422 whose
+message names the TRUE cause and what to add (round 2: no longer the false
+``lot_conditions_unconfirmed`` 503, which claims the city record or lot outline could not be
+read); and an absent channel leaves the document byte-identical to the city-record baseline.
 
 Offline and deterministic. The route tests drive the same injected benchmark provider the
 sibling wiring tests use (no network); the channel/evaluator tests reuse the proven study and
@@ -42,6 +43,7 @@ from tests.contracts.test_evaluator_inputs import (
     _fact,
     _record,
     _study,
+    _two_frontage_corner_facts,
 )
 
 _STD = {"housing_program": "standard_residence"}
@@ -169,7 +171,8 @@ def test_s3_survey_frontage_governs_and_displaces_the_recorded_frontage():
 
 
 # ===========================================================================
-# S4: duplicate input -> 422 at the gate; unplaceable survey value -> 503
+# S4: duplicate input -> 422 at the gate; an unplaceable survey value -> a truthful 422
+# (round 2: no longer the false lot_conditions_unconfirmed 503)
 # ===========================================================================
 def test_s4_duplicate_input_is_422_at_the_body_gate(enabled):
     """S4: the SAME input entered twice is a typed 422 at the body gate (the conflict is visible,
@@ -192,27 +195,65 @@ def test_s4_duplicate_input_is_422_at_the_body_gate(enabled):
     assert calls == []
 
 
-def test_s4_unplaceable_survey_value_fails_closed_to_503(enabled, monkeypatch):
-    """S4: a survey lot_frontage against the benchmark CORNER lot (two recorded frontages, so
-    which the survey replaces is not settled) fails closed to the existing lot_conditions
-    503 - never a guess and never a fabricated document."""
+def test_s4_unplaceable_corner_frontage_is_a_truthful_422(enabled, monkeypatch):
+    """S4 (round 2): a survey lot_frontage against the benchmark CORNER lot (two recorded
+    frontages on different streets, so which the survey replaces is not settled) is a typed 422
+    whose message names the TRUE cause - the two streets, from the CITY RECORD - and what to add
+    (the street it was measured on, on the site-facts screen). It is NEVER the false
+    lot_conditions_unconfirmed 503 ("the city record or lot outline could not be read"): the same
+    corner lot answers 200 for a placeable survey lot_area in the same run."""
     _no_network(monkeypatch)
     body = dict(_STD, entered_facts=[{"input": "lot_frontage", "value": 101, "basis": "survey"}])
     response = _post(benchmark_provider(), body)
-    assert response.status_code == 503
-    assert response.json()["state"] == "lot_conditions_unconfirmed"
+    assert response.status_code == 422
+    payload = response.json()
+    assert payload["state"] == "validation_error"
+    assert payload["detail"]["code"] == "entered_fact_needs_street"
+    message = payload["message"]
+    assert "Northern Boulevard" in message and "215 Place" in message  # streets from the record
+    assert "site-facts" in message  # what to add and where
+    assert "could not be read" not in message  # the false lot-evidence cause is gone
+    # the SAME corner lot still answers 200 for a placeable survey lot_area (proves the 422 is a
+    # user-input condition, not a lot-evidence failure)
+    ok = _post(
+        benchmark_provider(),
+        dict(_STD, entered_facts=[{"input": "lot_area", "value": 10388, "basis": "survey"}]),
+    )
+    assert ok.status_code == 200
 
 
-def test_s4_entered_fact_for_an_input_with_no_recorded_value_fails_closed():
-    """S4 (channel level): an entered value for an input the lot has NO recorded value for has
-    nothing to sit beside, so the merge raises (fail closed) rather than invent a lone fact."""
+def test_s4_multi_frontage_message_names_the_streets_from_the_record():
+    """S4 (channel level, round 2): on a corner lot with two recorded frontages the merge raises
+    entered_fact_needs_street and the message names BOTH streets (from the city record, never
+    caller text) and the remedy (enter the street it was measured on)."""
+    with pytest.raises(EnteredFactsError) as excinfo:
+        merge_entered_facts(
+            _study(_two_frontage_corner_facts()),
+            (EnteredFact(input="lot_frontage", value=101.0, basis="survey"),),
+            retrieved_at=_RETRIEVED,
+        )
+    assert excinfo.value.code == "entered_fact_needs_street"
+    msg = excinfo.value.message
+    assert "Northern Boulevard" in msg and "215 Place" in msg
+    assert "street it was measured on" in msg
+    assert "could not be read" not in msg
+
+
+def test_s4_entered_fact_for_an_input_with_no_recorded_value_is_a_truthful_refusal():
+    """S4 (channel level, round 2): an entered value for an input the lot has NO recorded value
+    for has nothing to displace, so the merge fails closed with a message that names the TRUE
+    cause - no recorded value to replace, and filling a missing measure is not available yet -
+    and never says the city record could not be read."""
     facts = [f for f in _benchmark_city_facts() if f["key"] != "lot_depth"]
     study = _study(facts)
-    with pytest.raises(EnteredFactsError, match="cannot be applied"):
+    with pytest.raises(EnteredFactsError) as excinfo:
         merge_entered_facts(
             study, (EnteredFact(input="lot_depth", value=99.0, basis="survey"),),
             retrieved_at=_RETRIEVED,
         )
+    assert excinfo.value.code == "entered_fact_no_recorded_value"
+    assert "no recorded" in excinfo.value.message
+    assert "could not be read" not in excinfo.value.message
 
 
 # ===========================================================================
@@ -377,3 +418,83 @@ def test_s8_one_survey_value_governs_but_a_city_input_keeps_approximate():
     assert build_status_strip(doc["site_measurement_rank"])[1] == {
         "text": "Approximate measurements"
     }
+
+
+# ===========================================================================
+# Round 2 (review findings): contract-version provenance (b), contract-guard (c),
+# defense in depth (d)
+# ===========================================================================
+def test_minted_survey_fact_copies_the_city_facts_contract_version():
+    """Round 2 item b: the minted survey fact copies contract_version from the city fact it sits
+    beside (the live lot_area/lot_depth city facts carry 1.1.0), not a hardcoded 1.0.0, so the two
+    same-key facts in one engine-input group declare the same contract shape; the merged study
+    stays schema-valid."""
+    facts = _benchmark_city_facts()
+    for fact in facts:
+        if fact["key"] == "lot_area":
+            fact["contract_version"] = "1.1.0"
+    merged = merge_entered_facts(
+        _study(facts), (EnteredFact(input="lot_area", value=10388.0, basis="survey"),),
+        retrieved_at=_RETRIEVED,
+    )
+    validate_study_document(merged)  # stays schema-valid
+    survey = next(
+        f for f in merged["site"]["facts"]
+        if f["key"] == "lot_area" and f["measurement"]["rank"] == "survey_entered"
+    )
+    assert survey["contract_version"] == "1.1.0"
+
+
+def test_merged_study_is_contract_guarded_before_use(enabled, monkeypatch):
+    """Round 2 item c: a survey-minting regression (a minted fact that breaks the site_fact
+    contract) is a clean internal_contract_error, never a 200 or a generic 500. The route
+    re-validates the merged study before it is used (and build_evaluator_inputs validates it
+    again as its first step), so a merged study that is not contract-valid never reaches the
+    engine."""
+    _no_network(monkeypatch)
+    import app.api.v1.entered_facts as ef
+
+    real = ef._survey_fact
+
+    def bad(**kw):
+        fact = real(**kw)
+        fact["contract_version"] = "9.9.9"  # out of the site_fact enum -> study invalid
+        return fact
+
+    monkeypatch.setattr(ef, "_survey_fact", bad)
+    response = _post(
+        benchmark_provider(),
+        dict(_STD, entered_facts=[{"input": "lot_area", "value": 10388, "basis": "survey"}]),
+    )
+    assert response.status_code == 500
+    assert response.json()["state"] == "internal_contract_error"
+
+
+def test_entered_facts_list_is_bounded_to_the_closed_inputs():
+    """Round 2 item d: the entered_facts list is explicitly bounded to at most one value per lot
+    measure; a longer list is refused up front with entered_facts_too_many, before any per-item
+    work."""
+    block = [
+        {"input": "lot_area", "value": 1, "basis": "survey"},
+        {"input": "lot_frontage", "value": 1, "basis": "survey"},
+        {"input": "lot_depth", "value": 1, "basis": "survey"},
+        {"input": "lot_area", "value": 1, "basis": "survey"},
+    ]
+    with pytest.raises(EnteredFactsError) as excinfo:
+        parse_entered_facts(block)
+    assert excinfo.value.code == "entered_facts_too_many"
+    assert excinfo.value.field == "entered_facts"
+
+
+def test_merge_refuses_an_unknown_input_with_a_typed_error():
+    """Round 2 item d: merge_entered_facts refuses an input outside the closed enum with a typed
+    EnteredFactsError (never a KeyError -> generic 500), guarding a future caller that builds an
+    EnteredFact directly, bypassing parse_entered_facts."""
+    study = _study(_benchmark_city_facts())
+    with pytest.raises(EnteredFactsError) as excinfo:
+        merge_entered_facts(
+            study, (EnteredFact(input="floor_area", value=10.0, basis="survey"),),
+            retrieved_at=_RETRIEVED,
+        )
+    assert excinfo.value.code == "entered_fact_input_invalid"
+    assert excinfo.value.field == "input"

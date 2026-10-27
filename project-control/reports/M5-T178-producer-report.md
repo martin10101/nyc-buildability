@@ -129,3 +129,100 @@ emitted values.
 - No report-print render (no report-page change, per above).
 - Behaviour is read from source at the reset head and proven by the executed tests above; an engine
   output is not independent legal verification (ADR-007 label stands).
+
+## Round 2 (review findings closed; commit on top of round-1 `c62839d5`)
+
+The four reviews (data-contract, code, test, security) all PASSED round 1. Round 2 closes the
+REQUIRED data-contract finding 1 and the advisories the reviewers converged on. No contract
+schema, engine, scenario, web, evidence-record or zoning-rule-review file touched (same scope).
+
+### What an architect now sees for a refused entry (the owner's truthfulness standard)
+
+- **Corner-lot frontage (the REQUIRED fix, item a).** A survey `lot_frontage` on a lot with two
+  recorded frontages on different streets used to become the **503 `lot_conditions_unconfirmed`**
+  whose message said the city record or lot outline "could not be read" — FALSE (the same lot
+  answers 200 for a survey `lot_area`). It is now a typed **422** (`validation_error`, code
+  `entered_fact_needs_street`) whose message states the true cause and the remedy. Live on the
+  benchmark: *"the survey lot frontage cannot be applied on its own: the city record has 2 recorded
+  lot frontages for this lot, on 215 Place and Northern Boulevard. Enter the survey value with the
+  street it was measured on, on the lot's site-facts screen."* The street names come from the city
+  record, never caller text. The 503 is no longer reachable for an entered-fact cause.
+- **No recorded value (item a).** A survey value for an input the lot has no recorded value for is
+  now **422** `entered_fact_no_recorded_value`: *"the survey lot depth cannot be applied yet: the
+  city record has no recorded lot depth for this lot for the survey to replace, and entering a
+  measure the city record is missing is not available yet."* No "could not be read".
+
+### Items b–d
+
+- **b (provenance).** The minted survey fact now copies `contract_version` from the matched city
+  fact it sits beside (`_survey_fact(..., contract_version=city_fact["contract_version"])`), so a
+  survey beside the live 1.1.0 `lot_area`/`lot_depth` city facts is itself 1.1.0, not a hardcoded
+  1.0.0. The merged study stays schema-valid (verified by `validate_study_document`).
+- **c (defense in depth).** `results_read.py` calls `validate_study_document(study)` after the merge
+  (only when the channel added a fact) and before `build_evaluator_inputs`. NOTE (honest): this is
+  **redundant today** — `build_evaluator_inputs` validates the study as its own first step
+  (`app/contracts/evaluator_inputs.py:360`), so a minting regression was already a clean
+  `internal_contract_error`, not a generic 500. The explicit call makes the route's "merged study
+  is contract-valid before use" guarantee LOCAL and independent of `build_evaluator_inputs`
+  internals. Because the guarantee is held jointly, there is **no mutation that isolates this one
+  line** (removing it leaves the guard test green via `build_evaluator_inputs`); the guard test
+  discriminates on the injected malformation (bad minted fact → 500 `internal_contract_error`; the
+  normal S2 path → 200).
+- **d (defense in depth).** `merge_entered_facts` now uses `_INPUT_TO_SITE_KEY.get(...)` with a
+  typed `entered_fact_input_invalid` refusal for an input outside the closed enum (never a
+  `KeyError` → generic 500), guarding a future direct `EnteredFact` caller. `parse_entered_facts`
+  now bounds the list length to the closed input count (`entered_facts_too_many`) before any
+  per-item work.
+
+### Follow-ons recorded (item e; NOT built)
+
+- A survey entry can only **displace a known** city value today; it cannot **FILL** a missing or
+  unknown city value (the no-recorded-value 422 above is the chosen, visible limit). Filling a
+  missing/unknown measure needs the standalone/street-qualified entry path — named follow-on
+  (part of the website entry wiring, follow-on D / survey reader E).
+- The **tax-map drawing measure 10,387.99 sq ft** (MapPLUTO `Shape__Area`, labelled in
+  `real-lot.json` L1 as a drawing measure "never used in a floor-area calculation") must **never**
+  be piped into the survey channel as a survey value. The tests use 10,388 only as a synthetic
+  "architect's entered value" to exercise the plumbing; the live route sends no `entered_facts`
+  yet. The website wiring (follow-on D) must take a real survey measurement, not the tax-map
+  drawing figure.
+
+### Round-2 checks (direct exit codes; lanes venv; PYTHONDONTWRITEBYTECODE=1; pytest -p no:cacheprovider; api from services/api)
+
+- `python -m ruff check .` (from services/api) → **exit 0** ("All checks passed!").
+- `pytest -q tests/api/test_entered_facts.py` → **exit 0, 36 passed** (was 31; +5 round-2 tests;
+  2 S4 tests repurposed 503→422).
+- `flock heavy-run.lock pytest -q tests/api/test_results_read_api.py tests/api/test_entered_facts.py
+  tests/contracts/test_evaluator_inputs.py tests/scenario/three_answers/test_three_answers_c6_c11.py
+  tests/journey/test_215_16_northern_journey.py` → **exit 0, 193 passed** (was 188; consumer sweep
+  green).
+- `python tools/modularity_check.py --check` → **exit 0** (824 files; failures 0; none of this
+  task's files flagged; entered_facts.py 354 / results_read.py 467 SLOC, under WARN 600).
+- `python3 tools/research_record_check.py --check` → **exit 0** ("PASS"). The NB-04
+  `code_current=False` note is pre-existing and unrelated: this task touches none of NB-04/NB-05's
+  pinned `code_paths` (density/result-way files).
+- `python3 scripts/lanes/check_lane_paths.py --coverage` → **exit 0** ("LANE COVERAGE PASS").
+- `flock heavy-run.lock pytest -q` (WHOLE api suite, from services/api) → **exit 0,
+  10218 passed, 8 skipped** in 548.91s (round 1 was 10213 passed; +5 round-2 tests). The live
+  results route changed; the full suite is green at this head.
+
+### Round-2 mutation proofs (each new behaviour test reverts to red; source restored after each)
+
+- Item a route 422 → `_lot_conditions_unconfirmed_503`: **1 red** —
+  `test_s4_unplaceable_corner_frontage_is_a_truthful_422` (503 != 422).
+- Item a merge street naming (`streets = []`): **2 red** —
+  `test_s4_multi_frontage_message_names_the_streets_from_the_record` and
+  `test_s4_unplaceable_corner_frontage_is_a_truthful_422` (street names dropped from the message).
+- Item a no-value code → old `entered_fact_not_placeable`: **1 red** —
+  `test_s4_entered_fact_for_an_input_with_no_recorded_value_is_a_truthful_refusal`.
+- Item b `contract_version` → hardcoded `"1.0.0"`: **1 red** —
+  `test_minted_survey_fact_copies_the_city_facts_contract_version` (expects 1.1.0).
+- Item d length bound disabled (`if False and …`): **1 red** —
+  `test_entered_facts_list_is_bounded_to_the_closed_inputs` (4-item list then hits the duplicate
+  check: `entered_fact_duplicate_input` != `entered_facts_too_many`).
+- Item d unknown input (`.get` → `[...]`): **1 red** —
+  `test_merge_refuses_an_unknown_input_with_a_typed_error` (a `KeyError` is raised, which
+  `pytest.raises(EnteredFactsError)` does not catch).
+- Item c: no isolating mutation (redundant with `build_evaluator_inputs` validation, per item c
+  note above); the guard test `test_merged_study_is_contract_guarded_before_use` discriminates on
+  the injected malformation.

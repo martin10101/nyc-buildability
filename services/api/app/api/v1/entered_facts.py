@@ -21,9 +21,11 @@ FAIL CLOSED, NEVER GUESS (CLAUDE.md principles 3 and 4; directive D-094-R285). W
 carries no single recorded value for an entered input - none at all, or several on different
 streets or tax lots (a corner lot's two frontages) - the channel raises rather than guess
 which recorded value the survey replaces: missing stays missing, a conflict stays visible.
-The request reader catches a malformed block as a typed 422 at the body gate; the route maps
-an unplaceable entered fact to the existing ``lot_conditions_unconfirmed`` 503 (fail safe,
-nothing fabricated).
+Both the request reader and the route map such a refusal to a typed 422 whose message states
+the TRUE cause and what the architect must add (the street a frontage was measured on, or that
+there is no recorded value to replace). The route never maps it to the
+``lot_conditions_unconfirmed`` 503 - that 503 means the city record or lot outline could not be
+read, which is false here: the same lot answers 200 for a placeable survey value.
 
 Scope of THIS increment (survey basis only): a survey value is already labelled correctly
 ("Survey measurements") by the accepted engine with no new wording. A plain (non-survey)
@@ -53,6 +55,14 @@ _INPUT_TO_SITE_KEY = {
     "lot_area": "lot_area",
     "lot_frontage": "lot_frontage",
     "lot_depth": "lot_depth",
+}
+
+#: A readable name for each closed input, used only in a refusal message. It is DERIVED from
+#: the closed enum (never caller text), so an architect reads "lot frontage", not "lot_frontage".
+_INPUT_LABEL = {
+    "lot_area": "lot area",
+    "lot_frontage": "lot frontage",
+    "lot_depth": "lot depth",
 }
 
 #: The lot measures an architect may enter through this channel (closed enum).
@@ -107,6 +117,14 @@ def _is_number(value: object) -> bool:
     return isinstance(value, int | float) and not isinstance(value, bool)
 
 
+def _join_and(items: list[str]) -> str:
+    """Join names for a plain message: ``[A, B]`` -> ``"A and B"``; ``[A, B, C]`` ->
+    ``"A, B and C"``. The items are street names from the city record, never caller text."""
+    if len(items) == 1:
+        return items[0]
+    return f"{', '.join(items[:-1])} and {items[-1]}"
+
+
 def parse_entered_facts(raw: object) -> tuple[EnteredFact, ...]:
     """Validate the body's ``entered_facts`` block and return the checked facts.
 
@@ -125,6 +143,16 @@ def parse_entered_facts(raw: object) -> tuple[EnteredFact, ...]:
         raise EnteredFactsError(
             "entered_facts_invalid",
             "entered_facts must be a list of architect-entered survey facts",
+            field="entered_facts",
+        )
+    # Explicit bound (defense in depth): at most one survey value per lot measure, so the list
+    # can never exceed the closed input enum. The duplicate check below also bounds a valid list
+    # to one per input; this length check refuses an oversized list before any per-item work.
+    if len(raw) > len(ENTERED_FACT_INPUTS):
+        raise EnteredFactsError(
+            "entered_facts_too_many",
+            "too many entered facts; enter at most one survey value per lot measure "
+            "(a lot area, a lot frontage and a lot depth)",
             field="entered_facts",
         )
 
@@ -194,18 +222,30 @@ def parse_entered_facts(raw: object) -> tuple[EnteredFact, ...]:
 
 
 def _survey_fact(
-    *, site_key: str, value: float, street: str | None, lot_bbl: object, retrieved_at: str
+    *,
+    site_key: str,
+    value: float,
+    street: str | None,
+    lot_bbl: object,
+    retrieved_at: str,
+    contract_version: str,
 ) -> dict:
     """Mint ONE contract-valid ``survey_entered`` site fact (site_fact.schema.json) for one
     entered survey value. It sits beside the city fact (same ``street`` and ``lot_bbl``), so
-    build_evaluator_inputs groups them together and the survey value governs."""
+    build_evaluator_inputs groups them together and the survey value governs.
+
+    ``contract_version`` is COPIED from the matched city fact the survey sits beside, so the two
+    same-key facts in one engine-input group declare the same contract shape (the city lot_area
+    and lot_depth facts carry 1.1.0; a hardcoded 1.0.0 would be an internal inconsistency and a
+    latent fail-closed if 1.0.0 were ever retired from the enum). The city fact is already
+    validated, so its version is in the schema enum."""
     unit = "square_feet" if site_key == "lot_area" else "feet"
     fact_id = f"{lot_bbl}:{site_key}"
     if street:
         fact_id = f"{fact_id}:{street}"
     fact_id = f"{fact_id}:survey_entered"
     return {
-        "contract_version": "1.0.0",
+        "contract_version": contract_version,
         "fact_id": fact_id,
         "key": site_key,
         "lot_bbl": lot_bbl,
@@ -236,33 +276,71 @@ def merge_entered_facts(
     When ``entered_facts`` is empty the SAME ``study`` object is returned unchanged (the
     no-channel path is byte-identical to today). Otherwise, for each entered fact, the study's
     KNOWN facts for that input are grouped by (street, tax lot); the survey fact is minted with
-    that group's street and tax lot so it joins the group and governs. Raises
-    :class:`EnteredFactsError` (fail closed) when the input has no single recorded group to sit
-    beside: zero recorded values (nothing to replace), or several on different streets or tax
-    lots (which recorded value the survey replaces is not settled - a corner lot's two
-    frontages). ``retrieved_at`` is the RFC3339 time the value was entered (the caller mints it,
-    so nothing is invented here)."""
+    that group's street and tax lot (and the matched city fact's contract version) so it joins
+    the group and governs. Fails closed with a typed :class:`EnteredFactsError` whose message
+    states the TRUE cause and what the architect must add:
+
+    * ``entered_fact_no_recorded_value`` - the lot has NO recorded value for this input, so a
+      survey value has nothing to displace (filling a missing measure is a named follow-on);
+    * ``entered_fact_needs_street`` - the lot has several recorded values on different streets
+      or tax lots (a corner lot's two frontages), so which one the survey replaces is not
+      settled; the message names the streets (from the city record) and the street to supply;
+    * ``entered_fact_input_invalid`` - an input outside the closed enum (defense in depth).
+
+    No message claims the city record or lot outline "could not be read"; that is the separate
+    ``lot_conditions_unconfirmed`` 503, and it is not true here. ``retrieved_at`` is the RFC3339
+    time the value was entered (the caller mints it, so nothing is invented here)."""
     if not entered_facts:
         return study
 
     merged = copy.deepcopy(study)
     facts = merged["site"]["facts"]
     for entered in entered_facts:
-        site_key = _INPUT_TO_SITE_KEY[entered.input]
+        # Defense in depth: a typed refusal (never a KeyError -> generic 500) for an input
+        # outside the closed enum. Unreachable through parse_entered_facts, which enforces the
+        # enum; this guards a future caller that builds an EnteredFact directly.
+        site_key = _INPUT_TO_SITE_KEY.get(entered.input)
+        if site_key is None:
+            raise EnteredFactsError(
+                "entered_fact_input_invalid",
+                "the entered fact's input must be one of the lot measures this channel "
+                "accepts: a lot area, a lot frontage or a lot depth",
+                field="input",
+            )
+        label = _INPUT_LABEL[entered.input]
         groups: dict[tuple[object, object], dict] = {}
         for fact in facts:
             if fact["key"] == site_key and fact["measurement"]["rank"] != "unknown":
                 groups.setdefault((fact["street"], fact["lot_bbl"]), fact)
-        if len(groups) != 1:
+        if not groups:
+            # No recorded value to replace. A survey value can only DISPLACE a known city value
+            # today; filling a measure the city record is missing is a named follow-on.
             raise EnteredFactsError(
-                "entered_fact_not_placeable",
-                f"the entered survey value for the {entered.input} cannot be applied: the lot "
-                f"has {len(groups)} recorded value(s) for it, so which value the survey "
-                "replaces is not settled. Enter the survey value on the lot's site-facts "
-                "screen, where the street and tax lot are chosen.",
+                "entered_fact_no_recorded_value",
+                f"the survey {label} cannot be applied yet: the city record has no recorded "
+                f"{label} for this lot for the survey to replace, and entering a measure the "
+                "city record is missing is not available yet.",
                 field="entered_facts",
             )
-        (street, lot_bbl), _city_fact = next(iter(groups.items()))
+        if len(groups) > 1:
+            # Several recorded values on different streets or tax lots (a corner lot's two
+            # frontages): which one the survey replaces is not settled. Name the streets from
+            # the CITY RECORD (never caller text) and say what to add - the street it was
+            # measured on. This is NOT the lot_conditions 503: the city record was read fine.
+            streets = sorted({str(s) for (s, _b) in groups if s})
+            where = (
+                f"on {_join_and(streets)}"
+                if len(streets) > 1
+                else "on more than one street or tax lot"
+            )
+            raise EnteredFactsError(
+                "entered_fact_needs_street",
+                f"the survey {label} cannot be applied on its own: the city record has "
+                f"{len(groups)} recorded {label}s for this lot, {where}. Enter the survey "
+                "value with the street it was measured on, on the lot's site-facts screen.",
+                field="entered_facts",
+            )
+        (street, lot_bbl), city_fact = next(iter(groups.items()))
         facts.append(
             _survey_fact(
                 site_key=site_key,
@@ -270,6 +348,7 @@ def merge_entered_facts(
                 street=street,
                 lot_bbl=lot_bbl,
                 retrieved_at=retrieved_at,
+                contract_version=city_fact["contract_version"],
             )
         )
     return merged

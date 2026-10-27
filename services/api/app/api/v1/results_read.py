@@ -55,7 +55,11 @@ from app.config import internal_results_enabled
 from app.connectors.bbl import BBLValidationError, normalize_bbl
 from app.contracts.engine_disclosures import EngineDisclosureError
 from app.contracts.evaluator_inputs import EvaluatorInputsError, build_evaluator_inputs
-from app.contracts.study_contracts import StudyContractError, validate_results_document
+from app.contracts.study_contracts import (
+    StudyContractError,
+    validate_results_document,
+    validate_study_document,
+)
 from app.contracts.study_setup_bridge import StudySetupBridgeError, study_from_study_setup
 from app.resilience.rate_limit import SlidingWindowRateLimiter, caller_key
 from app.scenario.three_answers import BuildingDefaults
@@ -358,14 +362,30 @@ async def post_results(
         # the city-record baseline). An entered value that cannot be placed beside a single
         # recorded value fails closed (EnteredFactsError below), never a fabricated document.
         study = merge_entered_facts(study, req.entered_facts, retrieved_at=computed_at)
+        if req.entered_facts:
+            # Re-validate the merged study BEFORE build_evaluator_inputs (defense in depth,
+            # M5-T178 round 2). This makes the route's "a merged study is contract-valid before
+            # it is used" guarantee LOCAL and explicit, so a future survey-minting regression is
+            # a clean internal_contract_error attributed to the study stage - independent of
+            # build_evaluator_inputs, which validates the study as its own first step today
+            # (app.contracts.evaluator_inputs). Only runs when the channel added a fact, so the
+            # no-channel path is unchanged.
+            validate_study_document(study)
         evaluator_inputs = build_evaluator_inputs(study, option_id)
     except EnteredFactsError as exc:
         # The architect's survey value cannot be placed beside a single recorded value for its
-        # input (none at all, or several on different streets/tax lots). Fail safe: a bounded 503,
-        # never a guess and never a fabricated document (directive D-094-R285).
-        logger.info("results_v1 lot_conditions_unconfirmed stage=entered_facts "
+        # input: the lot has several recorded values on different streets/tax lots (a corner
+        # lot's two frontages) or none at all. This is a correctable USER-INPUT condition, not a
+        # lot-evidence failure - the same lot answers 200 for a placeable survey value - so it is
+        # a typed 422 whose message names the true cause and what to add, never the
+        # lot_conditions_unconfirmed 503 that falsely claims the city record/outline could not be
+        # read (directive D-094-R103/R285). exc.message is client-safe (closed-vocabulary field
+        # names and street names from the city record only).
+        logger.info("results_v1 validation_error stage=entered_facts "
                     "code=%s correlation_id=%s", exc.code, correlation_id)
-        return _lot_conditions_unconfirmed_503(correlation_id)
+        return _validation_error_422(
+            correlation_id, code=exc.code, message=exc.message, field=exc.field
+        )
     except EvaluatorInputsError as exc:
         # The lot's evidence cannot be turned into a runnable input set (no known value, an
         # ambiguous multi-frontage lot, or a visible conflict). Fail safe: a bounded 503, never a
