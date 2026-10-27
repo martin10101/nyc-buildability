@@ -764,3 +764,5 @@ Sweep 2026-10-16 (M5-T173 wiring-part contract, session 2026-10-15c): DB-227, DB
 Sweep 2026-10-16 (M5-T206 contract, session 2026-10-15c): DB-292 added at the M0-T197 seam; the website law-link gap (R027) is taken by M5-T206; other rows unchanged.
 
 Sweep 2026-10-16 (M5-T178 contract, session 2026-10-15c): DB-114 stays OPEN (the plain-entered status words are follow-on A of M5-T178, owner wording); other rows unchanged.
+
+Sweep 2026-10-27 (M0-T199 contract, session 2026-10-27a): B-032 opened (advisories against the web and api tooling locks; a blocker, so no backlog row); OPEN/WATCH rows unchanged.

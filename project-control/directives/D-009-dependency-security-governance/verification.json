@@ -249,6 +249,26 @@
         }
       ],
       "verified_at": "2026-10-08T01:07:23+00:00"
+    },
+    {
+      "directive_id": "D-009",
+      "task_id": "M0-T199",
+      "applicable_requirement_ids": [
+        "D-009-R017"
+      ],
+      "producer": "frontend-engineer",
+      "verifier": "",
+      "schema_version": "directive_verification/v2",
+      "reviewed_sha": null,
+      "reviewed_manifest_sha256": null,
+      "requirements": [
+        {
+          "id": "D-009-R017",
+          "state": "pending",
+          "evidence": [],
+          "reviewed_sha": null
+        }
+      ]
     }
   ],
   "updated_at": "2026-10-08T01:07:23+00:00"
