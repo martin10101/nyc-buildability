@@ -150,21 +150,39 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
     // C3: the report holds its drawings — a site plan on the decision summary and the site page, and
     // the floor-stack section on the scenario sheet. A report printed WITHOUT its drawings fails.
     // [DEPENDS ON M5-T152: the report-frame drawings reaching the report.]
+    // M5-T173 part B: the site page's close frame draws the ILLUSTRATIVE FOOTPRINT (its own
+    // data-role) and the scenario sheet draws the two-zone AREA ILLUSTRATION (its fitted-zone
+    // data-roles). A report that claims these but does not draw them fails here (owner audit
+    // 2026-10-15c; D-094 R198/R200).
     const drawings = await printPage.evaluate(() => {
       const pages = Array.from(document.querySelectorAll(".report-page"));
       const pageWith = (re: RegExp) => pages.find((p) => re.test(p.textContent ?? ""));
       const hasSvg = (p: Element | undefined) => !!(p && p.querySelector("svg"));
+      const hasRole = (p: Element | undefined, role: string) =>
+        !!(p && p.querySelector(`[data-role="${role}"]`));
+      const sitePage = pageWith(/site and context/i);
+      const scenarioPage = pageWith(/scenario/i);
       return {
         total: document.querySelectorAll("svg").length,
         decision: hasSvg(pageWith(/decision summary/i)),
-        site: hasSvg(pageWith(/site and context/i)),
-        scenario: hasSvg(pageWith(/scenario/i)),
+        site: hasSvg(sitePage),
+        scenario: hasSvg(scenarioPage),
+        footprintOnSite: hasRole(sitePage, "illustrative-footprint"),
+        areaIllustrationOnScenario: hasRole(scenarioPage, "area_zone_apartment"),
       };
     });
     expect(drawings.total, "the report holds its drawings (two site plans and a floor stack)").toBeGreaterThanOrEqual(3);
     expect(drawings.decision, "the decision summary carries a drawing").toBe(true);
     expect(drawings.site, "the site and context page carries a drawing").toBe(true);
     expect(drawings.scenario, "the scenario sheet carries the floor-stack drawing").toBe(true);
+    expect(
+      drawings.footprintOnSite,
+      "the site and context page draws the illustrative building footprint (M5-T173 part B)",
+    ).toBe(true);
+    expect(
+      drawings.areaIllustrationOnScenario,
+      "the scenario sheet draws the two-zone area illustration (M5-T173 part B)",
+    ).toBe(true);
 
     // M5-T166: the Site and context page OPENS with the "Where is the lot?" location sheet, holding
     // ONE neighbourhood locator (the block close-up is no longer printed here; D-094 R014/R074),

@@ -41,8 +41,8 @@ def _chart(*, placed_on_site: bool, footprint_drawn):
 
 # ------------------------------------------------------------------ S1 byte-identical
 def test_s1_new_keywords_default_to_byte_identical_output() -> None:
-    # The chart status: footprint_drawn=None is the legacy site_plan_draws_placed_footprint()
-    # path exactly (an unwired caller is byte-identical).
+    # The chart status: omitting footprint_drawn (the default None, an unwired caller) is
+    # byte-identical to passing footprint_drawn=None - both read as not drawn.
     legacy = drawings_embed.allowance_bar_chart_svg("20,150", 20150.0, _BUILDINGS,
                                                     placed_on_site=True)
     assert _chart(placed_on_site=True, footprint_drawn=None) == legacy
@@ -119,16 +119,15 @@ def test_s3_appendix_method_reads_the_manifest_illustration_state() -> None:
     assert page_evidence._area_illustration_method({"building_alternatives": []}, "bar") is None
 
 
-def test_s3_explicit_not_drawn_state_ignores_the_legacy_predicate(monkeypatch) -> None:
-    # An explicit not-drawn state gives today's "not yet drawn" clause WITHOUT reading the
-    # legacy predicate, so part W keeps a deterministic not-drawn claim after the constant
-    # is deleted. Mutation: force the legacy predicate True; only the None (legacy) path moves.
+def test_s3_not_drawn_state_reads_only_the_manifest_no_legacy_predicate() -> None:
+    # M5-T173 part W DELETES the legacy _area_illustration_drawn predicate, so the drawing clause
+    # reads ONLY the manifest state: None (an unwired caller) and any explicit not-drawn state both
+    # give the "not yet drawn" clause, never a hard-coded "it is shown".
     doc = _doc_with_block(fitted=True)
-    monkeypatch.setattr(page_evidence, "_area_illustration_drawn", lambda _r: True)
-    legacy = str(page_evidence._area_illustration_method(doc, None))
-    assert "it is shown " in legacy  # legacy path honoured the (mutated) predicate
-    explicit = str(page_evidence._area_illustration_method(doc, "not_drawn"))
-    assert "it is not yet drawn in this report" in explicit and "it is shown " not in explicit
+    assert not hasattr(page_evidence, "_area_illustration_drawn")  # the predicate is gone
+    for state in (None, "not_drawn"):
+        clause = str(page_evidence._area_illustration_method(doc, state))
+        assert "it is not yet drawn in this report" in clause and "it is shown " not in clause
 
 
 # -------------------------------------------- S4 a refused kernel is never called drawn

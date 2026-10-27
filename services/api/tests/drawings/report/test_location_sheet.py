@@ -253,14 +253,16 @@ def test_s3_not_placed_sentence_scenario_only_legend_on_site() -> None:
     # the fixed sentence, not spliced from the document's reason text (fix 4).
     assert line == ("No building is placed on this plan yet: the program does not yet "
                     "work out where a building sits on the lot.")
-    # M5-T172: the benchmark now places building B (its floor plates are drawn), so the
-    # not-placed sentence is GONE from the scenario sheet. The site close-frame context map
-    # still carries the 'No building placed' legend (that map draws no building massing).
+    # M5-T172: the benchmark now places building B, so the not-placed sentence is GONE from the
+    # scenario sheet. M5-T173 part B: the site close frame now DRAWS the illustrative footprint,
+    # so its 'No building placed' legend is replaced by the 'Illustrative building footprint'
+    # legend and the drawn-state caption.
     placed = benchmark()
     assert readers.building_not_placed(placed) is False
     placed_html = build_report_html(placed, map_context=map_context(), env=_LANE_E)
     assert line not in visible_text(placed_html[placed_html.index('id="scenario-B"'):])
-    assert "No building placed" in visible_text(_site_section(placed_html))
+    assert "No building placed" not in visible_text(_site_section(placed_html))
+    assert "Illustrative building footprint" in visible_text(_site_section(placed_html))
     # A not-placed document (floor plates withheld) still shows the sentence on the scenario
     # sheet ONLY; the site page shows the 'No building placed' legend entry instead (M5-T166
     # S8). Kept as explicit not-placed coverage now the benchmark is placed (M5-T172 S13).

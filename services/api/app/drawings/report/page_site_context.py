@@ -234,25 +234,78 @@ def _constraint_rows(results: Mapping, item_number: dict) -> list[list[object]]:
     return rows
 
 
-def _site_outline(results: Mapping, site_plan: Embedded) -> object:
+def _placement_conflict_sentence(results: Mapping) -> str | None:
+    """The placement's recorded-conflict sentence read VERBATIM from the document: the
+    first ``contradicted_record`` condition on a building's placement block (the clearance
+    to the back lot line read on the printed tax map and on the city-map outline, each
+    named, choosing neither - 33.34 ft tax map, 35.31 ft city map). Never averaged, chosen,
+    hidden or computed here; ``None`` when the document carries no such condition."""
+    for building in results.get("building_alternatives", []) or []:
+        if not isinstance(building, Mapping):
+            continue
+        placement = building.get("placement")
+        conditions = placement.get("conditions", []) if isinstance(placement, Mapping) else []
+        for condition in conditions or []:
+            if (isinstance(condition, Mapping)
+                    and condition.get("kind") == "contradicted_record"
+                    and condition.get("assumption")):
+                return str(condition["assumption"])
+    return None
+
+
+def _footprint_caption(results: Mapping, site_plan: Embedded,
+                       footprint_drawn: object) -> list[object]:
+    """The lines UNDER the page-4 drawing that state the footprint's drawn state honestly
+    (owner audit 2026-10-15c; D-094 R196/R201/R204). A drawn footprint names what it is -
+    the illustrative footprint on the city-map outline - then the document's own
+    tax-map/city-map clearance-conflict sentence (33.34 ft / 35.31 ft, each named, neither
+    chosen). A worked-out footprint that a DRAWN site plan does NOT carry says so plainly.
+    Nothing is added when no site plan is drawn (drawings off: there is no map to name), or
+    when no building is placed, or for an unwired caller, so the sheet stays byte-identical."""
+    if not site_plan.is_drawing:
+        return []
+    if footprint_drawn is True:
+        lines: list[object] = [short_line(
+            "Illustrative building footprint on the city map outline "
+            "(not surveyed; not a design).")]
+        sentence = _placement_conflict_sentence(results)
+        if sentence:
+            lines.append(short_line(sentence))
+        return lines
+    placed = page_location.placed_footprint(results) is not None
+    if footprint_drawn is False and placed:
+        return [short_line("The worked-out footprint is not drawn on this map.")]
+    return []
+
+
+def _site_outline(results: Mapping, site_plan: Embedded,
+                  footprint_drawn: object = None) -> object:
     if not readers.geometry_available(results):
         return short_line("The lot outline is not available for this property.")
     # The drawing is in its own block with space above (D7). When the surroundings
     # are shown this is the map-based site plan among them, captioned by the map's
     # own sources and dates (Y7); otherwise it is today's lot-only plan, whose one
     # caption is the kit's own "Lot outline: Approximate - tax map" inside the SVG
-    # (D8). Only one of the two outlines is ever drawn (Y5).
+    # (D8). Only one of the two outlines is ever drawn (Y5). The drawn-state lines
+    # (M5-T173 part B) sit UNDER the drawing: the illustrative-footprint statement with
+    # the clearance-conflict sentence when the footprint is drawn, or the worked-out-but-
+    # not-drawn line when the engine placed it but this drawn map did not draw it.
     drawn = figure(site_plan, site_plan.caption or "")
+    children: list[object] = [drawn]
     if site_plan.notes:
         # The constraint overlay could not be drawn: the map is kept WITHOUT it and
         # one short note says so and points to page 3 (M5-T175 S15).
-        return el("div", drawn, *[short_line(note) for note in site_plan.notes])
-    return drawn
+        children += [short_line(note) for note in site_plan.notes]
+    children += _footprint_caption(results, site_plan, footprint_drawn)
+    if len(children) == 1:
+        return drawn
+    return el("div", *children)
 
 
 def render(
     results: Mapping, ident: Mapping, *, site_plan: Embedded,
-    surroundings: page_location.Surroundings | None = None, env=None,
+    surroundings: page_location.Surroundings | None = None,
+    footprint_drawn: object = None, env=None,
 ) -> str:
     item_number = {item["category"]: item["number"] for item in readers.open_items(results)}
     children: list[object] = [el("p", "Site and context", class_="type-name")]
@@ -281,7 +334,7 @@ def render(
             _constraint_rows(results, item_number),
             caption="Zoning constraints for this lot",
         ),
-        _site_outline(results, site_plan),
+        _site_outline(results, site_plan, footprint_drawn),
     ]
     children.append(el("div", *constraints_block, class_="constraints-sheet"))
     return str(el("section", *children, class_="report-page", id="site-and-context"))

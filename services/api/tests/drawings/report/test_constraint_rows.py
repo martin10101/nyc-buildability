@@ -225,6 +225,15 @@ def _report_with_maps(doc: dict) -> str:
     return build_report_html(doc, map_context=map_context(), env=_LANE_E)
 
 
+def _other_basis_texts(html: str) -> list[str]:
+    """Every OTHER-BASIS lot-dimension label drawn on the page-4 close frame (the input_facts
+    overlay, ``data-role="other-basis-dimension"``). This excludes BOTH the scenario-sheet area
+    caption (page 6) and the page-4 drawn-footprint clearance caption (M5-T173 part B), which both
+    name the printed-tax-map basis in prose; scoping to the overlay labels keeps these tests on the
+    page-4 overlay itself (carry item 2)."""
+    return re.findall(r'<text[^>]*data-role="other-basis-dimension"[^>]*>([^<]*)</text>', html)
+
+
 def test_s12_live_report_draws_only_established_lines_and_other_basis_dimensions() -> None:
     doc = rear_yard_1_5_0()
     # Add a not_established line that DOES carry geometry: R017 (the state guard), not a
@@ -249,19 +258,26 @@ def test_s12_live_report_draws_only_established_lines_and_other_basis_dimensions
     assert 'data-kind="setback_line"' not in html
     assert 'data-kind="corner_area"' not in html
     # the input_facts' other-basis lot dimensions draw beside the map outline, each basis
-    # named (the printed-tax-map frontage and the recorded area); dropping the wiring
-    # (mutation 1) removes them.
-    assert "printed tax map" in html
-    assert "city record" in html
+    # named (the printed-tax-map frontage and the recorded area) as page-4 overlay labels;
+    # dropping the wiring (mutation 1) removes them. Scoped to the overlay labels so the
+    # scenario-sheet / drawn-footprint prose captions cannot pass this for it (carry item 2).
+    overlay_labels = _other_basis_texts(html)
+    assert any("printed tax map" in t for t in overlay_labels)
+    assert any("city record" in t for t in overlay_labels)
 
 
 def test_s12_1_4_0_report_with_maps_draws_no_overlay() -> None:
-    # The benchmark is 1.4.0: it carries no constraint_lines / input_facts, so the live
-    # report draws no overlay and no other-basis dimension - byte-identical (S1).
+    # The benchmark carries no ESTABLISHED constraint line, so the live report draws no
+    # constraint overlay and no rear-yard line. It carries input_facts, so it DOES draw the
+    # recorded-area / map-outline other-basis dimensions - but NOT a printed-tax-map frontage
+    # one (it has no such fact). "printed tax map" is no longer checked absent in the whole
+    # html: the placed footprint's drawn-state caption (M5-T173 part B) names the printed-tax-
+    # map and city-map clearances in prose (owner standard - both bases named, neither hidden),
+    # so the string legitimately appears. The overlay check scopes to the drawn overlay labels.
     html = _report_with_maps(benchmark())
     assert 'data-role="constraint-overlay"' not in html
     assert "Rear-yard 100 ft line" not in html
-    assert "printed tax map" not in html
+    assert not any("printed tax map" in t for t in _other_basis_texts(html))
 
 
 def test_s12_page_one_uncertainty_reads_the_1_5_0_conditional_rear_yard() -> None:

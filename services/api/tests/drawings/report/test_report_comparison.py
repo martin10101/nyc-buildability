@@ -100,20 +100,20 @@ def _chart(**over):
     args.update(over)
     return drawings_embed.allowance_bar_chart_svg(
         args["allowance_display"], args["allowance_value"], args["buildings"],
-        placed_on_site=args.get("placed_on_site", False))
+        placed_on_site=args.get("placed_on_site", False),
+        footprint_drawn=args.get("footprint_drawn"))
 
 
 # S14: one case per placed-on-site input state. The status is a word, never a bar, and it never
-# says "Shown on the site plan" unless the site plan actually draws the footprint (M5-T172 S14).
-def test_s14_placed_on_site_three_states(monkeypatch) -> None:
+# says "Shown on the site plan" unless the site plan actually draws the footprint; the drawn state
+# is the manifest's footprint_drawn, never a hard-coded predicate (M5-T173 part B).
+def test_s14_placed_on_site_three_states() -> None:
     # (1) not placed -> "Not demonstrated"
     not_placed = _chart(placed_on_site=False)
     # (2) placed but the site plan does not draw the footprint -> "Worked out; not drawn"
-    monkeypatch.setattr(drawings_embed, "site_plan_draws_placed_footprint", lambda: False)
-    worked_not_drawn = _chart(placed_on_site=True)
-    # (3) placed AND drawn (simulated: M5-T173 part B switches the predicate on) -> "Shown ..."
-    monkeypatch.setattr(drawings_embed, "site_plan_draws_placed_footprint", lambda: True)
-    placed_drawn = _chart(placed_on_site=True)
+    worked_not_drawn = _chart(placed_on_site=True, footprint_drawn=False)
+    # (3) placed AND drawn (manifest.site_plan_draws_footprint True) -> "Shown on the site plan"
+    placed_drawn = _chart(placed_on_site=True, footprint_drawn=True)
     assert "Not demonstrated" in not_placed and "Worked out; not drawn" not in not_placed
     assert "Worked out; not drawn" in worked_not_drawn and "Shown on the site plan" \
         not in worked_not_drawn
@@ -122,13 +122,17 @@ def test_s14_placed_on_site_three_states(monkeypatch) -> None:
     assert len({not_placed, worked_not_drawn, placed_drawn}) == 3
     # the placed-on-site row carries no rectangle (it is a status, never a bar).
     assert "<rect" not in worked_not_drawn[worked_not_drawn.index("Placed on site"):]
+    # MUTATION: footprint_drawn=None (an unwired caller) is not drawn, so the placed row cannot
+    # read "Shown on the site plan" (byte-identical to the deleted legacy predicate's False).
+    unwired = _chart(placed_on_site=True, footprint_drawn=None)
+    assert "Worked out; not drawn" in unwired and "Shown on the site plan" not in unwired
 
 
 def test_s14_benchmark_placed_on_site_reads_worked_out_not_drawn() -> None:
-    # On this head the site plan (page 4) does not draw the placed footprint, so the page-5 status
-    # reads "Worked out; not drawn", never "Shown on the site plan" (the visual reviewer's F1).
-    # Mutation: forcing site_plan_draws_placed_footprint() true makes the benchmark say "Shown on
-    # the site plan" again and this test fails.
+    # Drawings OFF (no LANE_E, no map pack): the site plan is not drawn, so the manifest's
+    # footprint_drawn is False and the page-5 status reads "Worked out; not drawn", never "Shown
+    # on the site plan". Mutation: with LANE_E on the kit fallback DRAWS the footprint and the
+    # benchmark reads "Shown on the site plan" instead (the wiring covered by S3).
     comparison = _comparison(build_report_html(benchmark()))
     assert "Worked out; not drawn" in comparison
     assert "Shown on the site plan" not in comparison

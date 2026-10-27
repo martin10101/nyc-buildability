@@ -234,18 +234,6 @@ def embed_map(
                     kinds_drawn=tuple(getattr(result, "kinds_drawn", ()) or ()))
 
 
-def site_plan_draws_placed_footprint() -> bool:
-    """Whether the report's site plan actually RENDERS the placed building footprint
-    (M5-T172 S14). The site plan (page 4, the maps context close frame drawn by
-    ``drawings.maps.site_context_plan``) does NOT draw it on this head: it still carries
-    the 'No building placed' legend and draws no footprint polygon - drawing it is
-    M5-T173 part B. So the placed-on-site status reads 'Worked out; not drawn', never
-    'Shown on the site plan', until the footprint is actually drawn. This is the single
-    named predicate M5-T173 part B switches on (it reads the scene's drawn state, never a
-    guess); the chart's text follows it so page 5 never claims a drawing page 4 lacks."""
-    return False
-
-
 def allowance_bar_chart_svg(
     allowance_display: str | None,
     allowance_value: float | None,
@@ -262,10 +250,10 @@ def allowance_bar_chart_svg(
     but the site plan does not draw the footprint; and "Shown on the site plan" only when
     the footprint is actually drawn in the report - so page 5 never claims a placement the
     site plan contradicts and the chart never prints two equal bars. ``footprint_drawn``
-    carries that drawn state from the drawn-content manifest (M5-T173 part B); when it is
-    ``None`` the legacy :func:`site_plan_draws_placed_footprint` predicate is read, so an
-    unwired caller is byte-identical. Returns ``None`` when there is no allowance to
-    chart. Every printed number is a document figure passed in."""
+    carries that drawn state from the drawn-content manifest (M5-T173 part B): ``True``
+    only when the site plan actually drew the footprint; ``False`` or ``None`` (an unwired
+    caller) is not drawn, so page 5 never claims a drawing page 4 lacks. Returns ``None``
+    when there is no allowance to chart. Every printed number is a document figure passed in."""
     if not isinstance(allowance_value, (int, float)) or allowance_value <= 0:
         return None
     bars = [b for b in buildings if isinstance(b.get("scheduled_value"), (int, float))]
@@ -291,10 +279,10 @@ def allowance_bar_chart_svg(
     # placed-on-site: a status, never a bar (an unknown is never a zero-height bar, R020).
     # Three honest states (S14): not placed -> "Not demonstrated"; placed but the site plan
     # does not draw the footprint -> "Worked out; not drawn"; placed AND drawn -> "Shown on
-    # the site plan". The drawn state is the manifest's ``footprint_drawn`` when given; when
-    # it is None the legacy site_plan_draws_placed_footprint() predicate is read (byte-
-    # identical for an unwired caller).
-    drawn = site_plan_draws_placed_footprint() if footprint_drawn is None else footprint_drawn
+    # the site plan". The drawn state is the manifest's ``footprint_drawn``: True only when
+    # the site plan actually drew the footprint; False or None (an unwired caller) is not
+    # drawn, so the chart never claims a drawing page 4 lacks.
+    drawn = footprint_drawn is True
     if not placed_on_site:
         placed_text = "Not demonstrated"
     elif drawn:

@@ -14,6 +14,7 @@ from collections.abc import Mapping
 from . import (
     drawings_embed,
     layout,
+    manifest,
     page_decision_summary,
     page_evidence,
     page_location,
@@ -21,6 +22,7 @@ from . import (
     page_scenario_sheet,
     page_site_context,
     readers,
+    scenario_figures,
 )
 from .html import escape
 
@@ -81,17 +83,35 @@ def build_report_html(
     # Page 1 carries the COMPACT summary-frame site plan beside the answers (not the
     # full-size one); ``None`` falls back to the wave-21 summary site plan.
     summary_plan = surroundings.summary_plan if surroundings.available else None
+    # Every drawing is embedded ONCE, before any page renders, and ONE drawn-content
+    # manifest is built from the rendered Embedded values (M5-T173 part B; audit
+    # 2026-10-15c section 3). The scenario-sheet drawings (the two-zone area illustration
+    # and the floor-stack section per worked building) are embedded here and passed to the
+    # scenario sheet, so the page never re-embeds them and the manifest reads exactly what
+    # the report drew. The manifest then decides every drawn/shown/placed claim on pages 4,
+    # 5, 6 and the appendix - a data field never stands in for a rendered drawing.
+    scenario_drawings = scenario_figures.embed_scenario_drawings(results, env=env)
+    drawn_manifest = manifest.build_manifest(
+        site_plan=site_plan,
+        area_illustrations=[d.area_illustration for d in scenario_drawings
+                            if d.area_illustration is not None],
+        sections=[d.section for d in scenario_drawings],
+    )
+    footprint_drawn = drawn_manifest.site_plan_draws_footprint
     # Page types 5 and 6 are one merged evidence appendix (D-094 R077, M5-T169):
     # page_evidence renders the whole appendix, reusing page_assumptions' fragments.
     pages = [
         page_decision_summary.render(results, ident, maps_present=maps_present,
                                      site_context_plan=summary_plan, env=env),
         page_site_context.render(results, ident, site_plan=site_plan,
-                                 surroundings=surroundings, env=env),
-        page_option_comparison.render(results, ident, env=env),
-        page_scenario_sheet.render(results, ident, env=env),
+                                 surroundings=surroundings,
+                                 footprint_drawn=footprint_drawn, env=env),
+        page_option_comparison.render(results, ident, footprint_drawn=footprint_drawn, env=env),
+        page_scenario_sheet.render(results, ident, env=env, drawings=scenario_drawings,
+                                   footprint_drawn=footprint_drawn),
         page_evidence.render(results, ident, maps_present=maps_present,
-                             map_context=map_context, env=env, commit=ident.get("commit")),
+                             map_context=map_context, env=env, commit=ident.get("commit"),
+                             illustration_state=drawn_manifest.area_illustration_state),
     ]
 
     title = ident.get("address") or ident.get("display") or "Preliminary zoning results"

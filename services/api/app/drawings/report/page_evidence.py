@@ -137,27 +137,14 @@ def _area_allocation(results: Mapping) -> Mapping | None:
     return None
 
 
-def _area_illustration_drawn(results: Mapping) -> bool:
-    """Whether the two-zone area illustration is actually DRAWN in this report (M5-T172
-    S14). It is not on this head: M5-T173 part B draws it on the scenario sheet. Until
-    then the method states HOW it will be drawn, never that the zones or the bar are
-    shown (no figure exists to point a reader at). The single named predicate M5-T173
-    part B switches on when it draws the illustration; never a guess."""
-    return False
-
-
 def _area_illustration_drawing_clause(results: Mapping, illustration_state: str | None,
                                       how: str) -> str:
-    """The one drawing clause of the method sentence. ``illustration_state`` is the
-    drawn-content manifest's ``area_illustration_state`` (M5-T173 part B4): ``None``
-    reads the legacy :func:`_area_illustration_drawn` predicate, so an unwired caller is
-    byte-identical; ``'zones'`` / ``'bar'`` name WHERE the illustration is drawn on the
-    scenario sheet; any other explicit (not-drawn) state gives the not-yet-drawn clause
-    without reading the legacy predicate - so a page can state a drawn claim from
-    rendered content, never a hard-coded constant."""
-    if illustration_state is None:
-        return (f"it is shown {how}" if _area_illustration_drawn(results)
-                else f"it is not yet drawn in this report; when drawn it will be shown {how}")
+    """The one drawing clause of the method sentence, decided ONLY from the drawn-content
+    manifest's ``area_illustration_state`` (M5-T173 part B4): ``'zones'`` / ``'bar'`` name
+    WHERE the illustration is drawn on the scenario sheet; ``None`` (an unwired caller) or
+    any other not-drawn state gives the not-yet-drawn clause. There is no hard-coded
+    constant and no legacy predicate: a page states a drawn claim only from rendered
+    content, never a guess."""
     if illustration_state == "zones":
         return "it is shown as zones inside the placed building footprint on the scenario sheet"
     if illustration_state == "bar":

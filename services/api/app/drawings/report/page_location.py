@@ -26,7 +26,8 @@ from .components import short_line
 from .drawings_embed import Embedded
 from .html import el, raw
 
-__all__ = ["QUESTION", "Surroundings", "outlines_match", "render", "resolve"]
+__all__ = ["QUESTION", "Surroundings", "outlines_match", "placed_footprint", "render",
+           "resolve"]
 
 QUESTION = "Where is the lot?"
 
@@ -127,6 +128,32 @@ def _overlay_data(results: Mapping) -> tuple[list | None, list | None]:
             facts if isinstance(facts, list) and facts else None)
 
 
+def placed_footprint(results: Mapping) -> list | None:
+    """The engine's results-local floor-1 plate ring (``geometry.floor_plates``, the
+    entry whose ``floor`` is 1), passed to the CLOSE frame as the illustrative footprint
+    (M5-T173 part B). The block must be ``available`` (a building is placed) and the
+    floor-1 entry must carry a non-empty outline ring; otherwise ``None`` - a 1.4.0
+    document (no block), a not-``available`` block, or a malformed entry - so the close
+    frame keeps the 'No building placed' legend and draws no footprint (S1). A ring that
+    is present but geometrically degenerate is still returned: the close frame then drops
+    'No building placed' but draws nothing, which part B1's renderer decides (S4)."""
+    geometry = results.get("geometry") if isinstance(results, Mapping) else None
+    plates = geometry.get("floor_plates") if isinstance(geometry, Mapping) else None
+    if not isinstance(plates, Mapping) or plates.get("status") != "available":
+        return None
+    entries = plates.get("entries")
+    if not isinstance(entries, list):
+        return None
+    for entry in entries:
+        if not isinstance(entry, Mapping) or entry.get("floor") != 1:
+            continue
+        outline = entry.get("outline")
+        if isinstance(outline, list) and outline and isinstance(outline[0], list) and outline[0]:
+            return outline[0]
+        return None
+    return None
+
+
 def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     """Decide whether the report may show the surroundings and render the maps when
     it may (ruling Y5). The location sheet takes the wide locator; page 1 takes the
@@ -157,7 +184,11 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     block = embed("render_block_map", map_caption.BLOCK_LAYERS, "wide")
     summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary_close",
                          **overlay)
-    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "close", **overlay)
+    # The illustrative building footprint is drawn ONLY on the large close frame (part B1),
+    # so the floor-1 plate ring is passed to this embed alone; the summary close frame and
+    # the wide locators never receive it and stay byte-identical (S1/S6).
+    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "close",
+                        placed_footprint=placed_footprint(results), **overlay)
     drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
     if not drawn:
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)

@@ -176,12 +176,18 @@ a {{ color: {action}; }}
 /* The scenario sheet's floor schedule and estimate stay together, so the estimate
    never lands alone on a page (rework 1 fix 5). */
 .sheet-tail {{ break-inside: avoid; }}
-/* The tall floor-stack figure sits beside the 'Why' and 'What was not checked' text
-   so the sheet fits one page where it can (correction 3). */
-.scenario-row {{ display: flex; gap: 6mm; align-items: flex-start; break-inside: avoid; }}
-.scenario-figure {{ flex: 0 0 auto; }}
+/* The floor-stack section and the 'Why it has this shape' text share the scenario row.
+   Part B2/B3 round 2 enlarged the section to 382.5 pt wide (so its labels print at 8.5 pt);
+   that fills about three quarters of the A4 content box, leaving too little beside it - the
+   'Why' text wrapped to about one word per line and its heading to four lines (visual review
+   T193 round 2, G3v finding 1). So the row STACKS: the section sits on its own line and the
+   'Why' text takes the FULL content width below it, wrapping at a readable width, while the
+   section's printed labels are never shrunk (M5-T173 part B page-fit). break-inside:avoid
+   keeps the two together; if they do not fit with the schedule, the row takes the next page
+   rather than leaving a block alone on a blank one. */
+.scenario-row {{ display: block; break-inside: avoid; }}
+.scenario-figure {{ margin: 0 0 3mm; }}
 .scenario-figure figure {{ margin: 0; }}
-.scenario-side {{ flex: 1 1 0; min-width: 0; }}
 .scenario-side h3 {{ margin-top: 0; }}
 /* The rules/review, drawing notes and run identity share a row in columns so the
    appendix stays compact (corrections T156-C1; M5-T169 DB-270). The row may break across

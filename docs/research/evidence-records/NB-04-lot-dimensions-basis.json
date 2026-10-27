@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-04",
  "title": "215-16 Northern Boulevard: which dimensions are printed, recorded or GIS, and what the 2017 survey settles",
- "revision": 3,
- "last_changed": "2026-10-14",
+ "revision": 4,
+ "last_changed": "2026-10-16",
  "question": {
   "text": "Which dimensions of lot 70 come from printed tax-map labels, administrative records and GIS, and what must the named 2017 survey settle?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -265,12 +265,14 @@
   "code_paths": [
    "services/api/app/connectors/mappluto_geometry_arcgis.py",
    "services/api/app/connectors/mappluto_lot_outline.py",
-   "services/api/app/drawings/maps/close_frame_dimensions.py"
+   "services/api/app/drawings/maps/close_frame_dimensions.py",
+   "services/api/app/drawings/maps/placed_footprint.py"
   ],
   "code_identity": {
    "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
    "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8",
-   "services/api/app/drawings/maps/close_frame_dimensions.py": "8394b3e605728f14afc1544f8a6d5dec659a9fde0cd4e9c358822e83814529e8"
+   "services/api/app/drawings/maps/close_frame_dimensions.py": "3950da2363bdea3b3e8f13935c51fe87c0cec55dac217270ebd92bb56812adff",
+   "services/api/app/drawings/maps/placed_footprint.py": "6ffae0445fca49580749f8163c6d13c0fc3b94ad78e438fca92134d5e8e30ea8"
   },
   "worked_example": {
    "inputs": "Recorded area 10075 sq ft; GIS outline 10387.99 sq ft.",
@@ -283,7 +285,8 @@
    "Area is never derived as frontage x depth (100.76 x 100 = 10,076, not 10,075)."
   ],
   "dependency_assessment": [
-   "Every lot whose recorded area and GIS outline disagree has the same two bases; the program already keeps them apart (measurement in EPSG:2263 via mappluto_geometry_arcgis.py; display only via mappluto_lot_outline.py). No change; the survey would settle this lot only."
+   "Every lot whose recorded area and GIS outline disagree has the same two bases; the program already keeps them apart (measurement in EPSG:2263 via mappluto_geometry_arcgis.py; display only via mappluto_lot_outline.py). No change; the survey would settle this lot only.",
+   "Revision 4 (DB-283, M5-T173): close_frame_dimensions.py drifted (its LF sha256 resynced from 8394b3e6 to 3950da23) when M5-T188 changed a dimension chip; that change altered no reading - the same GIS (city-map) edges are still drawn figure-only under the one city-map note. M5-T173 part B1 adds maps/placed_footprint.py, which draws the engine's floor-1 plate as an illustrative building footprint with its two edge dimensions on the same GIS (city-map) basis under that one note, never a tax-map value; the report caption states the tax-map clearance (33.34 ft) and the city-map clearance (35.31 ft) separately, each named, neither averaged or chosen. So placed_footprint.py implements this record's labelling and is pinned here. No reading changed; the survey named in settled_by would still settle this lot only."
   ]
  },
  "review": {

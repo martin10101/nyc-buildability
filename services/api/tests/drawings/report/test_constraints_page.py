@@ -119,10 +119,12 @@ def test_s8_no_building_placed_legend_on_site_sentence_on_scenario() -> None:
     html = _report_with_maps()
     site = visible_text(_site_section(html))
     scenario = visible_text(html[html.index('id="scenario-B"'):])
-    # M5-T172: the benchmark now places building B, so the not-placed sentence is GONE from the
-    # scenario sheet; the site close-frame context map keeps the 'No building placed' legend
-    # (that map draws no building massing).
-    assert "No building placed" in site                 # the close frame legend entry
+    # M5-T173 part B: the benchmark places building B AND the close frame now DRAWS the
+    # illustrative footprint, so the 'No building placed' legend is REPLACED by the
+    # 'Illustrative building footprint' legend and the drawn-state caption below the drawing; the
+    # not-placed sentence is gone from the scenario sheet.
+    assert "No building placed" not in site             # the footprint is drawn: the legend is gone
+    assert "Illustrative building footprint" in site    # the drawn footprint's legend and caption
     assert readers.NOT_PLACED_LINE not in site          # not the full sentence
     assert readers.NOT_PLACED_LINE not in scenario      # the sentence is gone once placed
     # A not-placed document (floor plates withheld) still carries the sentence on the scenario

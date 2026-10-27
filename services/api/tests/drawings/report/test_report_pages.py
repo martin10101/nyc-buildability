@@ -213,11 +213,12 @@ def test_f7_columns_chart_and_units() -> None:
     assert "20,150 sq ft" in text and "FAR 2.0" in text
     assert "24,180 sq ft" in text and "FAR 2.4" in text
     assert "None scheduled" in text
-    # the chart shows the placed-on-site status, never a bar; the benchmark building is placed but
-    # the site plan does not yet draw the footprint (M5-T172 S14; M5-T173 part B draws it), so it
-    # reads "Worked out; not drawn", never "Shown on the site plan" or "Not demonstrated".
-    assert "Placed on site" in text and "Worked out; not drawn" in text
-    assert "Shown on the site plan" not in text
+    # the chart shows the placed-on-site status, never a bar; the benchmark building is placed and
+    # the kit-fallback site plan now DRAWS the illustrative footprint (M5-T173 part B wiring, carry
+    # item 6), so page 5 reads "Shown on the site plan" - matching page 4 - never "Worked out; not
+    # drawn" or "Not demonstrated" for this placed-and-drawn case.
+    assert "Placed on site" in text and "Shown on the site plan" in text
+    assert "Worked out; not drawn" not in text
 
 
 # =========================================================================== S6
@@ -261,8 +262,10 @@ def test_f4_no_stale_caption_and_single_floor_stack_caption() -> None:
     html = build_report_html(benchmark(), env=_LANE_E)
     text = visible_text(html)
     assert "shown when the drawing is available" not in text
-    # the floor-stack Illustrative caption appears once per worked building (one here).
-    assert text.count("Floor-stack section (Illustrative)") == 1
+    # the floor-stack section's Illustrative caption appears once per worked building (one here).
+    # With the permitted-envelope height lines present (part B2) the caption reads
+    # "Section (Illustrative): ...", so the stable Illustrative-section label is counted.
+    assert text.count("Section (Illustrative)") == 1
 
 
 # =========================================================================== F6
@@ -306,9 +309,10 @@ def test_s8_q1_one_label_per_output_on_every_fixture(name: str) -> None:
 
 
 def test_q1_drawing_caption_carries_a_label() -> None:
-    # the floor-stack caption (a drawing caption) carries the Illustrative label.
+    # the floor-stack section caption (a drawing caption) carries the Illustrative label; with the
+    # part-B2 height lines present it reads "Section (Illustrative): ...".
     text = visible_text(build_report_html(benchmark(), env=_LANE_E))
-    assert "Floor-stack section (Illustrative)" in text
+    assert "Section (Illustrative)" in text
 
 
 # =========================================================================== S9
