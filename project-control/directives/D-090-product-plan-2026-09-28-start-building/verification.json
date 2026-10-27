@@ -7762,6 +7762,26 @@
     }
    ],
    "verified_at": "2026-10-11T21:21:08+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M0-T200",
+   "applicable_requirement_ids": [
+    "D-090-R639"
+   ],
+   "producer": "cloud-architect",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R639",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

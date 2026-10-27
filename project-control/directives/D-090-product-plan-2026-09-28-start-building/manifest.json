@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-11T19:45:12+00:00",
+ "updated_at": "2026-10-27T04:25:02+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -965,7 +965,7 @@
   "D-090-R941"
  ],
  "requirements_id_digest_sha256": "5157a3c5304c380d0a674cbb1d28426081538c10380babba5759d549181bdb66",
- "requirements_content_digest_sha256": "f14ea0b9e19ff4eaf85379986c740089bd4c731415f81625dc6600137ae9281f",
+ "requirements_content_digest_sha256": "c88b46d30e26da6a6aa92ceadfe8f71a9e59e377974213796fb2500cf8aade78",
  "sources": [
   {
    "file": "source-001.md",
@@ -1791,7 +1791,8 @@
   "M5-T161",
   "M5-T162",
   "M0-T193",
-  "M5-T168"
+  "M5-T168",
+  "M0-T200"
  ],
  "affected_prs": [
   262,
@@ -2696,6 +2697,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T168 (lint gap DB-240) to R639 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-27T04:25:02+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T200 (api tooling-lock advisories (uv 0.13.4 after its age, setuptools 84.1.0, filelock 4.2.1, certifi 2026.10.19) under the normal policy; both locks proven byte-identical) to R639 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 2026-10-27a (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
