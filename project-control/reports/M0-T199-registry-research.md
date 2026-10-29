@@ -216,3 +216,159 @@ next 15.5.28 / vitest 4.1.12 is decided by CI (S7), not by reasoning. The workfl
 and the round-2 lock comparison are the authorities that decide at run time. If any reports a finding,
 an under-age package, a new name, or a registry outage, the task STOPs and reports — no waiver, no
 gate change (S6).
+
+---
+
+# ROUND 2 — registry research for the packages the workflow-regenerated lock actually moved
+
+Round 2 reads the *real* workflow-regenerated lock (bot commit `989e7ac0`, parent = round-1 pin
+commit `03052939`) and extends S1 to **every** package whose locked version changed, not just the
+four targeted families round 1 covered. Round 1's predictions and the ten reddening advisories above
+stand unchanged; this section adds the re-resolution cascade that round 1 expected *not* to move
+(it did — see the producer report for the entry-by-entry cause analysis) and the one new package
+name the cascade introduced.
+
+- **Reading clock (authoritative, UTC):** the registry's own `Date` response header captured at the
+  start of this round's fetches: **`Tue, 27 Oct 2026 13:54:14 GMT`** (`registry.npmjs.org`). All
+  round-2 ages below are `(13:54:14Z) − time["<new>"]` in whole seconds from each package's
+  `registry.npmjs.org/<pkg>` `time` map. Advisory reads were taken against
+  `api.github.com/advisories?ecosystem=npm&affects=<pkg>@<new>` during the same window (HTTP 200).
+- **Lock identity:** the lock analysed in round 2 is byte-identical to the one the bot committed —
+  `git hash-object` of the analysed file = `14e9f52e61ffda9a71a9de6f258d713e5501d159` =
+  `989e7ac0:apps/web/package-lock.json`. So these facts describe exactly the committed lock.
+
+## Outcome: PROCEED (no STOP condition in round 2)
+
+Every one of the **75** packages whose locked version moved, plus the **3** added lock nodes
+(`@napi-rs/lzma-linux-x64-gnu`, and the hoisted `fdir`/`picomatch`), is: from `registry.npmjs.org`,
+integrity-matched to the registry's `dist.integrity` (**78/78** moved+added match), at least 604800 s
+old (minimum age **774259 s ≈ 8.96 days**, the rollup 4.64.10 platform family), and advisory-free at
+every severity for its new version. One new package **name** entered the lock —
+`@napi-rs/lzma-linux-x64-gnu@1.5.1` — reviewed for provenance below (D-009-R005 / §5). No STOP
+condition. (Note: round 1 predicted the vite transitive subtree would **not** move; it did, because
+npm re-resolves the subtree of every replaced node — the producer report classifies each as
+FORCED vs RE-RESOLVED. The security facts are what matter for G5 and they are all clean.)
+
+## Cascade packages — registry facts (new versions)
+
+Ages vs the round-2 clock `13:54:14Z`. Every age ≥ 604800 s; every lock `integrity` equals the
+registry `dist.integrity` (verified programmatically for all 78 moved+added entries — 0 mismatches).
+
+### esbuild 0.28.1 → 0.28.2 (the main package; +26 `@esbuild/*` platform binaries)
+
+| package | published new (UTC) | age at reading (s) | ≥604800 | dist.integrity (registry = lock) |
+|---|---|---|---|---|
+| esbuild | 2026-08-08T20:00:55.454Z | 6889998 | yes | `sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA==` |
+
+The 26 `@esbuild/*` binaries all move `0.28.1 → 0.28.2` (esbuild 0.28.2 pins each at the exact
+`0.28.2` in `optionalDependencies`); each age ≈ 6.889 M s (≈ 79.7 days), each integrity-matched.
+**Lifecycle scripts:** esbuild 0.28.2 keeps `postinstall: node install.js` — **byte-identical to
+0.28.1 (unchanged)**. This is the only install-time hook anywhere in the moved set. On this hardened
+install (`npm ci` via npm@11.18.0) npm's allow-scripts listed it as *not covered / not run* rather
+than executing it. The 26 platform binaries have **no** scripts.
+
+### rollup 4.62.2 → 4.64.10 (the main package; +25 `@rollup/rollup-*` platform binaries)
+
+| package | published new (UTC) | age at reading (s) | ≥604800 | dist.integrity (registry = lock) |
+|---|---|---|---|---|
+| rollup | 2026-10-18T14:48:55.725Z | 774318 | yes | `sha512-8N52YH1B5JzBP+B1rkcBERG7rfRTGAM0RmUpyd76yyRfTljuG452GCNbVm6MPzs1+gXBha6Rw5/oHRFohOpfDg==` |
+
+The 25 `@rollup/rollup-*` binaries all move `4.62.2 → 4.64.10` (rollup 4.64.10 pins each at exact
+`4.64.10`); minimum age in this family 774259 s (≈ 8.96 days), each integrity-matched, each with
+**no** scripts. rollup 4.64.10 itself has build/test scripts only (no `preinstall`/`install`/
+`postinstall`); its `scripts` differ from 4.62.2 in dev/coverage targets (`ci:coverage`,
+`test:coverage`, `test:leak`, added `build:napi:coverage`, `test:only:coverage`) — **none is an
+install-lifecycle hook**, so `npm ci` runs none of them. rollup's runtime deps are just
+`@types/estree 1.0.9`.
+
+### Other re-resolved transitives
+
+| package | old → new | published new (UTC) | age (s) | ≥604800 | dist.integrity (registry = lock) |
+|---|---|---|---|---|---|
+| chai | 6.2.2 → 6.3.0 | 2026-09-30T19:18:04.368Z | 2313369 | yes | `sha512-XWAtwJ6OHO+tj0EKCs0Y2UamnyOxseZWltU4x2U2wh8g4AigdjwvtUjvLP2tqkA/avxHEtzxNaqGq/YGNwckKg==` |
+| tinyrainbow | 3.1.1 → 3.2.0 | 2026-09-30T10:40:46.467Z | 2344407 | yes | `sha512-LgO3D9yZJjApUiuUfl9iFAwrtaX4+lok3wJIqttGoKCHlWUqHqbQpnxCf82L8FjgKsh4iGo78hqJwgL8F6To2A==` |
+| picomatch | 4.0.5 → 4.0.7 | 2026-08-24T14:36:23.690Z | 5527070 | yes | `sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==` |
+| fdir | 6.5.0 → 6.5.0 (hoist only) | 2025-08-14T16:56:03.948Z | 37918690 | yes | `sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==` |
+
+`chai`, `tinyrainbow`, `picomatch` have **no** install hooks (test/build scripts only, unchanged old→new).
+`fdir`'s **version does not change** (6.5.0 → 6.5.0); it is only hoisted to a single top-level node
+(its integrity is the same value the old nested copies carried). None of these runs anything on
+`npm ci`.
+
+### Advisory status of every moved/added new version (api.github.com, round-2 window)
+
+`affects=<pkg>@<new>` returned `[]` (0 advisories, HTTP 200) for each of: `esbuild@0.28.2`,
+`rollup@4.64.10`, `chai@6.3.0`, `tinyrainbow@3.2.0`, `picomatch@4.0.7`, `fdir@6.5.0`,
+`@napi-rs/lzma-linux-x64-gnu@1.5.1` (plus the five round-1 families already shown clean). Control:
+`esbuild@0.24.0 → 2 advisories`, confirming the query discriminates. The platform binaries
+(`@esbuild/*`, `@rollup/rollup-*`) carry no advisories of their own; advisories target the main
+package, which `npm audit` (workflow S3) and these reads both cover. **No new version sits inside any
+advisory range.**
+
+## New package NAME admission — `@napi-rs/lzma-linux-x64-gnu@1.5.1` (D-009-R005 / §5, G5)
+
+This is the one name new to the lock. Provenance facts read from
+`registry.npmjs.org/@napi-rs/lzma-linux-x64-gnu` and the rollup repository
+(`raw.githubusercontent.com/rollup/rollup/v4.64.10/...`) on 2026-10-27:
+
+**Package facts (registry):**
+- version `1.5.1`, published `2026-07-14T01:55:57.074Z`; age at reading **9,115,096 s ≈ 105.5 days** (≥ 604800).
+- `license: MIT`; `os: ["linux"]`, `cpu: ["x64"]`, `libc: ["glibc"]`; `engines.node: ^22.20 || ^24.12 || >=25`.
+- `main: lzma.linux-x64-gnu.node` — a **prebuilt native addon**. The installed package contains only
+  `README.md`, `package.json`, and `lzma.linux-x64-gnu.node` (1.45 MB binary). **No `scripts` field at all**
+  → no `preinstall`/`install`/`postinstall`; `npm ci` runs none of its code.
+- maintainers: `broooooklyn <lynweklm@gmail.com>`, `forehalo <forehalo@gmail.com>`; repository
+  `github.com/Brooooooklyn/lzma` (the well-known napi-rs LZMA binding; napi-rs = Brooklyn Zelenka / LongYinan).
+- **Publisher = trusted publisher / OIDC:** `_npmUser = {name: "GitHub Actions",
+  email: npm-oidc-no-reply@github.com, trustedPublisher: {id: github, oidcConfigId: oidc:dfbd7a6d-…}}`.
+  `dist.attestations` present (`provenance`, predicateType `https://slsa.dev/provenance/v1`) and
+  `dist.signatures` present. Published by npm 12.0.1 / Node 24.18.0.
+- integrity `sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==`
+  (= the lock value, verified).
+- advisory status: `affects=@napi-rs/lzma-linux-x64-gnu@1.5.1 → []` (0).
+
+**Why it is in our tree (registry + rollup source):**
+- It is declared in **`rollup`'s `optionalDependencies`** at the exact version `1.5.1`. rollup 4.64.10
+  declares exactly one `@napi-rs/lzma-*` variant — `linux-x64-gnu` — which is why only this single
+  name (not a family) enters our linux-x64-glibc lock.
+- rollup's own `package.json` (v4.64.10) carries an inline comment on this entry:
+  *"@napi-rs/lzma-linux-x64-gnu: If missing, `napi build --use-napi-cross` silently skips the cross
+  toolchain and links against the host glibc (#6461)."* So it is a **build/publish-time** aid for
+  rollup's napi cross-compilation (keeping rollup's shipped linux-gnu binary compatible with old
+  glibc ≤ 2.28 — the 4.62.4 changelog "Resolve a regression … on older Linux distributions / enforce
+  glibc ≤ 2.28 compatibility, #6467"). It landed in rollup's `optionalDependencies` and thus leaks
+  into *consumer* trees on the matching platform, though consumers never use it for builds.
+- **Not loaded at runtime in our install path.** rollup's runtime native loader (`native.js`,
+  v4.64.10, 176 lines) only `require()`s `./rollup.<platform>.node` (the `@rollup/rollup-*` binary);
+  it contains **no** reference to lzma / napi / decompression. So when `vite build` or `vitest`
+  loads rollup, `@napi-rs/lzma-linux-x64-gnu` is **not** `require()`d. With no lifecycle scripts, its
+  code is neither executed on install nor loaded at runtime — it is inert payload on disk.
+
+**Correction to the dispatch note (fact):** the orchestrator's first read said rollup declared this
+optional dep "since 4.63.0". The registry `optionalDependencies` across rollup versions shows it
+**first appears in rollup 4.62.4 (published 2026-08-01)**, present in every release since. The claim
+that 4.62.2 (the old locked rollup) does **not** declare it is correct.
+
+**Admission verdict (evidence-based; the gate records the decision):** admit. The package is
+advisory-free, ~105 days old (far past the 7-day floor), integrity-matched to the registry, MIT,
+published through GitHub Actions OIDC trusted publishing with an SLSA v1 provenance attestation and
+registry signatures, has no lifecycle scripts, and is not loaded at runtime by our toolchain. The
+only wart is a known rollup packaging quirk (a build-time tool exposed via `optionalDependencies`);
+it is not a security concern.
+
+## What round 2 shows and does not
+
+**Shows:** on `registry.npmjs.org` and the GitHub advisory DB (reads `13:54:14Z`, 2026-10-27), the
+*actual* regenerated lock points every moved package and every added node at a version that is
+advisory-free at every severity, ≥ 604800 s old, from the registry with a `dist.integrity` matching
+the lock (78/78 moved+added), with no changed install-time hook (esbuild's `postinstall` is byte-identical; the
+new `@napi-rs/lzma` has none). `npm ci` from this exact lock installs cleanly on this linux-x64-glibc
+server.
+
+**Does not show / out of scope:** the browser e2e result and the full CI on the post-lock head
+(the orchestrator reads CI; the exact-production-install job stays red until the separate api-tooling
+repair lands — not this task). This round reads registry/advisory metadata and performs an on-server
+`npm ci` + unit run; it is not the authoritative CI audit. The workflow's own `npm audit total == 0`
+and committed-lock age-gate PASS for run `40450612409` are confirmed by the orchestrator (gh is
+orchestrator-only under the ledger protocol); this round reconfirms the same facts independently
+from the registry and from a local `npm ci`.
