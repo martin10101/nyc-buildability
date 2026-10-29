@@ -52,6 +52,17 @@ describe("zrSectionPageNumber (port of sources.zr_section_page_number)", () => {
     expect(zrSectionPageNumber(cited)).toBe(page);
   });
 
+  // Start-anchoring (RISK 2): a section number BURIED after other text must NOT be picked up.
+  // This guards the `^` in SECTION_PAGE_RE / Python re.match: dropping the anchor would make
+  // these parse the embedded "23-52" and redden here and the server-written golden together.
+  it.each([
+    ["see 23-52", ""],
+    ["Appendix 23-52", ""],
+    ["note 12-10 applies", ""],
+  ] as [unknown, string][])("buried number %s is not matched (start-anchored)", (cited, page) => {
+    expect(zrSectionPageNumber(cited)).toBe(page);
+  });
+
   it("reproduces every golden page-number case (parity with the server)", () => {
     for (const { cited, page } of golden.page_number_cases) {
       expect(zrSectionPageNumber(cited)).toBe(page);

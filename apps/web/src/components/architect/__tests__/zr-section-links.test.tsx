@@ -17,6 +17,9 @@ afterEach(cleanup);
 const RESOLVABLE_PAGE = Object.keys(ZR_SECTION_URLS)[0];
 const RESOLVABLE_LABEL = `ZR ${RESOLVABLE_PAGE}(a)`;
 const RESOLVABLE_HREF = ZR_SECTION_URLS[RESOLVABLE_PAGE];
+// A second resolvable page, so two adjacent links can be checked (decoupled from the capture set).
+const RESOLVABLE_PAGE_2 = Object.keys(ZR_SECTION_URLS)[1];
+const RESOLVABLE_LABEL_2 = `ZR ${RESOLVABLE_PAGE_2}(c)(3)`;
 // A page with no capture: resolves to null -> plain text (matches the PDF for ZR 11-25).
 const UNRESOLVABLE_LABEL = "ZR 999-99";
 
@@ -32,6 +35,38 @@ describe("ZrSectionLinks", () => {
     expect(link.textContent).toBe(RESOLVABLE_LABEL);
     // never the bare host.
     expect(link).not.toHaveAttribute("href", "https://zoningresolution.planning.nyc.gov/");
+  });
+
+  it("gives each new-tab link an accessible 'opens in a new tab' cue, visible label unchanged (a11y)", () => {
+    render(<ZrSectionLinks citations={[RESOLVABLE_LABEL]} />);
+    const link = screen.getByTestId("zr-section-link");
+    // the visible text stays the verbatim citation label...
+    expect(link.textContent).toBe(RESOLVABLE_LABEL);
+    // ...while the accessible name tells screen-reader/keyboard users it opens a new tab.
+    expect(link).toHaveAttribute("aria-label", `${RESOLVABLE_LABEL} (opens in a new tab)`);
+  });
+
+  it("separates adjacent citations with a visible '; ' and skips a blank with no '; ;' (S6)", () => {
+    // Two adjacent resolvable links plus a plain one, with a blank between the first pair.
+    render(
+      <ZrSectionLinks
+        citations={[RESOLVABLE_LABEL, "", RESOLVABLE_LABEL_2, UNRESOLVABLE_LABEL]}
+      />,
+    );
+    const container = screen.getByTestId("zr-section-links");
+    const text = container.textContent ?? "";
+    // three visible items -> exactly two "; " separators (the blank is dropped, not separated).
+    const separators = screen.getAllByTestId("zr-section-separator");
+    expect(separators).toHaveLength(2);
+    for (const sep of separators) {
+      expect(sep.textContent).toBe("; ");
+    }
+    // adjacent links no longer run together; items read in order with the separator between.
+    expect(text).toBe(`${RESOLVABLE_LABEL}; ${RESOLVABLE_LABEL_2}; ${UNRESOLVABLE_LABEL}`);
+    // nothing before the first or after the last, and the skipped blank leaves no "; ;".
+    expect(text.startsWith("; ")).toBe(false);
+    expect(text.endsWith("; ")).toBe(false);
+    expect(text).not.toContain("; ;");
   });
 
   it("renders an unresolvable citation as plain text, no anchor (S3)", () => {
@@ -53,9 +88,9 @@ describe("ZrSectionLinks", () => {
     expect(plains).toHaveLength(1);
     expect(links[0]).toHaveAttribute("href", RESOLVABLE_HREF);
     expect(plains[0].textContent).toBe(UNRESOLVABLE_LABEL);
-    // order preserved: the link precedes the plain text in the DOM.
+    // order preserved: the link precedes the plain text, joined by the PDF's "; " separator.
     const container = screen.getByTestId("zr-section-links");
-    expect(container.textContent).toBe(`${RESOLVABLE_LABEL}${UNRESOLVABLE_LABEL}`);
+    expect(container.textContent).toBe(`${RESOLVABLE_LABEL}; ${UNRESOLVABLE_LABEL}`);
   });
 
   it("renders nothing for an empty or all-blank citation list (nothing invented)", () => {

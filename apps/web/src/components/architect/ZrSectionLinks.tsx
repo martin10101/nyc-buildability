@@ -8,9 +8,13 @@
  * citation renders nothing. This component computes no law: it only resolves labels through
  * the shared zr-section-urls resolver and shows the label verbatim.
  *
+ * Grouped citations read like the PDF: the items are joined with the PDF's "; " separator
+ * (nothing before the first or after the last), so adjacent links no longer run together
+ * ("ZR 23-344(b)ZR 23-344(c)(3)" -> "ZR 23-344(b); ZR 23-344(c)(3)").
+ *
  * Unmounted here by design — M5-T174 mounts it in the Results flow.
  */
-import type { ReactElement } from "react";
+import { Fragment, type ReactElement } from "react";
 
 import { sectionUrl } from "@/lib/architect/zr-section-urls";
 
@@ -18,6 +22,9 @@ export interface ZrSectionLinksProps {
   /** Cited section labels, e.g. ["ZR 23-362", "ZR 11-25"]. Blank/missing entries are skipped. */
   citations?: readonly string[];
 }
+
+/** The PDF's citation separator, interleaved between rendered items. */
+const CITATION_SEPARATOR = "; ";
 
 /** A cited label is shown only when it carries visible section text. */
 function visibleCitations(citations: readonly string[]): string[] {
@@ -34,23 +41,30 @@ export function ZrSectionLinks({ citations = [] }: ZrSectionLinksProps): ReactEl
       {labels.map((label, index) => {
         const href = sectionUrl(label);
         const key = `${label}-${index}`;
-        if (href) {
-          return (
-            <a
-              key={key}
-              data-testid="zr-section-link"
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {label}
-            </a>
-          );
-        }
-        return (
-          <span key={key} data-testid="zr-section-plain">
+        const item = href ? (
+          <a
+            data-testid="zr-section-link"
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${label} (opens in a new tab)`}
+          >
             {label}
-          </span>
+          </a>
+        ) : (
+          <span data-testid="zr-section-plain">{label}</span>
+        );
+        // Interleave the PDF's "; " between items — skipped blanks never reach here, so
+        // there is never a double separator, and none precedes the first or follows the last.
+        return (
+          <Fragment key={key}>
+            {index > 0 && (
+              <span data-testid="zr-section-separator" aria-hidden="true">
+                {CITATION_SEPARATOR}
+              </span>
+            )}
+            {item}
+          </Fragment>
         );
       })}
     </span>

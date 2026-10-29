@@ -43,6 +43,11 @@ _PAGE_CASES: list[object] = [
     "Appendix A",
     "New York City Zoning Resolution (official text)",
     "ZR 11-25",
+    # A section number buried after other text must yield "" on BOTH surfaces: the parse is
+    # start-anchored (Python re.match; the website's start-anchored regex). This case pins
+    # that anchoring in the golden, so dropping the website's leading anchor reddens the web
+    # tests and any future server anchoring change reddens this parity test.
+    "see 23-52",
 ]
 
 # section_url cases: resolvable citations, a citation whose page has no capture (ZR 11-25 ->
