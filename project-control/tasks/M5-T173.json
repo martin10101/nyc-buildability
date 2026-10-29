@@ -136,7 +136,8 @@
     "code-reviewer",
     "visual-quality-reviewer",
     "qa-engineer",
-    "directive-compliance-verifier"
+    "directive-compliance-verifier",
+    "security-reviewer"
   ],
   "status": "claimed",
   "progress_percent": 20,
@@ -147,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-16T01:33:40.016200+00:00",
-  "updated_at": "2026-10-16T01:49:37+00:00",
+  "updated_at": "2026-10-29T22:34:35+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -207,6 +208,11 @@
       "at": "2026-10-16T01:49:37+00:00",
       "actor": "orchestrator",
       "change": "Binding correction: The part B4 (M5-T194) rule check named the wiring part as the holder of these rows' open share (every drawing claim read from the manifest, the legacy predicates deleted, the page references and the three print states on the real print); they were not bound at the wiring part's contract (session 2026-10-15c, after M5-T194's acceptance at c4422294). Rows added: D-094-R198, D-094-R200, D-094-R203, D-094-R204, D-094-R205, D-094-R277, D-094-R278. No allowed path, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-29T22:34:35+00:00",
+      "actor": "orchestrator",
+      "change": "Reviewer roster correction: G5 is a required gate but no reviewer able to hold it in substance was listed; security-reviewer added to reviewer_agents (the M5-T167 pattern). No allowed path, gate, scenario or dependency changes."
     }
   ]
 }
