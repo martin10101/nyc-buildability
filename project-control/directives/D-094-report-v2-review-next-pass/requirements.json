@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 320,
+ "requirement_count": 324,
  "producer": "orchestrator",
- "updated_at": "2026-10-17T03:47:29+00:00",
+ "updated_at": "2026-11-11T02:21:56+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -10579,6 +10579,130 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured in session 2026-10-15c (resumed 2026-10-17) before the next build step.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R321",
+   "text": "'Hi can you upload the full program to github privet make sure no keys so I can shut down the digital ocean': everything that exists only on the build server is saved into ONE new PRIVATE GitHub repository under the owner's account (the owner's answer); the main repository's visibility does not change.",
+   "source_ref": "source-034-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-11-11"
+   },
+   "dependencies": [],
+   "required_harness": "`gh repo view <backup> --json visibility` reads PRIVATE; the main repo still reads PUBLIC.",
+   "required_evidence": "The backup repo's inventory file and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-27a (2026-11-11) before the backup is made; nothing uploaded yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R322",
+   "text": "'Hi can you upload the full program to github privet make sure no keys so I can shut down the digital ocean': no key, token, password or other secret is uploaded: every file is scanned before the first push; anything that matches is left out or replaced and named in the inventory; the scan result is kept in the backup.",
+   "source_ref": "source-034-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-11-11"
+   },
+   "dependencies": [],
+   "required_harness": "A secret scan of the exact tree pushed reports no finding (or only reviewed false positives, listed).",
+   "required_evidence": "The scan report in the backup repo.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-27a (2026-11-11) before the backup is made; nothing uploaded yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R323",
+   "text": "'Hi can you upload the full program to github privet make sure no keys so I can shut down the digital ocean': the backup is complete enough that the server can be shut down without losing work: all local branches and commits (a git bundle of every ref), uncommitted changes of every worktree (patches), the owner-docs folder, the memory notes and an inventory of what is included and what is deliberately left out (rebuildable).",
+   "source_ref": "source-034-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-11-11"
+   },
+   "dependencies": [],
+   "required_harness": "A restore check: the bundle verifies (`git bundle verify`), lists every local ref, and the inventory accounts for every worktree.",
+   "required_evidence": "The inventory and restore notes in the backup repo.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-27a (2026-11-11) before the backup is made; nothing uploaded yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R324",
+   "text": "'Hi can you upload the full program to github privet make sure no keys so I can shut down the digital ocean': the owner is told plainly when it is safe to shut the server down, where the backup is, what it holds, how to restore from it, and what stops when the server goes (the preview; the next session needs a new server).",
+   "source_ref": "source-034-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-11-11"
+   },
+   "dependencies": [],
+   "required_harness": "The owner update after the upload says these.",
+   "required_evidence": "The owner update in the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-27a (2026-11-11) before the backup is made; nothing uploaded yet.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

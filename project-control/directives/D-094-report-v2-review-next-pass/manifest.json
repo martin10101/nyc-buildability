@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-17T03:47:29+00:00",
+ "updated_at": "2026-11-11T02:21:56+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -341,10 +341,14 @@
   "D-094-R317",
   "D-094-R318",
   "D-094-R319",
-  "D-094-R320"
+  "D-094-R320",
+  "D-094-R321",
+  "D-094-R322",
+  "D-094-R323",
+  "D-094-R324"
  ],
- "requirements_id_digest_sha256": "c838e3a103bce39e7ad2d01f0bb44d226df9d0e13ea52e65bb75800576835314",
- "requirements_content_digest_sha256": "31f488a5662658a535f2de5f282e39affd636b8946609527ba33516158059e82",
+ "requirements_id_digest_sha256": "ac20cfe59065b0f910bf175f1a1d88eb051e4e72a75cf1a2328f200aea275875",
+ "requirements_content_digest_sha256": "e35893e38d23268304ed6a2aef1fadbb56e7bfff9dd44661a9c53909a6ed1a19",
  "sources": [
   {
    "file": "source-001.md",
@@ -608,6 +612,14 @@
    "recorded_at": "2026-10-17T03:47:29+00:00",
    "content_digest_sha256": "f6b4f4079c96036fdbd541b3d343c3aacca45d1e3964e43a31caf5c2e415e1eb",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-034-amendment.md",
+   "kind": "amendment",
+   "sequence": 34,
+   "recorded_at": "2026-11-11T02:21:56+00:00",
+   "content_digest_sha256": "27d531c3a49e83a3c5b21255202bb305571558c12723bd5ea1abce5f9b716606",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -642,7 +654,8 @@
   "source-030-amendment.md",
   "source-031-amendment.md",
   "source-032-amendment.md",
-  "source-033-amendment.md"
+  "source-033-amendment.md",
+  "source-034-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1283,6 +1296,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-033 (the owner's forwarded outside check of the progress claims) and requirements D-094-R316 to R320, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-11-11T02:21:56+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-034 (the owner's request to save the whole program privately on GitHub before shutting down the build server, with the owner's answer to the follow-up question) and requirements D-094-R321 to R324, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
